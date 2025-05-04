@@ -86,7 +86,9 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    needs: build-application
+    needs: 
+      - build-application
+      - terraform
     runs-on: ubuntu-latest
     steps:
       - name: Configure AWS credentials
