@@ -114,6 +114,34 @@ resource "aws_instance" "balderdash_ec2_instance" {
   }
 
   vpc_security_group_ids = [ aws_security_group.ec2_security_group.id ]
+
+  user_data = <<-EOF
+    # Install necessary packages
+    sudo apt install unzip
+    sudo apt update
+    sudo apt upgrade
+    sudo apt install nodejs
+    sudo apt install npm
+    sudo npm install -g pm2
+    
+    # Setup nginx proxy
+    mkdir -p /etc/nginx/conf.d
+    file="/etc/nginx/conf.d/proxy.conf"
+
+    echo "server {" > $file
+    echo "  listen 80;" >> $file
+    echo "  server_name *.amazonaws.com;" >> $file
+    echo "  location / {" >> $file
+    echo "    proxy_pass http://localhost:8080;" >> $file
+    echo "    proxy_set_header Host \$host;" >> $file
+    echo "    proxy_set_header X-Real-IP \$remote_addr;" >> $file
+    echo "  }" >> $file
+    echo "}" >> $file
+
+    systemctl enable nginx
+    systemctl start nginx
+
+    EOF
 }
 
 resource "aws_eip" "balderdash_ec2_eip" {
