@@ -106,7 +106,7 @@ jobs:
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
-          name: balderdash-build.zip
+          name: balderdash-build
 
       - name: Deploy
         run: |
