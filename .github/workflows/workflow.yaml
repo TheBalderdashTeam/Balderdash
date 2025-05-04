@@ -55,6 +55,10 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+
+      - name: Install required dependencies
+        run: npm install
+        working-directory: balderdash-app
       
       - name: Compile Typescript to Javascript
         run: npm run build
