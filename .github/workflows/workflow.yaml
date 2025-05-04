@@ -132,14 +132,14 @@ jobs:
             cd dist &&
             pm2 start index.js --name balderdash-app &&
             
-            sudo bash -c 'cat > /etc/nginx/conf.d/proxy.conf <<EOL
+            sudo bash -c 'cat > /etc/nginx/conf.d/proxy.conf <<'"'"'EOL
             server {
               listen 80;
               server_name *.amazonaws.com;
               location / {
                 proxy_pass http://localhost:8080;
-                proxy_set_header Host \$host;
-                proxy_set_header X-Real-IP \$remote_addr;
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
               }
             }
             EOL' &&
