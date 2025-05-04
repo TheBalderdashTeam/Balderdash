@@ -116,33 +116,31 @@ resource "aws_instance" "balderdash_ec2_instance" {
   vpc_security_group_ids = [ aws_security_group.ec2_security_group.id ]
 
   user_data = <<-EOF
-    #!/bin/bash
-    sudo apt install unzip -y
-    sudo apt update -y
-    sudo apt upgrade -y
-    sudo apt install nodejs -y
-    sudo apt install npm -y
-    sudo npm install -g pm2 -y
-    sudo apt install nginx -y
+  #!/bin/bash
+  sudo apt install unzip -y
+  sudo apt update -y
+  sudo apt upgrade -y
+  sudo apt install nodejs -y
+  sudo apt install npm -y
+  sudo npm install -g pm2 -y
+  sudo apt install nginx -y
 
-    # Setup nginx proxy
-    mkdir -p /etc/nginx/conf.d
-    file="/etc/nginx/conf.d/proxy.conf"
+  # Setup nginx proxy
+  cat > /etc/nginx/conf.d/proxy.conf <<EOL
+  server {
+    listen 80;
+    server_name *.amazonaws.com;
+    location / {
+      proxy_pass http://localhost:8080;
+      proxy_set_header Host \$host;
+      proxy_set_header X-Real-IP \$remote_addr;
+    }
+  }
+  EOL
 
-    echo "server {" > $file
-    echo "  listen 80;" >> $file
-    echo "  server_name *.amazonaws.com;" >> $file
-    echo "  location / {" >> $file
-    echo "    proxy_pass http://localhost:8080;" >> $file
-    echo "    proxy_set_header Host \$host;" >> $file
-    echo "    proxy_set_header X-Real-IP \$remote_addr;" >> $file
-    echo "  }" >> $file
-    echo "}" >> $file
-
-    systemctl enable nginx
-    systemctl start nginx
-
-    EOF
+  sudo systemctl enable nginx
+  sudo systemctl start nginx
+  EOF
 }
 
 resource "aws_eip" "balderdash_ec2_eip" {
