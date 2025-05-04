@@ -114,6 +114,7 @@ jobs:
           chmod 0500 privatekey.pem
           EC2_HOST=${{ needs.terraform.outputs.ec2host }}
           scp -o StrictHostKeyChecking=no -i privatekey.pem ./balderdash-build.zip "ubuntu@$EC2_HOST:balderdash-build.zip"
+          ssh -o StrictHostKeyChecking=no -i privatekey.pem "ubuntu@$EC2_HOST" "sudo apt install unzip -y && sudo apt update -y && sudo apt upgrade -y && sudo apt install nodejs -y && sudo apt install npm -y && sudo npm install -g pm2 -y"
           ssh -o StrictHostKeyChecking=no -i privatekey.pem "ubuntu@$EC2_HOST" "unzip -o balderdash-build.zip"
           ssh -o StrictHostKeyChecking=no -i privatekey.pem "ubuntu@$EC2_HOST" "npm install"
           ssh -o StrictHostKeyChecking=no -i privatekey.pem "ubuntu@$EC2_HOST" "cd dist && pm2 start --name balderdash-app index.js"

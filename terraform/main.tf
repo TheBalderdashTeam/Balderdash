@@ -117,12 +117,6 @@ resource "aws_instance" "balderdash_ec2_instance" {
 
   user_data = <<-EOF
   #!/bin/bash
-  sudo apt install unzip -y
-  sudo apt update -y
-  sudo apt upgrade -y
-  sudo apt install nodejs -y
-  sudo apt install npm -y
-  sudo npm install -g pm2 -y
   sudo apt install nginx -y
 
   # Setup nginx proxy
