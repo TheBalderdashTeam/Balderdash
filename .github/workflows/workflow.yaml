@@ -119,11 +119,12 @@ jobs:
             sudo apt-get update &&
             sudo apt-get install -y nginx &&
 
-            # Write proxy config to the default site
-            sudo bash -c 'cat > /etc/nginx/sites-available/default <<EOF
+            # Write proxy config safely
+            sudo tee /etc/nginx/sites-available/default > /dev/null <<'EOF'
             server {
               listen 80;
               server_name *.amazonaws.com;
+
               location / {
                 proxy_pass http://localhost:8080;
                 proxy_set_header Host \$host;
@@ -131,15 +132,12 @@ jobs:
               }
             }
             EOF
-                        ' &&
 
-                        # Test nginx config and reload
+                        # Test and restart nginx
                         sudo nginx -t &&
                         sudo systemctl enable nginx &&
                         sudo systemctl restart nginx
                       "
-
-
 
       - name: Deploy
         run: |
