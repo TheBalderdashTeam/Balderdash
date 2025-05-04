@@ -142,20 +142,20 @@ jobs:
       - name: Deploy
         run: |
           EC2_HOST=${{ needs.terraform.outputs.ec2host }}
-          
           scp -o StrictHostKeyChecking=no -i privatekey.pem ./balderdash-build.zip "ubuntu@$EC2_HOST:balderdash-build.zip"
           
-          ssh -o StrictHostKeyChecking=no -i privatekey.pem "ubuntu@$EC2_HOST" "
+          ssh -o StrictHostKeyChecking=no -i privatekey.pem "ubuntu@$EC2_HOST" ' 
             unzip -o balderdash-build.zip &&
 
             # Stop and delete existing pm2 process if it exists
-            if pm2 list | grep -q 'balderdash-app'; then
+            if pm2 list | grep -q "balderdash-app"; then
               pm2 delete balderdash-app;
             fi &&
             
             cd dist &&
-            pm2 start index.js --name balderdash-app &&
-          "
+            pm2 start index.js --name balderdash-app
+          '
+
 
   flyway:
     needs:
