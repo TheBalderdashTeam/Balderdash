@@ -117,15 +117,15 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i privatekey.pem "ubuntu@$EC2_HOST" '
             sudo apt-get update &&
             sudo apt-get install -y nginx &&
-            sudo bash -c \"echo 'server {' > /etc/nginx/sites-available/default\" &&
-            sudo bash -c \"echo '  listen 80;' >> /etc/nginx/sites-available/default\" &&
-            sudo bash -c \"echo '  server_name *.amazonaws.com;' >> /etc/nginx/sites-available/default\" &&
-            sudo bash -c \"echo '  location / {' >> /etc/nginx/sites-available/default\" &&
-            sudo bash -c \"echo '    proxy_pass http://localhost:8080;' >> /etc/nginx/sites-available/default\" &&
-            sudo bash -c \"echo '    proxy_set_header Host \\$host;' >> /etc/nginx/sites-available/default\" &&
-            sudo bash -c \"echo '    proxy_set_header X-Real-IP \\$remote_addr;' >> /etc/nginx/sites-available/default\" &&
-            sudo bash -c \"echo '  }' >> /etc/nginx/sites-available/default\" &&
-            sudo bash -c \"echo '}' >> /etc/nginx/sites-available/default\" &&
+            sudo bash -c \"echo \"server {\" > /etc/nginx/sites-available/default\"\" &&
+            sudo bash -c \"echo \"  listen 80;\" >> /etc/nginx/sites-available/default\"\" &&
+            sudo bash -c \"echo \"  server_name *.amazonaws.com;\" >> /etc/nginx/sites-available/default\"\" &&
+            sudo bash -c \"echo \"  location / {\" >> /etc/nginx/sites-available/default\"\" &&
+            sudo bash -c \"echo \"    proxy_pass http://localhost:8080;\" >> /etc/nginx/sites-available/default\"\" &&
+            sudo bash -c \"echo \"    proxy_set_header Host \\$host;\" >> /etc/nginx/sites-available/default\"\" &&
+            sudo bash -c \"echo \"    proxy_set_header X-Real-IP \\$remote_addr;\" >> /etc/nginx/sites-available/default\"\" &&
+            sudo bash -c \"echo \"  }\" >> /etc/nginx/sites-available/default\"\" &&
+            sudo bash -c \"echo \"}\" >> /etc/nginx/sites-available/default\"\" &&
             sudo nginx -t &&
             sudo systemctl enable nginx &&
             sudo systemctl restart nginx
