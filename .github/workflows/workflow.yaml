@@ -139,7 +139,7 @@ jobs:
       - name: Deploy
         run: |
           echo "${{ env.EC2_PRIVATE_KEY }}" > privatekey.pem
-          chmod 0500 privatekey.pem
+          sudo chmod 0500 privatekey.pem
           EC2_HOST=${{ needs.terraform.outputs.ec2host }}
           
           scp -o StrictHostKeyChecking=no -i privatekey.pem ./balderdash-build.zip "ubuntu@$EC2_HOST:balderdash-build.zip"
