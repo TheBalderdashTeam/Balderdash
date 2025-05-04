@@ -107,32 +107,20 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: balderdash-build
-
-      - name: Deploy
+      
+      - name: Setup nginx proxy
         run: |
           echo "${{ env.EC2_PRIVATE_KEY }}" > privatekey.pem
           chmod 0500 privatekey.pem
           EC2_HOST=${{ needs.terraform.outputs.ec2host }}
-          
-          scp -o StrictHostKeyChecking=no -i privatekey.pem ./balderdash-build.zip "ubuntu@$EC2_HOST:balderdash-build.zip"
-          
+
           ssh -o StrictHostKeyChecking=no -i privatekey.pem "ubuntu@$EC2_HOST" "
-            sudo apt update -y &&
-            sudo apt upgrade -y &&
-            sudo apt install unzip nodejs npm nginx -y &&
-            sudo npm install -g pm2 -y &&
-            unzip -o balderdash-build.zip &&
-            npm install &&
-            
-            # Stop and delete existing pm2 process if it exists
-            if pm2 list | grep -q 'balderdash-app'; then
-              pm2 delete balderdash-app;
-            fi &&
-            
-            cd dist &&
-            pm2 start index.js --name balderdash-app &&
-            
-            sudo tee /etc/nginx/conf.d/proxy.conf > /dev/null <<EOF
+            # Ensure nginx is installed
+            sudo apt-get update &&
+            sudo apt-get install -y nginx &&
+
+            # Write proxy config to the default site
+            sudo bash -c 'cat > /etc/nginx/sites-available/default <<EOF
             server {
               listen 80;
               server_name *.amazonaws.com;
@@ -143,10 +131,34 @@ jobs:
               }
             }
             EOF
+                        ' &&
 
-            sudo nginx -t &&
-            sudo systemctl enable nginx &&
-            sudo systemctl restart nginx
+                        # Test nginx config and reload
+                        sudo nginx -t &&
+                        sudo systemctl enable nginx &&
+                        sudo systemctl restart nginx
+                      "
+
+
+
+      - name: Deploy
+        run: |
+          echo "${{ env.EC2_PRIVATE_KEY }}" > privatekey.pem
+          chmod 0500 privatekey.pem
+          EC2_HOST=${{ needs.terraform.outputs.ec2host }}
+          
+          scp -o StrictHostKeyChecking=no -i privatekey.pem ./balderdash-build.zip "ubuntu@$EC2_HOST:balderdash-build.zip"
+          
+          ssh -o StrictHostKeyChecking=no -i privatekey.pem "ubuntu@$EC2_HOST" "
+            unzip -o balderdash-build.zip &&
+
+            # Stop and delete existing pm2 process if it exists
+            if pm2 list | grep -q 'balderdash-app'; then
+              pm2 delete balderdash-app;
+            fi &&
+            
+            cd dist &&
+            pm2 start index.js --name balderdash-app &&
           "
 
   flyway:
