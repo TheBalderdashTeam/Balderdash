@@ -107,11 +107,14 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: balderdash-build
-      
-      - name: Setup nginx proxy
+
+      - name: Setup private key
         run: |
           echo "${{ env.EC2_PRIVATE_KEY }}" > privatekey.pem
           chmod 0500 privatekey.pem
+      
+      - name: Setup nginx proxy
+        run: |
           EC2_HOST=${{ needs.terraform.outputs.ec2host }}
 
           ssh -o StrictHostKeyChecking=no -i privatekey.pem "ubuntu@$EC2_HOST" '
@@ -138,8 +141,6 @@ jobs:
 
       - name: Deploy
         run: |
-          echo "${{ env.EC2_PRIVATE_KEY }}" > privatekey.pem
-          sudo chmod 0500 privatekey.pem
           EC2_HOST=${{ needs.terraform.outputs.ec2host }}
           
           scp -o StrictHostKeyChecking=no -i privatekey.pem ./balderdash-build.zip "ubuntu@$EC2_HOST:balderdash-build.zip"
