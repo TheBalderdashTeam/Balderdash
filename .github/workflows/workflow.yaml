@@ -113,12 +113,31 @@ jobs:
           echo "${{ env.EC2_PRIVATE_KEY }}" > privatekey.pem
           chmod 0500 privatekey.pem
           EC2_HOST=${{ needs.terraform.outputs.ec2host }}
+          
           scp -o StrictHostKeyChecking=no -i privatekey.pem ./balderdash-build.zip "ubuntu@$EC2_HOST:balderdash-build.zip"
-          ssh -o StrictHostKeyChecking=no -i privatekey.pem "ubuntu@$EC2_HOST" "sudo apt install unzip -y && sudo apt update -y && sudo apt upgrade -y && sudo apt install nodejs -y && sudo apt install npm -y && sudo npm install -g pm2 -y"
-          ssh -o StrictHostKeyChecking=no -i privatekey.pem "ubuntu@$EC2_HOST" "unzip -o balderdash-build.zip"
-          ssh -o StrictHostKeyChecking=no -i privatekey.pem "ubuntu@$EC2_HOST" "npm install"
-          ssh -o StrictHostKeyChecking=no -i privatekey.pem "ubuntu@$EC2_HOST" "cd dist && pm2 start --name balderdash-app index.js"
-
+          
+          ssh -o StrictHostKeyChecking=no -i privatekey.pem "ubuntu@$EC2_HOST" "
+            sudo apt update -y &&
+            sudo apt upgrade -y &&
+            sudo apt install unzip nodejs npm nginx -y &&
+            sudo npm install -g pm2 -y &&
+            unzip -o balderdash-build.zip &&
+            npm install &&
+            cd dist && pm2 start --name balderdash-app index.js &&
+            sudo bash -c 'cat > /etc/nginx/conf.d/proxy.conf <<EOL
+            server {
+              listen 80;
+              server_name *.amazonaws.com;
+              location / {
+                proxy_pass http://localhost:8080;
+                proxy_set_header Host \$host;
+                proxy_set_header X-Real-IP \$remote_addr;
+              }
+            }
+            EOL' &&
+                  sudo systemctl enable nginx &&
+                  sudo systemctl restart nginx
+                "
   flyway:
     needs:
       - terraform
