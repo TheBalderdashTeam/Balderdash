@@ -3,8 +3,8 @@ name: "Deployment pipeline"
 on:
   push:
     branches:
-      - main
-      - development
+      # - main
+      # - development
       - pipeline-setup
 
 jobs:
