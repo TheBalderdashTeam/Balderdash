@@ -116,14 +116,15 @@ resource "aws_instance" "balderdash_ec2_instance" {
   vpc_security_group_ids = [ aws_security_group.ec2_security_group.id ]
 
   user_data = <<-EOF
-    # Install necessary packages
-    sudo apt install unzip
-    sudo apt update
-    sudo apt upgrade
-    sudo apt install nodejs
-    sudo apt install npm
-    sudo npm install -g pm2
-    
+    #!/bin/bash
+    sudo apt install unzip -y
+    sudo apt update -y
+    sudo apt upgrade -y
+    sudo apt install nodejs -y
+    sudo apt install npm -y
+    sudo npm install -g pm2 -y
+    sudo apt install nginx -y
+
     # Setup nginx proxy
     mkdir -p /etc/nginx/conf.d
     file="/etc/nginx/conf.d/proxy.conf"
