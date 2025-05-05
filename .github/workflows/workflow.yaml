@@ -3,9 +3,8 @@ name: "Deployment pipeline"
 on:
   push:
     branches:
-      # - main
-      # - development
-      - pipeline-setup
+      - main
+      - development
 
 jobs:
   terraform:
@@ -27,7 +26,7 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          role-to-assume: arn:aws:iam::757924171835:role/github-role
+          role-to-assume: arn:aws:iam::958933916692:role/github-role
           aws-region: af-south-1
 
       - name: Setup Terraform
@@ -38,7 +37,7 @@ jobs:
 
       - name: Terraform Init
         id: init
-        run: terraform init -backend-config="bucket=balderdashterraform" -backend-config="key=terraformstate/terraform.tfstate" -backend-config="region=af-south-1"
+        run: terraform init -backend-config="bucket=balderdashterraformbucket" -backend-config="key=terraformstate/terraform.tfstate" -backend-config="region=af-south-1"
 
       - name: Terraform Apply
         run: terraform apply -auto-approve
@@ -94,7 +93,7 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          role-to-assume: arn:aws:iam::757924171835:role/github-role
+          role-to-assume: arn:aws:iam::958933916692:role/github-role
           aws-region: af-south-1
 
       - name: Get secrets from AWS Key Store
@@ -118,7 +117,6 @@ jobs:
           EC2_HOST=${{ needs.terraform.outputs.ec2host }}
 
           ssh -o StrictHostKeyChecking=no -i privatekey.pem "ubuntu@$EC2_HOST" '
-            sudo apt-get update &&
             sudo apt-get install -y nginx &&
             
             # Write the NGINX config with sudo and tee
@@ -147,6 +145,8 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i privatekey.pem "ubuntu@$EC2_HOST" ' 
             unzip -o balderdash-build.zip &&
 
+            npm install &&
+            
             # Stop and delete existing pm2 process if it exists
             if pm2 list | grep -q "balderdash-app"; then
               pm2 delete balderdash-app;
@@ -174,7 +174,7 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          role-to-assume: arn:aws:iam::757924171835:role/github-role
+          role-to-assume: arn:aws:iam::958933916692:role/github-role
           aws-region: af-south-1
 
       - name: Get secrets from AWS Key Store
