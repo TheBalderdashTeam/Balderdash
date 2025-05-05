@@ -118,7 +118,6 @@ jobs:
           EC2_HOST=${{ needs.terraform.outputs.ec2host }}
 
           ssh -o StrictHostKeyChecking=no -i privatekey.pem "ubuntu@$EC2_HOST" '
-            sudo apt-get update &&
             sudo apt-get install -y nginx &&
             
             # Write the NGINX config with sudo and tee
@@ -147,6 +146,8 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i privatekey.pem "ubuntu@$EC2_HOST" ' 
             unzip -o balderdash-build.zip &&
 
+            npm install &&
+            
             # Stop and delete existing pm2 process if it exists
             if pm2 list | grep -q "balderdash-app"; then
               pm2 delete balderdash-app;
