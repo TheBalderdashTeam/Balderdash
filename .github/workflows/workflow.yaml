@@ -3,9 +3,8 @@ name: "Deployment pipeline"
 on:
   push:
     branches:
-      # - main
-      # - development
-      - pipeline-setup
+      - main
+      - development
 
 jobs:
   terraform:
