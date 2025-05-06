@@ -3,17 +3,19 @@ const authRoutes = require('./modules/auth/AuthRoutes')
 import roundRoutes from './routes/RoundRoutes'
 import path from 'path'
 
-const app = express();
-const port = 8080;
+const app = express()
+const port = 8080
 
 // Serve static files (like index.html)
 app.use(authRoutes)
+
 app.use(roundRoutes)
+
 app.use(express.static(path.join(__dirname, '../public')))
 
-app.get('/', (req: Request, res: Response) => {
-  res.sendFile(path.join(__dirname, '../public/index.html'));
-});
+app.get('/', isAuthenticated, (req: Request, res: Response) => {
+    res.sendFile(path.join(__dirname, '../public/index.html'))
+})
 
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`)
@@ -28,4 +30,5 @@ function isAuthenticated(
         return next()
  //   }
   //  response.redirect('/')
+
 }
