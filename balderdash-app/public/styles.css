@@ -1,0 +1,87 @@
+:root {
+    --font-family-inter: 'Inter', sans-serif;
+    --text-black: rgba(0, 0, 0, 1);
+    --text-rgb-130-130-130: rgb(148, 144, 144);
+  }
+  
+  .text-black {
+    color: var(--text-black);
+  }
+  
+  .text-rgb-130-130-130 {
+    color: var(--text-rgb-130-130-130);
+  }
+  
+  
+  /* CSS Reset */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  #app{
+    display: flex;
+    flex-direction:column;
+  }
+  body {
+    width: 100%;
+    min-height: 100vh;
+    overflow-x: hidden;
+    font-family: var(--font-family-inter);
+    
+  
+  }
+  
+  img {
+    display: block;
+    margin: 15rem auto 0rem; 
+    width: 350px;;
+    align-self: center;
+    height: auto;
+  
+  }
+  
+  .divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem; /* smaller gap between lines and text */
+    margin: 2rem 0;
+  }
+  
+  .divider hr {
+    width: 200px; /* set a fixed shorter width */
+    border: none;
+    border-top: 1px solid #ccc;
+    margin: 0; /* remove default spacing */
+  }
+  
+  .divider p {
+    margin: 0;
+    font-size: 1rem;
+    color: #666;
+    white-space: nowrap;
+  }
+  
+  .node-17 {
+    display: block;
+    margin: 0 auto 1.5rem;
+    max-width: 200px;
+    height: auto;
+  }
+  
+  
+  
+  .google-btn  {
+    background-color: transparent;
+    border: none;
+    display:flex;
+    justify-content: center;
+    
+   
+  }
+  
+  #GoogleLogin{
+    width:250px;
+  
+  }
