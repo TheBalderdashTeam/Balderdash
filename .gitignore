@@ -5,3 +5,4 @@ npm-shrinkwrap.json
 *.log
 *.gz
 dist
+.env

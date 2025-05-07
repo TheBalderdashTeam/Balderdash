@@ -1,5 +1,6 @@
 import express, { NextFunction, Request, Response } from 'express'
 const authRoutes = require('./modules/auth/AuthRoutes')
+import roundRoutes from './routes/RoundRoutes'
 import path from 'path'
 
 const app = express()
@@ -7,6 +8,9 @@ const port = 8080
 
 // Serve static files (like index.html)
 app.use(authRoutes)
+
+app.use(roundRoutes)
+
 app.use(express.static(path.join(__dirname, '../public')))
 
 app.get('/', isAuthenticated, (req: Request, res: Response) => {
@@ -22,8 +26,9 @@ function isAuthenticated(
     response: Response,
     next: NextFunction
 ) {
-    if (request.body) {
+ //   if (request.body) {
         return next()
-    }
-    response.redirect('/')
+ //   }
+  //  response.redirect('/')
+
 }
