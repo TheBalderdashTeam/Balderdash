@@ -12,7 +12,4 @@ const sql = postgres({
     }
 })
 
-console.log(process.env.DB_HOST)
-
-
 export default sql
