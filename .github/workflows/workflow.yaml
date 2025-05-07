@@ -127,16 +127,18 @@ jobs:
           EC2_HOST=${{ needs.terraform.outputs.ec2host }}
 
           ssh -o StrictHostKeyChecking=no -i privatekey.pem "ubuntu@$EC2_HOST" '
-            cat <<EOF > .env
-            CLIENT_ID=${{ env.CLIENT_ID }}
-            CLIENT_SECRET=${{ env.CLIENT_SECRET }}
-            REDIRECT_URI=${{ env.REDIRECT_URI }}
-            DB_HOST=${{ env.dbhost }}
-            DB_PORT=${{ env.DB_PORT }}
-            DB_NAME=balderdashdb
-            DB_USERNAME=${{ env.POSTGRES_USER }}
-            DB_PASSWORD=${{ env.POSTGRES_PASS }}
-            EOF
+          cd dist/ &&
+          
+          cat <<EOF > .env
+          CLIENT_ID=${{ env.CLIENT_ID }}
+          CLIENT_SECRET=${{ env.CLIENT_SECRET }}
+          REDIRECT_URI=${{ env.REDIRECT_URI }}
+          DB_HOST=${{ env.DB_HOST }}
+          DB_PORT=${{ env.DB_PORT }}
+          DB_NAME=balderdashdb
+          DB_USERNAME=${{ env.POSTGRES_USER }}
+          DB_PASSWORD=${{ env.POSTGRES_PASS }}
+          EOF
           '
       
       - name: Setup nginx proxy
