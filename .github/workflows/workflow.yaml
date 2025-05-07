@@ -127,8 +127,6 @@ jobs:
           EC2_HOST=${{ needs.terraform.outputs.ec2host }}
 
           ssh -o StrictHostKeyChecking=no -i privatekey.pem "ubuntu@$EC2_HOST" '
-          cd dist/ &&
-          
           cat <<EOF > .env
           CLIENT_ID=${{ env.CLIENT_ID }}
           CLIENT_SECRET=${{ env.CLIENT_SECRET }}
@@ -181,6 +179,7 @@ jobs:
               pm2 delete balderdash-app;
             fi &&
             
+            mv .env dist/ &&
             cd dist &&
             pm2 start index.js --name balderdash-app
           '
