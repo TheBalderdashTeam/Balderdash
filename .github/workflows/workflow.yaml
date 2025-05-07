@@ -51,9 +51,29 @@ jobs:
   build-application:
     name: Build application
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::958933916692:role/github-role
+          aws-region: af-south-1
+
+      - name: Get secrets from AWS Key Store
+        uses: aws-actions/aws-secretsmanager-get-secrets@v2
+        with:
+          secret-ids: |
+            CLIENT_ID, clientid
+            CLIENT_SECRET, clientsecret
+            REDIRECT_URI, redirecturi
+            DB_PORT, dbport
+            POSTGRES_USER, postgresuser
+            POSTGRES_PASS, postgrespass
 
       - name: Install required dependencies
         run: npm install
@@ -63,11 +83,25 @@ jobs:
         run: npm run build
         working-directory: balderdash-app
 
+      - name: Create secrets file
+        run: |
+          cat <<EOF > .env
+          CLIENT_ID='${{ env.CLIENT_ID }}'
+          CLIENT_SECRET='${{ env.CLIENT_SECRET }}'
+          REDIRECT_URI='${{ env.REDIRECT_URI }}'
+          DB_HOST='${{ needs.terraform.outputs.dbhost }}'
+          DB_PORT='${{ env.DB_PORT }}'
+          DB_NAME='balderdashdb'
+          DB_USERNAME='${{ env.POSTGRES_USER }}'
+          DB_PASSWORD='${{ env.POSTGRES_PASS }}'
+          EOF
+
       - name: Package application
         working-directory: balderdash-app
         run: |
           mkdir -p final-build
           cp -r dist final-build/
+          cp -r .env final-build/
           cp -r public final-build/
           cp -r src final-build/
           cp package.json final-build/
