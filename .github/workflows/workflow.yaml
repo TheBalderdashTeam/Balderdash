@@ -50,8 +50,6 @@ jobs:
 
   build-application:
     name: Build application
-    needs:
-     - terraform
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -59,23 +57,6 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          role-to-assume: arn:aws:iam::958933916692:role/github-role
-          aws-region: af-south-1
-
-      - name: Get secrets from AWS Key Store
-        uses: aws-actions/aws-secretsmanager-get-secrets@v2
-        with:
-          secret-ids: |
-            CLIENT_ID, clientid
-            CLIENT_SECRET, clientsecret
-            REDIRECT_URI, redirecturi
-            DB_PORT, dbport
-            POSTGRES_USER, postgresuser
-            POSTGRES_PASS, postgrespass
 
       - name: Install required dependencies
         run: npm install
@@ -85,26 +66,11 @@ jobs:
         run: npm run build
         working-directory: balderdash-app
 
-      - name: Create secrets file
-        working-directory: balderdash-app
-        run: |
-          cat <<EOF > .env
-          CLIENT_ID='${{ env.CLIENT_ID }}'
-          CLIENT_SECRET='${{ env.CLIENT_SECRET }}'
-          REDIRECT_URI='${{ env.REDIRECT_URI }}'
-          DB_HOST='${{ needs.terraform.outputs.dbhost }}'
-          DB_PORT='${{ env.DB_PORT }}'
-          DB_NAME='balderdashdb'
-          DB_USERNAME='${{ env.POSTGRES_USER }}'
-          DB_PASSWORD='${{ env.POSTGRES_PASS }}'
-          EOF
-
       - name: Package application
         working-directory: balderdash-app
         run: |
           mkdir -p final-build
           cp -r dist final-build/
-          cp -r .env final-build/
           cp -r public final-build/
           cp -r src final-build/
           cp package.json final-build/
@@ -138,6 +104,12 @@ jobs:
         with:
           secret-ids: |
             EC2_PRIVATE_KEY, privatekey
+            CLIENT_ID, clientid
+            CLIENT_SECRET, clientsecret
+            REDIRECT_URI, redirecturi
+            DB_PORT, dbport
+            POSTGRES_USER, postgresuser
+            POSTGRES_PASS, postgrespass
 
       - name: Download build artifact
         uses: actions/download-artifact@v4
@@ -148,6 +120,23 @@ jobs:
         run: |
           echo "${{ env.EC2_PRIVATE_KEY }}" > privatekey.pem
           chmod 0500 privatekey.pem
+
+      - name: Set env variables
+        run: |
+          EC2_HOST=${{ needs.terraform.outputs.ec2host }}
+
+          ssh -o StrictHostKeyChecking=no -i privatekey.pem "ubuntu@$EC2_HOST" '
+            cat <<EOF > .env
+            CLIENT_ID='${{ env.CLIENT_ID }}'
+            CLIENT_SECRET='${{ env.CLIENT_SECRET }}'
+            REDIRECT_URI='${{ env.REDIRECT_URI }}'
+            DB_HOST='${{ needs.terraform.outputs.dbhost }}'
+            DB_PORT='${{ env.DB_PORT }}'
+            DB_NAME='balderdashdb'
+            DB_USERNAME='${{ env.POSTGRES_USER }}'
+            DB_PASSWORD='${{ env.POSTGRES_PASS }}'
+            EOF
+          '
       
       - name: Setup nginx proxy
         run: |
@@ -157,15 +146,15 @@ jobs:
             sudo apt-get install -y nginx &&
             
             # Write the NGINX config with sudo and tee
-            echo "server {" | sudo tee /etc/nginx/sites-available/default > /dev/null &&
-            echo "  listen 80;" | sudo tee -a /etc/nginx/sites-available/default > /dev/null &&
-            echo "  server_name *.amazonaws.com;" | sudo tee -a /etc/nginx/sites-available/default > /dev/null &&
-            echo "  location / {" | sudo tee -a /etc/nginx/sites-available/default > /dev/null &&
-            echo "    proxy_pass http://localhost:8080;" | sudo tee -a /etc/nginx/sites-available/default > /dev/null &&
-            echo "    proxy_set_header Host \$host;" | sudo tee -a /etc/nginx/sites-available/default > /dev/null &&
-            echo "    proxy_set_header X-Real-IP \$remote_addr;" | sudo tee -a /etc/nginx/sites-available/default > /dev/null &&
-            echo "  }" | sudo tee -a /etc/nginx/sites-available/default > /dev/null &&
-            echo "}" | sudo tee -a /etc/nginx/sites-available/default > /dev/null &&
+            echo "server {" | sudo tee  > /dev/null &&
+            echo "  listen 80;" | sudo tee -a  > /dev/null &&
+            echo "  server_name *.amazonaws.com;" | sudo tee -a  > /dev/null &&
+            echo "  location / {" | sudo tee -a  > /dev/null &&
+            echo "    proxy_pass http://localhost:8080;" | sudo tee -a  > /dev/null &&
+            echo "    proxy_set_header Host \$host;" | sudo tee -a  > /dev/null &&
+            echo "    proxy_set_header X-Real-IP \$remote_addr;" | sudo tee -a  > /dev/null &&
+            echo "  }" | sudo tee -a  > /dev/null &&
+            echo "}" | sudo tee -a  > /dev/null &&
             
             # Test and restart nginx
             sudo nginx -t &&
