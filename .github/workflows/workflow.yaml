@@ -108,6 +108,7 @@ jobs:
             CLIENT_SECRET, clientsecret
             REDIRECT_URI, redirecturi
             DB_PORT, dbport
+            DB_HOST, dbhost
             POSTGRES_USER, postgresuser
             POSTGRES_PASS, postgrespass
 
@@ -127,14 +128,14 @@ jobs:
 
           ssh -o StrictHostKeyChecking=no -i privatekey.pem "ubuntu@$EC2_HOST" '
             cat <<EOF > .env
-            CLIENT_ID='${{ env.CLIENT_ID }}'
-            CLIENT_SECRET='${{ env.CLIENT_SECRET }}'
-            REDIRECT_URI='${{ env.REDIRECT_URI }}'
-            DB_HOST='${{ needs.terraform.outputs.dbhost }}'
-            DB_PORT='${{ env.DB_PORT }}'
-            DB_NAME='balderdashdb'
-            DB_USERNAME='${{ env.POSTGRES_USER }}'
-            DB_PASSWORD='${{ env.POSTGRES_PASS }}'
+            CLIENT_ID=${{ env.CLIENT_ID }}
+            CLIENT_SECRET=${{ env.CLIENT_SECRET }}
+            REDIRECT_URI=${{ env.REDIRECT_URI }}
+            DB_HOST=${{ env.dbhost }}
+            DB_PORT=${{ env.DB_PORT }}
+            DB_NAME=balderdashdb
+            DB_USERNAME=${{ env.POSTGRES_USER }}
+            DB_PASSWORD=${{ env.POSTGRES_PASS }}
             EOF
           '
       
