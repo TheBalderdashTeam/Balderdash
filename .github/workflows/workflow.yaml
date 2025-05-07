@@ -50,6 +50,8 @@ jobs:
 
   build-application:
     name: Build application
+    needs:
+     - terraform
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -84,6 +86,7 @@ jobs:
         working-directory: balderdash-app
 
       - name: Create secrets file
+        working-directory: balderdash-app
         run: |
           cat <<EOF > .env
           CLIENT_ID='${{ env.CLIENT_ID }}'
