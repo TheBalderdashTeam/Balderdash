@@ -79,4 +79,4 @@ ALTER TABLE "votes" ADD FOREIGN KEY ("round_id") REFERENCES "rounds" ("id");
 
 ALTER TABLE "votes" ADD FOREIGN KEY ("voter_user_id") REFERENCES "users" ("id");
 
-ALTER TABLE "votes" ADD FOREIGN KEY ("submission_id") REFERENCES "round_definitions" ("id");
+ALTER TABLE "votes" ADD FOREIGN KEY ("round_definition_id") REFERENCES "round_definitions" ("id");
