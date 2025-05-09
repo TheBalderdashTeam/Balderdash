@@ -9,7 +9,7 @@ export class BaseContainer extends HTMLElement {
     this.shadow.innerHTML = `
       <style>
         :host {
-          display: flex;
+          display: block;
           width: 100%;
         }
         .container {

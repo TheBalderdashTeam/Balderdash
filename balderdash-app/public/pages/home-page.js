@@ -1,16 +1,17 @@
 import { PrimaryButton } from '../components/primary-button.js';
 import { SecondaryButton } from '../components/secondary-button.js';
 import { VerticalContainerH } from '../components/vertical-container-h.js';
-import { LoadingSpinner } from '../components/loading-spinner.js'; // Import the spinner
 import { router } from '../router/index.js'; // Import your router
 
 
 export class HomePage extends HTMLElement {
+
   constructor(){
     super();
-     this.shadow = this.attachShadow({ mode: 'open' });
-     this.routeData = null;
+    this.shadow = this.attachShadow({ mode: 'open' });
+    this.routeData = null;
   }
+
   connectedCallback() {
     this.render();
     this.updateContent();
@@ -80,11 +81,17 @@ export class HomePage extends HTMLElement {
 
   async fetchGameData() {
 
-    return new Promise(resolve => {
-      setTimeout(() => {
-        resolve({ gameData: 'This is the data for the game!' });
-      }, 5000); 
-    });
+    const response = await fetch('http://localhost:8080/api/rounds/games/1/current-round', {
+      method: "GET",
+    })
+
+    if (!response) {
+      return {}
+    }
+
+    const data = await response.json();
+
+    return data;
   }
 
   updateContent() {
