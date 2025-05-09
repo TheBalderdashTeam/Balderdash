@@ -15,10 +15,9 @@ export class HomePage extends HTMLElement {
   connectedCallback() {
     this.render();
     this.updateContent();
-    // Get a reference to the Start Game button *after* it's rendered
+
     const startGameButton = this.shadowRoot.querySelector('#start-game-button');
 
-    // Add event listener to the Start Game button
     if (startGameButton) {
       startGameButton.addEventListener('click', () => {
         this.handleStartGameClick();
@@ -65,17 +64,16 @@ export class HomePage extends HTMLElement {
     spinner.show(); // Show the spinner
 
     try {
-      // Simulate data fetching (replace with your actual fetch logic)
+      //TODO: replace with actual fetch and navigations
       const data = await this.fetchGameData();
       console.log('Data fetched:', data);
 
-      // Navigate to the game screen (replace '/game' with your actual route)
       router.navigate('/home', data);
     } catch (error) {
       console.error('Error fetching data:', error);
-      // Handle error (e.g., show a message to the user)
+
     } finally {
-      spinner.hide(); // Hide the spinner, regardless of success or failure
+      setTimeout(() => spinner.hide(), 5000)
     }
   }
 

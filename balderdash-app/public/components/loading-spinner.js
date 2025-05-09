@@ -30,16 +30,16 @@ export class LoadingSpinner extends HTMLElement {
           justify-content: center;
           width: 100%;
           height: 100%;
-          position: absolute; /* Important:  Position absolutely within its parent */
+          position: absolute;
           top: 0;
           left: 0;
-          background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent background */
-          z-index: 1000; /* Ensure it's on top of other content */
+          background-color: rgba(255, 255, 255, 0.8); 
+          z-index: 1000; 
         }
       </style>
-      <div class="loading-overlay">
-        <div class="spinner"></div>
-      </div>
+      <section class="loading-overlay">
+        <div class="spinner"></div> /* Purely visual non-semantic UI element*/
+      </section>
     `;
   }
 

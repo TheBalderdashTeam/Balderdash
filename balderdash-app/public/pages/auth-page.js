@@ -16,7 +16,6 @@ export class AuthPage extends HTMLElement {
 
     const loginButton = this.shadowRoot.querySelector('#google-login-button');
 
-    // Add event listener to the Start Game button
     if (loginButton) {
       loginButton.addEventListener('click', () => {
         this.handleGoogleLogin();
@@ -225,11 +224,10 @@ export class AuthPage extends HTMLElement {
     spinner.show(); 
 
     try {
-      // Simulate data fetching (replace with your actual fetch logic)
+
       const data = await this.login();
       console.log('Data fetched:', data);
 
-      // Navigate to the game screen (replace '/game' with your actual route)
       router.navigate('/home', data);
     } catch (error) {
       console.error('Error fetching data:', error);
