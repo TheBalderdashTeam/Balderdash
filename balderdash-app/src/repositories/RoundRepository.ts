@@ -1,4 +1,6 @@
 import sql from '../configuration/DatabaseConfig';
+import { Round } from '../types/Round';
+import { RoundDefinition } from '../types/RoundDefinition';
 
 export class RoundRepository {
     static async getLatestRoundByGameId(gameId: number): Promise<Round> {

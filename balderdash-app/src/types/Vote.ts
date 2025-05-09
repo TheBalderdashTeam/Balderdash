@@ -1,4 +1,4 @@
-type Vote = {
+export type Vote = {
     id: number
     roundId: number
     voterUserId: number

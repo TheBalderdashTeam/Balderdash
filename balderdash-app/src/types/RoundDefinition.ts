@@ -1,4 +1,4 @@
-type RoundDefinition = {
+export type RoundDefinition = {
     id: number;
     roundId: number;
     userId?: number;

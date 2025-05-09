@@ -1,15 +1,20 @@
 import express, { NextFunction, Request, Response } from 'express'
 const authRoutes = require('./modules/auth/AuthRoutes')
 import roundRoutes from './routes/RoundRoutes'
+import gameRoutes from './routes/GameRoutes'
 import path from 'path'
 
 const app = express()
 const port = 8080
 
 // Serve static files (like index.html)
+app.use(express.json());
+
 app.use(authRoutes)
 
 app.use(roundRoutes)
+
+app.use(gameRoutes)
 
 app.use(express.static(path.join(__dirname, '../public')))
 

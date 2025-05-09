@@ -1,4 +1,4 @@
-type GameStatus = {
+export type GameStatus = {
     id: number
     status: string
 }
