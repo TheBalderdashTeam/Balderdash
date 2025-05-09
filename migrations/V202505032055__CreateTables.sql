@@ -10,6 +10,7 @@ CREATE TABLE "games" (
   "host_user_id" INT NOT NULL,
   "number_rounds" INT NOT NULL,
   "time_limit_seconds" INT NOT NULL,
+  "lobby_code" varchar(8) UNIQUE NOT NULL,
   "started_at" timestamp NOT NULL DEFAULT (now()),
   "ended_at" timestamp,
   "status_id" INT NOT NULL
