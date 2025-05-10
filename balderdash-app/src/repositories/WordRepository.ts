@@ -1,4 +1,4 @@
-import sql from '../configuration/DatabaseConfig'
+import sql from '../configuration/DatabaseConfig';
 import { Word } from '../types/Word';
 
 export class WordRepository {
@@ -8,12 +8,27 @@ export class WordRepository {
       FROM words
       WHERE id = ${wordId}
       LIMIT 1
-    `
+    `;
         const wordDefinition: Word = {
             id: wordRow.id,
             word: wordRow.word,
             definition: wordRow.definition,
-        }
-        return wordDefinition
+        };
+        return wordDefinition;
+    }
+
+    static async getRandomWord() {
+        const [wordRow] = await sql`
+      SELECT id, word, definition 
+      FROM words
+      ORDER BY RANDOM()
+      LIMIT 1
+    `;
+        const wordDefinition: Word = {
+            id: wordRow.id,
+            word: wordRow.word,
+            definition: wordRow.definition,
+        };
+        return wordDefinition;
     }
 }

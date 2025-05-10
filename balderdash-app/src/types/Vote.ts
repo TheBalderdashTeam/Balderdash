@@ -1,7 +1,7 @@
 export type Vote = {
-    id: number
-    roundId: number
-    voterUserId: number
-    submissionId: number
-    votedAt: number
-}
+    id: number;
+    roundId: number;
+    voterUserId: number;
+    roundDefinitionId: number;
+    votedAt: number;
+};

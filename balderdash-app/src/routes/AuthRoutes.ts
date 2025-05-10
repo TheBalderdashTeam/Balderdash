@@ -8,14 +8,12 @@ const router: Router = express.Router();
 router.get('/auth/google', (request: Request, response: Response) => {
     var clientId = process.env.CLIENT_ID;
     var redirectUri = process.env.REDIRECT_URI;
-
     if (!!clientId && !!redirectUri) {
         const url = new URL('https://accounts.google.com/o/oauth2/v2/auth');
         url.searchParams.append('client_id', clientId);
         url.searchParams.append('redirect_uri', redirectUri);
         url.searchParams.append('response_type', 'code');
         url.searchParams.append('scope', 'profile email');
-
         response.redirect(url.href);
     }
 });

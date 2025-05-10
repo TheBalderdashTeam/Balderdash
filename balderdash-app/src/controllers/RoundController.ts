@@ -1,19 +1,20 @@
 import { Request, Response } from 'express';
 import { RoundService } from '../services/RoundService';
+import { Round } from '../types/Round';
 
 export class RoundController {
-    static async getCurrentRound(req: Request, res: Response): Promise<any> {
+    static async getCurrentRound(req: Request, res: Response): Promise<void> {
         try {
             const gameId = Number(req.params.gameId);
 
             if (isNaN(gameId)) {
-                return res.status(400).json({ error: 'Invalid gameId' });
+                res.status(400).json({ error: 'Invalid gameId' });
             }
 
             const roundData = await RoundService.getCurrentRound(gameId);
 
             if (!roundData) {
-                return res.status(404).json({ error: 'No active round found' });
+                res.status(404).json({ error: 'No active round found' });
             }
 
             res.json(roundData);
@@ -28,11 +29,11 @@ export class RoundController {
         response: Response
     ): Promise<void> {
         try {
-            const { roundId, playerId, definition, wordId } = request.body;
+            const { roundId, userId, definition, wordId } = request.body;
 
             const roundDefinition = await RoundService.createRoundDefinition(
                 roundId,
-                playerId,
+                userId,
                 definition,
                 wordId
             );

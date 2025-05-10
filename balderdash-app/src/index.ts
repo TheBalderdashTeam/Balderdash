@@ -1,8 +1,19 @@
 import express, { NextFunction, Request, Response } from 'express';
-const authRoutes = require('./modules/auth/AuthRoutes');
+import authRoutes from './routes/AuthRoutes';
+import userRoutes from './routes/UserRoutes';
 import roundRoutes from './routes/RoundRoutes';
 import gameRoutes from './routes/GameRoutes';
+import voteRoutes from './routes/VoteRoutes';
 import path from 'path';
+import { GooglePayload } from './types/GoolePayload';
+
+declare global {
+    namespace Express {
+        interface Request {
+            user?: GooglePayload;
+        }
+    }
+}
 
 const app = express();
 const port = 8080;
@@ -12,13 +23,20 @@ app.use(express.json());
 
 app.use(authRoutes);
 
+app.use(userRoutes);
+
 app.use(roundRoutes);
 
 app.use(gameRoutes);
 
+app.use(voteRoutes);
+
 app.use(express.static(path.join(__dirname, '../public')));
 
-app.get('/', isAuthenticated, (req: Request, res: Response) => {
+app.use(roundRoutes);
+
+// Fallback route (SPA support) - serves index.html for all other routes
+app.get(/.*/, isAuthenticated, (req: Request, res: Response) => {
     res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
