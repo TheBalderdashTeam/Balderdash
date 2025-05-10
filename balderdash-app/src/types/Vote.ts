@@ -3,5 +3,6 @@ export type Vote = {
     roundId: number;
     voterUserId: number;
     roundDefinitionId: number;
+    isCorrect: boolean;
     votedAt: number;
 };
