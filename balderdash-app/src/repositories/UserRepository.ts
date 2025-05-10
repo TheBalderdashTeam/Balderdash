@@ -63,6 +63,17 @@ export class UserRepository {
     `;
     }
 
+    static async getPlayersGameById(gameId: number): Promise<User[] | null> {
+    const users = await sql`
+        SELECT u.id, u.google_id, u.email, u.username
+        FROM users u
+        JOIN game_players gp ON u.id = gp.user_id
+        WHERE gp.game_id = ${gameId};
+    `;
+
+    return users.map(this.mapToUser)
+  }
+
     private static mapToUser(row: any): User {
         return {
             id: row.id,

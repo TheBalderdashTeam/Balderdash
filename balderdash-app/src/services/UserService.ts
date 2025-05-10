@@ -33,4 +33,13 @@ export class UserService {
     static async getUserByGoogleId(googleId: string): Promise<User | null> {
         return await UserRepository.getUserByGoogleId(googleId);
     }
+
+    
+    static async getAllPlayersInGame(gameId: number): Promise<User[] | null> {
+    try {
+        return await UserRepository.getPlayersGameById(gameId);
+    } catch {
+        return null;
+    }
+}
 }
