@@ -1,0 +1,96 @@
+body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-size: cover;
+            background-position: center;
+
+            background-image: url('images/dominoes.jpg');
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+
+        .leaderboard-container {
+            width: 80%;
+            max-width: 800px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .leaderboard-title {
+            text-align: center;
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .leaderboard-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .rank {
+            width: 10%;
+            text-align: left;
+        }
+
+        .player {
+            width: 60%;
+            text-align: center;
+        }
+
+        .score {
+            width: 10%;
+            text-align: right;
+        }
+
+        /* Row colors */
+        .row-1 {
+            background-color: #3f51b5; /* Blue */
+        }
+
+        .row-2 {
+            background-color: #f44336; /* Red */
+        }
+
+        .row-3 {
+            background-color: #e6a817; /* Gold/Orange */
+        }
+
+        .row-4 {
+            background-color: #9c27b0; /* Purple */
+        }
+
+        .row-5 {
+            background-color: #4caf50; /* Green */
+        }
+
+        /* Responsive adjustments */
+        /* @media (max-width: 600px) {
+            .leaderboard-container {
+                width: 95%;
+                padding: 10px;
+            }
+            
+            .leaderboard-row {
+                padding: 10px;
+            }
+            
+            .leaderboard-title {
+                font-size: 24px;
+            }
+        } */
+
+       
