@@ -109,6 +109,14 @@ export class RoundService {
             scoreMap
         );
 
+        const SCORE_LIMIT = 10; // You can adjust this limit (10 is example)
+        const gameOver = updatedScores.some((player) => player.newScore >= SCORE_LIMIT);
+
+        if (gameOver) {
+            await GameRepository.endGame(gameId);
+            console.log('Game ended');
+        }
+
         return updatedScores;
     }
 
