@@ -2,6 +2,6 @@ export type Vote = {
     id: number
     roundId: number
     voterUserId: number
-    submissionId: number
+    roundDefinitionId: number
     votedAt: number
 }

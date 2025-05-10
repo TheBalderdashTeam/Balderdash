@@ -6,5 +6,5 @@ export type Game = {
     lobbyCode: string
     startedAt: Date
     endedAt: Date
-    statusId: number
+    gameStatusId: number
 }

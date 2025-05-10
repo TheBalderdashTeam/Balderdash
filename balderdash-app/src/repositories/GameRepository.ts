@@ -11,9 +11,9 @@ export class GameRepository {
 
   static async createGame(hostUserId: number, numberRounds: number, timeLimitSeconds: number, lobbyCode: string, statusId: number): Promise<Game> {
     const [gameRow] = await sql`
-      INSERT INTO games (host_user_id, number_rounds, time_limit_seconds, lobby_code, status_id)
+      INSERT INTO games (host_user_id, number_rounds, time_limit_seconds, lobby_code, game_status_id)
       VALUES (${hostUserId}, ${numberRounds}, ${timeLimitSeconds}, ${lobbyCode}, ${statusId})
-      RETURNING id, host_user_id, number_rounds, time_limit_seconds, lobby_code, started_at, ended_at, status_id;
+      RETURNING id, host_user_id, number_rounds, time_limit_seconds, lobby_code, started_at, ended_at, game_status_id;
     `;
 
     return this.mapToGame(gameRow);
@@ -21,9 +21,9 @@ export class GameRepository {
 
   static async updateGameStatus(gameId: number, statusId: number): Promise<Game | null> {
     const games = await sql`
-      UPDATE games SET status_id = ${statusId}
+      UPDATE games SET game_status_id = ${statusId}
       WHERE id = ${gameId}
-      RETURNING id, host_user_id, number_rounds, time_limit_seconds, lobby_code, started_at, ended_at, status_id;
+      RETURNING id, host_user_id, number_rounds, time_limit_seconds, lobby_code, started_at, ended_at, game_status_id;
     `;
 
     const gameRow = games[0];
@@ -33,9 +33,9 @@ export class GameRepository {
   static async endGame(gameId: number): Promise<Game | null> {
   const [gameRow] = await sql`
     UPDATE games 
-    SET ended_at = NOW(), status_id = ${GameStatus.Ended}
+    SET ended_at = NOW(), game_status_id = ${GameStatus.Ended}
     WHERE id = ${gameId}
-    RETURNING id, host_user_id, number_rounds, time_limit_seconds, lobby_code, started_at, ended_at, status_id;
+    RETURNING id, host_user_id, number_rounds, time_limit_seconds, lobby_code, started_at, ended_at, game_status_id;
   `;
 
   return gameRow ? this.mapToGame(gameRow) : null;
@@ -50,7 +50,7 @@ export class GameRepository {
 
   static async getGameById(gameId: number): Promise<Game | null> {
     const games = await sql`
-      SELECT id, host_user_id, number_rounds, time_limit_seconds, lobby_code, started_at, ended_at, status_id
+      SELECT id, host_user_id, number_rounds, time_limit_seconds, lobby_code, started_at, ended_at, game_status_id
       FROM games
       WHERE id = ${gameId}
       LIMIT 1;
@@ -62,7 +62,7 @@ export class GameRepository {
 
   static async getGameByLobbyCode(lobbyCode: string): Promise<Game | null> {
   const [gameRow] = await sql`
-    SELECT id, host_user_id, number_rounds, time_limit_seconds, lobby_code, started_at, ended_at, status_id
+    SELECT id, host_user_id, number_rounds, time_limit_seconds, lobby_code, started_at, ended_at, game_status_id
     FROM games
     WHERE lobby_code = ${lobbyCode}
     LIMIT 1
@@ -81,7 +81,7 @@ export class GameRepository {
       lobbyCode: row.lobby_code,
       startedAt: row.started_at,
       endedAt: row.ended_at,
-      statusId: row.status_id
+      gameStatusId: row.game_status_id
     };
   }
 
