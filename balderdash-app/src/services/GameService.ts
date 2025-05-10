@@ -1,8 +1,11 @@
 import { GameRepository } from '../repositories/GameRepository';
 import { Game } from '../types/Game';
 import { GameState } from '../types/GameState';
+import { GooglePayload } from '../types/GoolePayload';
 import { generateLobbyCode } from '../utils/LobbyCodeGenerator';
 import { RoundService } from './RoundService';
+import { UserService } from './UserService';
+import { Request } from 'express';
 
 export class GameService {
     static async createGame(
@@ -30,11 +33,10 @@ export class GameService {
 
     static async startGame(gameId: number): Promise<Game | null> {
         const game = await this.getGameById(gameId);
-
+        console.log(game);
         if (!game) return null;
 
-        //TODO: First round, 0 or 1?
-        await RoundService.createRound(game.id, 0);
+        await RoundService.createRound(game.id, 1);
 
         return await GameRepository.updateGameStatus(gameId, GameState.Active);
     }
@@ -58,6 +60,58 @@ export class GameService {
         try {
             return await GameRepository.getGameById(gameId);
         } catch {
+            return null;
+        }
+    }
+
+    static async addPlayerToGame(
+        lobbyCode: string,
+        googleUser: GooglePayload | undefined
+    ): Promise<boolean> {
+        var game = await GameRepository.getGameByLobbyCode(lobbyCode);
+
+        if (!game) return false;
+
+        if (!googleUser) return false;
+
+        const user = await UserService.getUserByGoogleId(googleUser.sub);
+
+        if (!user) return false;
+
+        const result = GameRepository.addPlayerToGame(game.id, user.id);
+
+        if (!result) return false;
+
+        return true;
+    }
+
+    static async getGameFromGoogleUser(
+        googleUser: GooglePayload | undefined
+    ): Promise<Game | null> {
+        if (googleUser == undefined) return null;
+
+        const user = await UserService.getUserByGoogleId(googleUser.sub);
+
+        if (!user) return null;
+
+        const game = await GameRepository.getGameByUser(user.id);
+
+        return game;
+    }
+
+    static async getPlayerGame(req: Request): Promise<Game | null> {
+        try {
+            const googleUser = req.user;
+
+            if (!googleUser || googleUser == undefined) return null;
+
+            const game = await this.getGameFromGoogleUser(googleUser);
+
+            if (!game) return null;
+
+            return game;
+        } catch (error) {
+            console.error(error);
             return null;
         }
     }
