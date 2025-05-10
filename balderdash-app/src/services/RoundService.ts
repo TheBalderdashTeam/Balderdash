@@ -63,16 +63,23 @@ export class RoundService {
     }
 
     static async endRoundAndCalculateScores(gameId: number) {
-    // 1. Get latest round
+    // Get latest round
     const round = await RoundRepository.getLatestRoundByGameId(gameId);
     if (!round) throw new Error("Round not found");
     const roundId = round.id;
 
-    // 2. Get all votes for the round
+    console.log('Round:' , roundId)
+
+    // Get all votes for the round
     const votes = await VoteRepository.getVotesForRound(roundId);
 
-    // 3. Get all definitions for this round
+    console.log('Votes:' , votes);
+
+    // Get all definitions for this round so we can determine their authors
     const definitions = await RoundRepository.getDefinitionsByRoundId(roundId);
+
+     console.log('Definitions:' , definitions);
+
 
     // Map definitionId -> authorUserId
     const definitionAuthorMap: { [definitionId: number]: number } = {};
@@ -82,7 +89,8 @@ export class RoundService {
         }
     });
 
-    // 4. Initialize player score changes
+    console.log(definitionAuthorMap);
+
     const scoreMap: { [userId: number]: number } = {};
 
     for (const vote of votes) {
@@ -98,10 +106,10 @@ export class RoundService {
         }
     }
 
-    // 5. Apply score updates in DB
-    await GameRepository.updatePlayersScore(gameId, scoreMap);
+    console.log(scoreMap);
 
-    await RoundRepository.updateRoundState(roundId, RoundState.Writing); 
+    // Apply score updates in DB
+    await GameRepository.updatePlayersScore(gameId, scoreMap);
 
     return scoreMap;
 }

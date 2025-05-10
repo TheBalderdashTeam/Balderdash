@@ -71,26 +71,32 @@ export class GameRepository {
   return gameRow ? this.mapToGame(gameRow) : null;
 }
 
-static async updatePlayersScore(gameId: number, scoreMap: { [userId: number]: number }): Promise<{ userId: number; newScore: number }[]> {
+static async updatePlayersScore(
+  gameId: number,
+  scoreMap: { [userId: number]: number }
+): Promise<{ userId: number; newScore: number }[]> {
   const updates = Object.entries(scoreMap);
 
   if (updates.length === 0) return [];
 
-  // Build CASE WHEN ... THEN ... END manually
+  // Build CASE WHEN clauses
   const cases = updates.map(
-    ([userId, scoreDelta]) => `WHEN user_id = ${userId} THEN score + ${scoreDelta}`
-  ).join(' ');
+    ([userId, scoreDelta]) => sql`WHEN user_id = ${userId} THEN score + ${scoreDelta} `
+  );
 
-  const userIds = updates.map(([userId]) => Number(userId));
+  // Combine cases into a single SQL fragment
+  const caseFragment = cases.reduce((acc, curr) => sql`${acc} ${curr}`);
+
+  const userIds = updates.map(([userId]) => userId);
 
   // Run the update and return updated scores
   const updatedRows = await sql`
     UPDATE game_players
     SET score = CASE 
-      ${sql([cases])}
+      ${caseFragment}
       ELSE score
     END
-    WHERE user_id IN (${sql(userIds)}) AND game_id = ${gameId}
+    WHERE user_id IN (${userIds}) AND game_id = ${gameId}
     RETURNING user_id, score;
   `;
 
@@ -100,7 +106,6 @@ static async updatePlayersScore(gameId: number, scoreMap: { [userId: number]: nu
     newScore: row.score
   }));
 }
-
 
 
   private static mapToGame(row: any): Game {
