@@ -1,4 +1,5 @@
 import sql from '../configuration/DatabaseConfig'
+import { Word } from '../types/Word';
 
 export class WordRepository {
     static async getWordById(wordId: number): Promise<Word> {

@@ -1,4 +1,4 @@
-type GamePlayer = {
+export type GamePlayer = {
     id: number
     gameId: number
     userId: number
