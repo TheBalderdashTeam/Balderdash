@@ -1,7 +1,9 @@
 import { UserRepository } from '../repositories/UserRepository';
+import { Game } from '../types/Game';
 import { GooglePayload } from '../types/GoolePayload';
 import { User } from '../types/User';
 import { shuffleArray } from '../utils/shuffleArray';
+import { GameService } from './GameService';
 
 export class UserService {
     static async createUser(

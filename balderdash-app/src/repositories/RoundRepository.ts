@@ -10,8 +10,8 @@ export class RoundRepository {
         roundNumber: number
     ): Promise<Round | null> {
         const [roundRow] = await sql`INSERT INTO public.rounds(
-	game_id, word_id, round_number)
-	VALUES (${gameId}, ${wordId}, ${roundNumber});`;
+	game_id, word_id, round_number, round_status_id)
+	VALUES (${gameId}, ${wordId}, ${roundNumber}, ${1});`;
 
         return roundRow ? this.mapToRound(roundRow) : null;
     }
@@ -44,20 +44,18 @@ export class RoundRepository {
         return round;
     }
 
-    
-
-static async getDefinitionsByRoundId(
-    roundId: number
-): Promise<RoundDefinition[]> {
-    const definitionRows = await sql`
+    static async getDefinitionsByRoundId(
+        roundId: number
+    ): Promise<RoundDefinition[]> {
+        const definitionRows = await sql`
         SELECT rd.id, rd.round_id, rd.user_id, rd.definition, rd.word_id, rd.submitted_at
         FROM round_definitions rd
         LEFT JOIN users u ON rd.user_id = u.id
         WHERE rd.round_id = ${roundId}
     `;
 
-    return definitionRows.map(this.mapToRoundDefinition);
-}
+        return definitionRows.map(this.mapToRoundDefinition);
+    }
 
     static async createRoundDefinition(
         roundId: number,

@@ -23,34 +23,23 @@ app.use(express.json());
 
 app.use(authRoutes);
 
-app.use(userRoutes);
+app.use('/api', userRoutes);
 
-app.use(roundRoutes);
+app.use('/api', roundRoutes);
 
-app.use(gameRoutes);
+app.use('/api', gameRoutes);
 
-app.use(voteRoutes);
+app.use('/api', voteRoutes);
 
 app.use(express.static(path.join(__dirname, '../public')));
 
-app.use(roundRoutes);
+app.use('/api', roundRoutes);
 
 // Fallback route (SPA support) - serves index.html for all other routes
-app.get(/.*/, isAuthenticated, (req: Request, res: Response) => {
+app.get(/.*/, (req: Request, res: Response) => {
     res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
 });
-
-function isAuthenticated(
-    request: Request,
-    response: Response,
-    next: NextFunction
-) {
-    //   if (request.body) {
-    return next();
-    //   }
-    //  response.redirect('/')
-}
