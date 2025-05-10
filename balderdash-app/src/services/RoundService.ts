@@ -68,18 +68,11 @@ export class RoundService {
     if (!round) throw new Error("Round not found");
     const roundId = round.id;
 
-    console.log('Round:' , roundId)
-
     // Get all votes for the round
     const votes = await VoteRepository.getVotesForRound(roundId);
 
-    console.log('Votes:' , votes);
-
     // Get all definitions for this round so we can determine their authors
     const definitions = await RoundRepository.getDefinitionsByRoundId(roundId);
-
-     console.log('Definitions:' , definitions);
-
 
     // Map definitionId -> authorUserId
     const definitionAuthorMap: { [definitionId: number]: number } = {};
@@ -88,8 +81,6 @@ export class RoundService {
             definitionAuthorMap[def.id] = def.userId;
         }
     });
-
-    console.log(definitionAuthorMap);
 
     const scoreMap: { [userId: number]: number } = {};
 
@@ -105,13 +96,11 @@ export class RoundService {
             }
         }
     }
+    
+    // Apply score updates in DB and get back all players' latest scores
+    const updatedScores = await GameRepository.updatePlayersScore(gameId, scoreMap);
 
-    console.log(scoreMap);
-
-    // Apply score updates in DB
-    await GameRepository.updatePlayersScore(gameId, scoreMap);
-
-    return scoreMap;
+    return updatedScores;
 }
 
 }

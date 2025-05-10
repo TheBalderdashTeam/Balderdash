@@ -100,8 +100,12 @@ static async updatePlayersScore(
     RETURNING user_id, score;
   `;
 
-  // Map rows into cleaner format
-  return updatedRows.map(row => ({
+  // Now return ALL players and their (new) scores for this game
+  const rows = await sql`
+    SELECT user_id, score FROM game_players WHERE game_id = ${gameId};
+  `;
+
+  return rows.map(row => ({
     userId: row.user_id,
     newScore: row.score
   }));
