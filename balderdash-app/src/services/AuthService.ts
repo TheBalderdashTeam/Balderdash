@@ -1,26 +1,18 @@
-import { Request, Response } from 'express'
-require('dotenv').config()
-
-interface TokenData {
-    access_token: string
-    id_token: string
-    refresh_token?: string
-    expires_in?: number
-}
+import { Request, Response } from 'express';
+import { UserService } from './UserService';
+import { User } from '../types/User';
+import { GoogleProfile } from '../types/GoogleProfile';
+require('dotenv').config();
 
 class AuthService {
-    async login(request: Request, response: Response) {
-        const { token } = request.query
-
-        console.debug(request)
-
-        if (!token || typeof token !== 'string') {
-            return response.status(400).send('Authorization token is missing')
+    async login(request: Request, response: Response): Promise<string | null> {
+        const { code } = request.query;
+        if (!code || typeof code !== 'string') {
+            return null;
         }
 
         // Get access token
         try {
-            // Using node-fetch for HTTP requests
             const tokenResponse = await fetch(
                 'https://oauth2.googleapis.com/token',
                 {
@@ -31,24 +23,24 @@ class AuthService {
                     body: JSON.stringify({
                         client_id: process.env.CLIENT_ID,
                         client_secret: process.env.CLIENT_SECRET,
-                        token,
+                        code,
                         redirect_uri: process.env.REDIRECT_URI,
                         grant_type: 'authorization_code',
                     }),
                 }
-            )
+            );
 
             if (!tokenResponse.ok) {
                 throw new Error(
                     `Token request failed: ${tokenResponse.statusText}`
-                )
+                );
             }
 
             const tokenData = (await tokenResponse.json()) as {
-                access_token: string
-                id_token: string
-            }
-            const { access_token, id_token } = tokenData
+                access_token: string;
+                id_token: string;
+            };
+            const { access_token, id_token } = tokenData;
 
             // Use access_token to fetch user profile
             const profileResponse = await fetch(
@@ -56,32 +48,35 @@ class AuthService {
                 {
                     headers: { Authorization: `Bearer ${access_token}` },
                 }
-            )
+            );
 
             if (!profileResponse.ok) {
                 throw new Error(
                     `Profile request failed: ${profileResponse.statusText}`
-                )
+                );
             }
 
-            const profile = await profileResponse.json()
+            const profile: GoogleProfile = await profileResponse.json();
 
-            console.debug(profile)
+            let user = await UserService.getUserByGoogleId(profile.id);
+            if (!user) {
+                user = await UserService.createUser(
+                    profile.id,
+                    profile.email,
+                    profile.name
+                );
+            }
 
-            // Code to handle user authentication and retrieval using the profile data
-            // Example:
-            // req.session.user = profile;
-
-            response.redirect('/')
+            return id_token;
         } catch (error) {
             console.error(
                 'Error:',
                 error instanceof Error ? error.message : 'Unknown error'
-            )
-            response.redirect('/login')
+            );
+            return null;
         }
     }
 }
 
-const authService = new AuthService()
-export default authService
+const authService = new AuthService();
+export default authService;
