@@ -109,7 +109,7 @@ export class RoundService {
             scoreMap
         );
 
-        const SCORE_LIMIT = 10; // You can adjust this limit (10 is example)
+        const SCORE_LIMIT = 10; //todo: Discuss score limit
         const gameOver = updatedScores.some((player) => player.newScore >= SCORE_LIMIT);
 
         if (gameOver) {
