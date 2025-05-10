@@ -65,7 +65,7 @@ CREATE TABLE "round_statuses" (
 
 ALTER TABLE "games" ADD FOREIGN KEY ("host_user_id") REFERENCES "users" ("id");
 
-ALTER TABLE "games" ADD FOREIGN KEY ("status_id") REFERENCES "game_statuses" ("id");
+ALTER TABLE "games" ADD FOREIGN KEY ("game_status_id") REFERENCES "game_statuses" ("id");
 
 ALTER TABLE "game_players" ADD FOREIGN KEY ("game_id") REFERENCES "games" ("id");
 

@@ -31,7 +31,6 @@ export class VoteRepository {
     return voteRow ? this.mapToVote(voteRow) : null;
   }
 
-  // DRY helper
   private static mapToVote(row: any): Vote {
     return {
       id: row.id,
