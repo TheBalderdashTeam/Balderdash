@@ -2,6 +2,7 @@ import express, { NextFunction, Request, Response } from 'express'
 const authRoutes = require('./modules/auth/AuthRoutes')
 import roundRoutes from './routes/RoundRoutes'
 import gameRoutes from './routes/GameRoutes'
+import voteRoutes from './routes/VoteRoutes'
 import path from 'path'
 
 const app = express()
@@ -15,6 +16,8 @@ app.use(authRoutes)
 app.use(roundRoutes)
 
 app.use(gameRoutes)
+
+app.use(voteRoutes)
 
 app.use(express.static(path.join(__dirname, '../public')))
 
