@@ -47,7 +47,6 @@ export class RoundController {
         response: Response
     ): Promise<void> {
         try {
-            console.log(request.body);
             const { roundId, userId, definition, wordId } = request.body;
 
             const roundDefinition = await RoundService.createRoundDefinition(

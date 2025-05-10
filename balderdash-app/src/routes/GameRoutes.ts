@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { GameController } from '../controllers/GameController';
-
+const auth = require('../middleware/auth');
 const router = Router();
 
 router.post('/games', GameController.createGame);
