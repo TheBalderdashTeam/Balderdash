@@ -1,0 +1,104 @@
+:root {
+    --font-family-inter: 'Inter', sans-serif;
+    --font-family-roboto: 'Roboto', sans-serif;
+    --text-black: rgba(0, 0, 0, 1);
+    --text-white: rgba(255, 255, 255, 1);
+    --text-rgb-247-247-247: rgba(247, 247, 247, 1);
+    --text-rgb-29-27-32: rgba(29, 27, 32, 1);
+    --font-large:2rem;
+  }
+  
+  .text-black {
+    color: var(--text-black);
+  }
+  
+  .text-white {
+    color: var(--text-white);
+  }
+  
+  .text-rgb-247-247-247 {
+    color: var(--text-rgb-247-247-247);
+  }
+  
+  .text-rgb-29-27-32 {
+    color: var(--text-rgb-29-27-32);
+  }
+  
+  
+  /* CSS Reset */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    width: 100%;
+    min-height: 100vh;
+    overflow-x: hidden;
+    font-family: var(--font-family-inter);
+    text-align:center;
+    
+    place-items: center; 
+  
+  }
+
+.logo{
+  
+    display: block; 
+   margin: -7rem auto 0rem; 
+   width: 350px;; 
+   align-self: center; 
+   height: auto; 
+   align-items: flex-start;        
+ }
+
+ .lobbycode-textbox {
+    background-color: black;
+    color: white;
+    border: 1px solid #ccc;
+    padding: 0.5rem;
+    font-size: 1rem;
+    border-radius: 4px;
+    width: 100%; /* optional: responsive width */
+  }
+
+  
+.joingamebutton {
+    position: fixed;
+    bottom: clamp(1rem, 5vh, 3rem);
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px 24px;   /* Button padding */
+    background-color: #4CAF50; /* Green background */
+    color: white;         /* White text */
+    border: none;         /* Remove default border */
+    border-radius: 50px;  /* Rounded corners */
+    font-size: 16px;      /* Text size */
+    cursor: pointer;      /* Changes cursor on hover */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Adds a shadow */
+    transition: background-color 0.3s; /* Smooth hover effect */
+    
+      
+  }
+  
+  /* Hover effect */
+  .fixed-button:hover {
+    background-color: #45a049; /* Darker green on hover */
+  }
+  
+  .waiting{
+  
+    display: block; 
+   margin: -7rem auto 0rem; 
+   width: 350px;; 
+   align-self: center; 
+   height: auto; 
+   align-items: flex-start;        
+ }
+  #hangtight{
+      font-size: var(--font-large);
+      
+  }
+
+
