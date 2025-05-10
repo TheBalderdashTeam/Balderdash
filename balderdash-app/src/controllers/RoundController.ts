@@ -24,6 +24,24 @@ export class RoundController {
         }
     }
 
+    static async endRound(req: Request, res: Response): Promise<void> {
+    try {
+      const gameId = Number(req.params.gameId);
+
+      if (isNaN(gameId)) {
+        res.status(400).json({ error: 'Invalid gameId' });
+        return;
+      }
+
+      const result = await RoundService.endRoundAndCalculateScores(gameId);
+
+      res.json(result);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Failed to end round' });
+    }
+  }
+
     static async createRoundDefinition(
         request: Request,
         response: Response

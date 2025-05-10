@@ -44,40 +44,20 @@ export class RoundRepository {
         return round;
     }
 
-    static async getDefinitionsByRoundId(
-        roundId: number
-    ): Promise<RoundDefinition[]> {
-        const [definitionRows] = await sql`
-      SELECT rd.id, rd.round_id, rd.user_id, rd.defintion, rd.word_id, rd.submitted_at
-      FROM round_definitions rd
-      LEFT JOIN users u ON rd.user_id = u.id
-      WHERE rd.round_id = ${roundId}
+    
+
+static async getDefinitionsByRoundId(
+    roundId: number
+): Promise<RoundDefinition[]> {
+    const definitionRows = await sql`
+        SELECT rd.id, rd.round_id, rd.user_id, rd.definition, rd.word_id, rd.submitted_at
+        FROM round_definitions rd
+        LEFT JOIN users u ON rd.user_id = u.id
+        WHERE rd.round_id = ${roundId}
     `;
-        const definitions: RoundDefinition[] = [];
 
-        definitionRows.Map(
-            (definitionRow: {
-                submission_id: number;
-                roundId: number;
-                user_id?: number;
-                definition: string;
-                word_id: number;
-                submittedAt: Date;
-            }) => {
-                const definition: RoundDefinition = {
-                    id: definitionRow.submission_id,
-                    roundId: definitionRow.roundId,
-                    userId: definitionRow.user_id,
-                    definition: definitionRow.definition,
-                    wordId: definitionRow.word_id,
-                    submittedAt: definitionRow.submittedAt,
-                };
-                definitions.push(definition);
-            }
-        );
-
-        return definitions;
-    }
+    return definitionRows.map(this.mapToRoundDefinition);
+}
 
     static async createRoundDefinition(
         roundId: number,

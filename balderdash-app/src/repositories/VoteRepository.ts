@@ -18,7 +18,7 @@ export class VoteRepository {
 
     static async getVotesForRound(roundId: number): Promise<Vote[]> {
         const voteRows = await sql`
-      SELECT id, round_id, voter_user_id, round_definition_id, voted_at FROM votes WHERE round_id = ${roundId};
+      SELECT id, round_id, voter_user_id, round_definition_id, is_correct, voted_at FROM votes WHERE round_id = ${roundId};
     `;
 
         return voteRows.map(this.mapToVote);
@@ -29,7 +29,7 @@ export class VoteRepository {
         voterUserId: number
     ): Promise<Vote | null> {
         const voteInfo = await sql`
-      SELECT id, round_id, voter_user_id, round_definition_id, voted_at FROM votes 
+      SELECT id, round_id, voter_user_id, round_definition_id, is_correct, voted_at FROM votes 
       WHERE round_id = ${roundId} AND voter_user_id = ${voterUserId};
     `;
 
@@ -43,6 +43,7 @@ export class VoteRepository {
             roundId: row.round_id,
             voterUserId: row.voter_user_id,
             roundDefinitionId: row.round_definition_id,
+            isCorrect: row.is_correct,
             votedAt: row.voted_at,
         };
     }
