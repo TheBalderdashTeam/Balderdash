@@ -35,4 +35,4 @@ router.get('/logout', (request: Request, response: Response) => {
     response.redirect('/login')
 })
 
-module.exports = router
+export default router;

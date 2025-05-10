@@ -1,5 +1,5 @@
 import express, { NextFunction, Request, Response } from 'express'
-const authRoutes = require('./modules/auth/AuthRoutes')
+import authRoutes from './modules/auth/AuthRoutes'
 import roundRoutes from './routes/RoundRoutes'
 import gameRoutes from './routes/GameRoutes'
 import voteRoutes from './routes/VoteRoutes'
@@ -7,6 +7,7 @@ import path from 'path'
 
 const app = express()
 const port = 8080
+
 
 // Serve static files (like index.html)
 app.use(express.json());
@@ -21,7 +22,11 @@ app.use(voteRoutes)
 
 app.use(express.static(path.join(__dirname, '../public')))
 
-app.get('/', isAuthenticated, (req: Request, res: Response) => {
+app.use(authRoutes)
+app.use(roundRoutes)
+
+// Fallback route (SPA support) - serves index.html for all other routes
+app.get(/.*/, isAuthenticated, (req: Request, res: Response) => {
     res.sendFile(path.join(__dirname, '../public/index.html'))
 })
 
