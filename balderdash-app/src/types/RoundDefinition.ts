@@ -4,5 +4,5 @@ export type RoundDefinition = {
     userId?: number;
     definition: string;
     wordId: number;
-    submittedAt: Date;
+    submittedAt?: Date;
 };
