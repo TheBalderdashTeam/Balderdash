@@ -15,4 +15,7 @@ router.post(
     RoundController.createRoundDefinition
 );
 
+// End round and calculate scores
+router.post('/games/:gameId/end-round', RoundController.endRound);
+
 export default router;
