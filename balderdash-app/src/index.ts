@@ -6,6 +6,8 @@ import userRoutes from './routes/UserRoutes';
 import roundRoutes from './routes/RoundRoutes';
 import gameRoutes from './routes/GameRoutes';
 import voteRoutes from './routes/VoteRoutes';
+import leaderboardRoutes from './routes/LeaderboardRoutes';
+
 import path from 'path';
 import { GooglePayload } from './types/GoolePayload';
 
@@ -29,6 +31,7 @@ app.use(authRoutes);
 app.use('/api', userRoutes);
 
 app.use('/api', roundRoutes);
+app.use('/api', leaderboardRoutes);
 
 app.use('/api', gameRoutes);
 

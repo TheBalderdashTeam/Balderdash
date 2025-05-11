@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import { UserService } from './UserService';
-import { User } from '../types/User';
 import { GoogleProfile } from '../types/GoogleProfile';
 require('dotenv').config();
 

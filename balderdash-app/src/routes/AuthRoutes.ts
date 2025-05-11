@@ -27,6 +27,7 @@ router.get(
         if (!code || typeof code !== 'string') {
             return;
         }
+
         response.redirect(`/login?code=${encodeURI(code)}`);
     }
 );

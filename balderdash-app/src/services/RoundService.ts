@@ -6,7 +6,6 @@ import { RoundDefinition } from '../types/RoundDefinition';
 import { RoundState } from '../types/RoundState';
 import { shuffleArray } from '../utils/shuffleArray';
 import { GameService } from './GameService';
-import { UserService } from './UserService';
 import { WordService } from './WordService';
 import { Request } from 'express';
 
@@ -108,6 +107,13 @@ export class RoundService {
             gameId,
             scoreMap
         );
+
+        const SCORE_LIMIT = 10; //todo: Discuss score limit
+        const gameOver = updatedScores.some((player) => player.currentScore >= SCORE_LIMIT);
+
+        if (gameOver) {
+            await GameRepository.endGame(gameId);
+        }
 
         return updatedScores;
     }
