@@ -33,8 +33,6 @@ router.get(
         );
         url.searchParams.append('code', code);
 
-        console.log(url);
-
         response.redirect(url.href);
     }
 );

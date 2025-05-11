@@ -114,7 +114,6 @@ export class RoundService {
 
         if (gameOver) {
             await GameRepository.endGame(gameId);
-            console.log('Game ended');
         }
 
         return updatedScores;
