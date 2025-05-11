@@ -52,6 +52,11 @@ export class GameService {
         return await GameRepository.endGame(gameId);
     }
 
+    static async getGameStatus(lobbyCode: string): Promise<Game | null>
+    {
+        return await GameRepository.getGameByLobbyCode(lobbyCode);
+    }
+
     static async deleteGame(gameId: number): Promise<void> {
         await GameRepository.deleteGame(gameId);
     }

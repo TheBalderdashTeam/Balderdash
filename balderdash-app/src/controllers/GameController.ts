@@ -1,5 +1,7 @@
 import { Request, Response } from 'express';
 import { GameService } from '../services/GameService';
+import { GameRepository } from '../repositories/GameRepository';
+import { GameState } from '../types/GameState';
 
 export class GameController {
     static async createGame(req: Request, res: Response) {
@@ -98,6 +100,13 @@ export class GameController {
             if (!googleUser || googleUser == undefined)
                 res.status(404).json({ message: 'Invalid token' });
 
+            const currentGame = await GameService.getGameStatus(lobbyCode);
+
+            if (currentGame?.gameStatusId == GameState.Active)
+            {
+                res.status(404).json({ message: 'Game is already active. You cannot join an active game' });
+            }
+            
             const result = await GameService.addPlayerToGame(
                 lobbyCode,
                 googleUser
