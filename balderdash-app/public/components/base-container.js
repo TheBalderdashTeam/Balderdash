@@ -3,6 +3,10 @@ export class BaseContainer extends HTMLElement {
     super();
     this.shadow = this.attachShadow({ mode: 'open' });
     this.render();
+    this.backgroundColour = this.getAttribute('backgroundColour') || '';
+    this.margin = this.getAttribute('margin') || '';
+    this.borderRadius = this.getAttribute('borderRadius') || '';
+    this.padding = this.getAttribute('padding') || '';
   }
 
   render() {

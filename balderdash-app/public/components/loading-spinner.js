@@ -38,7 +38,7 @@ export class LoadingSpinner extends HTMLElement {
         }
       </style>
       <section class="loading-overlay">
-        <div class="spinner"></div> /* Purely visual non-semantic UI element*/
+        <div class="spinner"></div>
       </section>
     `;
   }
