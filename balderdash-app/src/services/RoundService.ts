@@ -6,7 +6,6 @@ import { RoundDefinition } from '../types/RoundDefinition';
 import { RoundState } from '../types/RoundState';
 import { shuffleArray } from '../utils/shuffleArray';
 import { GameService } from './GameService';
-import { UserService } from './UserService';
 import { WordService } from './WordService';
 import { Request } from 'express';
 

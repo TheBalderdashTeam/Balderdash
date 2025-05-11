@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import { RoundService } from '../services/RoundService';
-import { Round } from '../types/Round';
 import { GameService } from '../services/GameService';
 import { UserService } from '../services/UserService';
 import { handleFailure, handleSuccess } from '../utils/handleResponses';
