@@ -28,8 +28,12 @@ router.get(
             return;
         }
         //Make this hit the backend login url
-        const url = new URL('http://localhost:8080/login');
+        const url = new URL(
+            'http://ec2-13-247-204-202.af-south-1.compute.amazonaws.com/login'
+        );
         url.searchParams.append('code', code);
+
+        console.log(url);
 
         response.redirect(url.href);
     }
