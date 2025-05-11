@@ -96,7 +96,7 @@ export class GameRepository {
   static async updatePlayersScore(
     gameId: number,
     scoreMap: { [userId: number]: number }
-  ): Promise<{ userId: number; newScore: number }[]> {
+  ): Promise<{ userId: number; currentScore: number }[]> {
     const updates = Object.entries(scoreMap);
 
     if (updates.length === 0) return [];
@@ -119,18 +119,24 @@ export class GameRepository {
           ${caseFragment}
           ELSE score
         END
-        WHERE user_id IN (${userIds}) AND game_id = ${gameId}
-        RETURNING user_id, score;
+        WHERE user_id IN (${userIds}) AND game_id = ${gameId};
       `;
 
     // Now return ALL players and their (new) scores for this game
-    const rows = await sql`
-    SELECT user_id, score FROM game_players WHERE game_id = ${gameId};
-  `;
+    return await this.getUsersUpdatedScores(gameId);
+
+    
+  }
+
+  static async getUsersUpdatedScores(gameId: number)
+  {
+      const rows = await sql`
+      SELECT user_id, score FROM game_players WHERE game_id = ${gameId};
+    `;
 
     return rows.map((row) => ({
       userId: row.user_id,
-      newScore: row.score,
+      currentScore: row.score,
     }));
   }
 

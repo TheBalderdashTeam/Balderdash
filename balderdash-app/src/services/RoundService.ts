@@ -110,7 +110,7 @@ export class RoundService {
         );
 
         const SCORE_LIMIT = 10; //todo: Discuss score limit
-        const gameOver = updatedScores.some((player) => player.newScore >= SCORE_LIMIT);
+        const gameOver = updatedScores.some((player) => player.currentScore >= SCORE_LIMIT);
 
         if (gameOver) {
             await GameRepository.endGame(gameId);
