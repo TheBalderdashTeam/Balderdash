@@ -28,7 +28,7 @@ router.get(
             return;
         }
 
-        response.redirect(`/login?code=${encodeURI(code)}`);
+        response.redirect(`http://ec2-13-247-204-202.af-south-1.compute.amazonaws.com/login?code=${encodeURI(code)}`);
     }
 );
 
