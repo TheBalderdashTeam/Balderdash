@@ -1,14 +1,14 @@
 import { Request, Response } from 'express';
 import { LeaderboardService } from '../services/LeaderboardService';
+import {handleSuccess, handleFailure} from '../utils/handleResponses';
 
 export class LeaderboardController {
-    static async getLeaderboard(request: Request, response: Response): Promise<void> {
+    static async getLeaderboard(req: Request, res: Response): Promise<void> {
         try {
             const leaderboard = await LeaderboardService.getLeaderboard();
-            response.status(200).json(leaderboard);
+            handleSuccess(res, leaderboard);
         } catch (error) {
-            console.error(error);
-            response.status(500).json({ message: 'Error fetching leaderboard' });
+            handleFailure(res, error, 'Error fetching leaderboard');
         }
     }
 

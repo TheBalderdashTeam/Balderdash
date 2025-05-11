@@ -97,9 +97,13 @@ export class GameService {
 
         const user = await UserService.getUserByGoogleId(googleUser.sub);
 
+        console.log(user);
+
         if (!user) return null;
 
         const game = await GameRepository.getGameByUser(user.id);
+
+        console.log(game);
 
         return game;
     }
