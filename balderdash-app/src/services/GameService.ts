@@ -33,7 +33,6 @@ export class GameService {
 
     static async startGame(gameId: number): Promise<Game | null> {
         const game = await this.getGameById(gameId);
-        console.log(game);
         if (!game) return null;
 
         await RoundService.createRound(game.id, 1);
@@ -97,13 +96,9 @@ export class GameService {
 
         const user = await UserService.getUserByGoogleId(googleUser.sub);
 
-        console.log(user);
-
         if (!user) return null;
 
         const game = await GameRepository.getGameByUser(user.id);
-
-        console.log(game);
 
         return game;
     }
