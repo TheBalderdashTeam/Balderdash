@@ -7,7 +7,8 @@ export class PrimaryButton extends BaseButton {
       return `
     button {
       background-color: #93ff9a;
-      color: #black;
+      color: #000000;
+      align-self: 
     }
 
     button:hover:not(:disabled) {

@@ -1,4 +1,5 @@
 import { BaseContainer } from "./base-container.js";
+import { hexToRgba } from "../js/helpers.js";
 
 /** 
  * The HorizontalContainerV class extends BaseContainer and sets the flex-direction to row with center
@@ -13,8 +14,21 @@ import { BaseContainer } from "./base-container.js";
  * - margin (CSS margin value)
  * - borderRadius (CSS border-radius value)
  * - padding (CSS padding value)
+ * - maxWidth (CSS max-width value)
+ * - minHeight (CSS min-height value)
+ * - alpha (Number between 0 and 1 used to control background color opacity- default=1)
  */
 export class HorizontalContainerV extends BaseContainer {
+
+  static get observedAttributes() {
+    return ['backgroundcolour', 'margin', 'borderradius', 'padding', 'maxwidth', 'minheight', 'alpha'];
+  }
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (oldValue !== newValue) {
+      this.render();
+    }
+  }
 
   getStyles() {
 
@@ -22,6 +36,11 @@ export class HorizontalContainerV extends BaseContainer {
     const margin = this.getAttribute('margin') || '';
     const borderRadius = this.getAttribute('borderRadius') || '';
     const padding = this.getAttribute('padding') || '';
+    const maxWidth = this.getAttribute('maxWidth') || '';
+    const minHeight = this.getAttribute('minHeight') || '';
+    const alpha = this.getAttribute('alpha') || 1;
+
+
 
     return `
     .container {
@@ -29,10 +48,12 @@ export class HorizontalContainerV extends BaseContainer {
       flex: 1 0 auto;
       justify-content: center;
       align-items: center;
-      ${backgroundColour ? `background-color: rgba(${backgroundColour}, 0.7);` : ''}
+      ${backgroundColour ? `background-color: ${hexToRgba(backgroundColour, alpha)};` : ''}
       ${margin ? `margin: ${margin};` : ''}
       ${padding ? `padding: ${padding};` : ''}
       ${borderRadius ? `border-radius: ${borderRadius};` : ''}
+      ${maxWidth ? `max-width: ${maxWidth};` : ''}
+      ${minHeight ? `min-height: ${minHeight};` : ''}
     }
   `;
   }  

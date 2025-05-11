@@ -1,23 +1,52 @@
 import { router } from '../router/index.js';
-import { HomePage } from '../pages/home-page.js';
-import { AuthPage } from '../pages/auth-page.js';
+import {
+  HomePage,
+  AuthPage,
+  RankingPage,
+  LobbyPage,
+  JoinGamePage,
+} from './pages/index.js';
 import { LoadingSpinner } from '../components/loading-spinner.js';
 
 // Register Web Components
 customElements.define('home-page', HomePage);
 customElements.define('auth-page', AuthPage);
+customElements.define('ranking-page', RankingPage);
+customElements.define('lobby-page', LobbyPage);
+customElements.define('join-game-page', JoinGamePage);
 
 // Configure Routes
-router.addRoute('home', (data) => {
+router.addRoute('home', () => {
   const homePage = new HomePage();
-  homePage.routeData = data;
   document.querySelector('#app').appendChild(homePage);
 });
 
-router.addRoute('login', (data) => {
+router.addRoute('sign-in', () => {
   const authPage = new AuthPage();
-  authPage.routeData = data;
   document.querySelector('#app').appendChild(authPage);
+});
+
+router.addRoute('results', () => {
+  const rankingPage = new RankingPage();
+  rankingPage.pageHeading = 'Game Results'
+  document.querySelector('#app').appendChild(rankingPage);
+});
+
+router.addRoute('leaderboard', () => {
+  const rankingPage = new RankingPage();
+  rankingPage.isLeaderBoard = true;
+  rankingPage.pageHeading = 'Leaderboard'
+  document.querySelector('#app').appendChild(rankingPage);
+});
+
+router.addRoute('lobby', () => {
+  const lobbyPage = new LobbyPage();
+  document.querySelector('#app').appendChild(lobbyPage);
+});
+
+router.addRoute('join-game', () => {
+  const joinGamePage = new JoinGamePage();
+  document.querySelector('#app').appendChild(joinGamePage);
 });
 
 // Initialize router

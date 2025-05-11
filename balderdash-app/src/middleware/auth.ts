@@ -15,7 +15,7 @@ const auth = async (
     response: Response,
     next: NextFunction
 ) => {
-    const token = request.header('Authorization')?.split(' ')[1];
+    const token = request.cookies.authorization;
     if (!token)
         return response
             .status(401)

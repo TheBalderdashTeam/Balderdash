@@ -1,8 +1,11 @@
-import { PrimaryButton } from '../components/primary-button.js';
-import { SecondaryButton } from '../components/secondary-button.js';
-import { VerticalContainerH } from '../components/vertical-container-h.js';
-import { router } from '../router/index.js'; // Import your router
-
+import { router } from '../router/index.js';
+import { apiFetch, logoutUser } from '../js/apiClient.js';
+import { pageStyles } from '../js/styles.js';
+import { 
+  PrimaryButton,
+  SecondaryButton,
+  VerticalContainerH,
+} from '../components/index.js';
 
 export class HomePage extends HTMLElement {
 
@@ -17,12 +20,25 @@ export class HomePage extends HTMLElement {
     this.updateContent();
 
     const startGameButton = this.shadowRoot.querySelector('#start-game-button');
+    const joinGameButton = this.shadowRoot.querySelector('#join-game-button');
+    const leaderboardButton = this.shadowRoot.querySelector('#leaderboard-button');
+    const logoutButton = this.shadowRoot.querySelector('#logout-button');
 
-    if (startGameButton) {
-      startGameButton.addEventListener('click', () => {
-        this.handleStartGameClick();
-      });
-    }
+    startGameButton.addEventListener('click', () => {
+      this.onStartGameClick();
+    });
+
+    joinGameButton.addEventListener('click', () => {
+      this.onJoinGameClick();
+    });
+
+    leaderboardButton.addEventListener('click', () => {
+      this.onLeaderboardClick();
+    });
+
+    logoutButton.addEventListener('click', () => {
+      this.onLogoutClick();
+    });
   }
 
   render() {
@@ -35,60 +51,56 @@ export class HomePage extends HTMLElement {
           position: relative; 
         }
 
-        .home-page {
-          width: 100%;
-          display: flex;
-          flex: 1;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          padding: 8px;
-          box-sizing: border-box;
-        }
+        .home-page ${pageStyles}
       </style>
-      <section class="home-page">
-        <vertical-container-h>
-          <primary-button id="start-game-button">Start Game</primary-button>
-          <primary-button>Join Game</primary-button>
-          <primary-button>Score History</primary-button>
-          <secondary-button>Logout</secondary-button>
-          <div class="data-display"></div>
-        </vertical-container-h>
 
+      <section class="home-page">
+
+        <vertical-container-h 
+          backgroundColour="rgba(255, 255, 255, 0.8)"
+          padding="16px"
+          borderRadius="10px"
+          maxWidth="482px">
+          
+          <primary-button id="start-game-button">Start Game</primary-button>
+          <primary-button id="join-game-button">Join Game</primary-button>
+          <primary-button id="leaderboard-button">Leaderboard</primary-button>
+          <secondary-button id="logout-button">Logout</secondary-button>
+
+        </vertical-container-h>
       </section>
     `;
   }
 
-  async handleStartGameClick() {
-    const spinner = document.getElementById('loading-spinner');
-    spinner.show(); // Show the spinner
+  async onJoinGameClick() {
+    router.navigate('/join-game');
+  }
 
-    try {
-      //TODO: replace with actual fetch and navigations
-      const data = await this.fetchGameData();
-      console.log('Data fetched:', data);
+  async onLogoutClick() {
+    await logoutUser();
+  }
 
-      router.navigate('/home', data);
-    } catch (error) {
-      console.error('Error fetching data:', error);
+  async onLeaderboardClick() {
+    router.navigate('/leaderboard');
+  }
 
-    } finally {
-      setTimeout(() => spinner.hide(), 5000)
-    }
+  async onStartGameClick() {
+    this.fetchGameData();
+    // router.navigate('/lobby');
   }
 
   async fetchGameData() {
 
-    const response = await fetch('http://localhost:8080/api/rounds/games/1/current-round', {
+    const response = await apiFetch('games/1', {
       method: "GET",
-    })
+    });
 
     if (!response) {
-      return {}
+      return {};
     }
 
     const data = await response.json();
-
+    console.log({data});
     return data;
   }
 
