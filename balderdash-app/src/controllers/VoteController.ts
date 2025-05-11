@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { VoteService } from '../services/VoteService';
 import { UserService } from '../services/UserService';
 import { RoundService } from '../services/RoundService';
+import { handleFailure, handleSuccess } from '../utils/handleResponses';
 
 export class VoteController {
     static async createVote(req: Request, res: Response): Promise<void> {
@@ -27,10 +28,10 @@ export class VoteController {
                 user?.id ?? 0,
                 roundDefinitionId
             );
-            res.status(200).json(vote);
+
+            handleSuccess(res, vote);
         } catch (error) {
-            console.error(error);
-            res.status(500).json({ message: 'Error creating vote' });
+            handleFailure(res, error, 'Error creating vote');
         }
     }
 
@@ -63,14 +64,9 @@ export class VoteController {
                 voterUserId
             );
 
-            if (!vote) {
-                res.status(404).json({ message: 'Vote not found' });
-            }
-
-            res.status(200).json(vote);
+            handleSuccess(res, vote);
         } catch (error) {
-            console.error(error);
-            res.status(500).json({ message: 'Error fetching vote' });
+            handleFailure(res, error, 'Error fetching vote');
         }
     }
 }

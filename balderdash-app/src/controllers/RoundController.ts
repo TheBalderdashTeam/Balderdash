@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import { RoundService } from '../services/RoundService';
-import { Round } from '../types/Round';
 import { GameService } from '../services/GameService';
 import { UserService } from '../services/UserService';
+import { handleFailure, handleSuccess } from '../utils/handleResponses';
 
 export class RoundController {
     static async getCurrentRound(req: Request, res: Response): Promise<void> {
@@ -15,14 +15,9 @@ export class RoundController {
 
             const roundData = await RoundService.getCurrentRound(game?.id ?? 0);
 
-            if (!roundData) {
-                res.status(404).json({ error: 'No active round found' });
-            }
-
-            res.json(roundData);
+            handleSuccess(res, roundData);
         } catch (err) {
-            console.error(err);
-            res.status(500).json({ error: 'Failed to get current round' });
+            handleFailure(res, err, 'Failed to get current round');
         }
     }
 
@@ -39,10 +34,9 @@ export class RoundController {
                 gameId
             );
 
-            res.json(result);
+            handleSuccess(res, result);
         } catch (err) {
-            console.error(err);
-            res.status(500).json({ error: 'Failed to end round' });
+            handleFailure(res, err, 'Failed to end round');
         }
     }
 
@@ -79,12 +73,10 @@ export class RoundController {
                 definition,
                 roundData?.word.id ?? 0
             );
-            res.status(200).json(roundDefinition);
+
+            handleSuccess(res, roundDefinition);
         } catch (error) {
-            console.error(error);
-            res.status(500).json({
-                message: 'Error creating round definition',
-            });
+            handleFailure(res, error, 'Error creating round definition');
         }
     }
 }
