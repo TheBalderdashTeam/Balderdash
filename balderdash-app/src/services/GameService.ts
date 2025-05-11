@@ -51,8 +51,7 @@ export class GameService {
         return await GameRepository.endGame(gameId);
     }
 
-    static async getGameStatus(lobbyCode: string): Promise<Game | null>
-    {
+    static async getGameStatus(lobbyCode: string): Promise<Game | null> {
         return await GameRepository.getGameByLobbyCode(lobbyCode);
     }
 
@@ -81,6 +80,16 @@ export class GameService {
         const user = await UserService.getUserByGoogleId(googleUser.sub);
 
         if (!user) return false;
+
+        const gamePlayers = await UserService.getAllPlayersInGame(game.id);
+
+        if (gamePlayers) {
+            if (
+                gamePlayers.filter((player) => player.id == user.id).length !==
+                0
+            )
+                return false;
+        }
 
         const result = GameRepository.addPlayerToGame(game.id, user.id);
 
@@ -118,5 +127,15 @@ export class GameService {
             console.error(error);
             return null;
         }
+    }
+
+    static async getGameByRoundId(roundId: number): Promise<Game | null> {
+        const game = GameRepository.getGameByRoundId(roundId);
+
+        return game;
+    }
+
+    static async getUsersUpdatedScores(gameId: number): Promise<any> {
+        return await GameRepository.getUsersUpdatedScores(gameId);
     }
 }

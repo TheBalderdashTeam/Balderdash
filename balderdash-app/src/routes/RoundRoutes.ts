@@ -8,6 +8,6 @@ router.get('/games/current-round', auth, RoundController.getCurrentRound);
 router.post('/games/definitions', auth, RoundController.createRoundDefinition);
 
 // End round and calculate scores
-router.post('/games/end-round', RoundController.endRound);
+router.post('/games/get-round-scores', auth, RoundController.getRoundScores);
 
 export default router;

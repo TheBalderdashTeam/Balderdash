@@ -23,6 +23,7 @@ const auth = async (
 
     try {
         const user = await verifyGoogleToken(token);
+
         request.user = user;
         next();
     } catch (error) {

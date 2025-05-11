@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { RoundService } from '../services/RoundService';
+import { Round } from '../types/Round';
 import { GameService } from '../services/GameService';
 import { UserService } from '../services/UserService';
 import { handleFailure, handleSuccess } from '../utils/handleResponses';
@@ -21,17 +22,14 @@ export class RoundController {
         }
     }
 
-    static async endRound(req: Request, res: Response): Promise<void> {
+    static async getRoundScores(req: Request, res: Response): Promise<void> {
         try {
-            const gameId = Number(req.params.gameId);
+            const game = await GameService.getPlayerGame(req);
 
-            if (isNaN(gameId)) {
-                res.status(400).json({ error: 'Invalid gameId' });
-                return;
-            }
+            if (!game) res.status(500).json({ message: 'Failed to end round' });
 
-            const result = await RoundService.endRoundAndCalculateScores(
-                gameId
+            const result = await GameService.getUsersUpdatedScores(
+                game?.id ?? 0
             );
 
             handleSuccess(res, result);
@@ -73,7 +71,6 @@ export class RoundController {
                 definition,
                 roundData?.word.id ?? 0
             );
-
             handleSuccess(res, roundDefinition);
         } catch (error) {
             handleFailure(res, error, 'Error creating round definition');

@@ -1,12 +1,11 @@
 import { Request, Response } from 'express';
 import { GameService } from '../services/GameService';
+import { handleSuccess, handleFailure } from '../utils/handleResponses';
 import { GameState } from '../types/GameState';
-import {handleSuccess, handleFailure} from '../utils/handleResponses';
 
 export class GameController {
     static async createGame(req: Request, res: Response) {
         try {
-           
             const { hostUserId, numberRounds, timeLimitSeconds, statusId } =
                 req.body;
             const game = await GameService.createGame(
@@ -15,7 +14,7 @@ export class GameController {
                 timeLimitSeconds,
                 statusId
             );
-             handleSuccess(res, game);
+            handleSuccess(res, game);
         } catch (error) {
             handleFailure(res, error, 'Error occured while creating the game');
         }
@@ -40,8 +39,11 @@ export class GameController {
         try {
             const gameInfo = await GameService.getPlayerGame(req);
             const { statusId } = req.body;
-            
-            const game = await GameService.updateGameStatus(gameInfo?.id ?? 0, statusId);
+
+            const game = await GameService.updateGameStatus(
+                gameInfo?.id ?? 0,
+                statusId
+            );
 
             handleSuccess(res, game);
         } catch (error) {
@@ -95,11 +97,13 @@ export class GameController {
 
             const currentGame = await GameService.getGameStatus(lobbyCode);
 
-            if (currentGame?.gameStatusId == GameState.Active)
-            {
-                res.status(404).json({ message: 'Game is already active. You cannot join an active game' });
+            if (currentGame?.gameStatusId == GameState.Active) {
+                res.status(404).json({
+                    message:
+                        'Game is already active. You cannot join an active game',
+                });
             }
-            
+
             const result = await GameService.addPlayerToGame(
                 lobbyCode,
                 googleUser

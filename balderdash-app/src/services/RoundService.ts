@@ -5,7 +5,9 @@ import { Round } from '../types/Round';
 import { RoundDefinition } from '../types/RoundDefinition';
 import { RoundState } from '../types/RoundState';
 import { shuffleArray } from '../utils/shuffleArray';
+import { checkRoundState } from '../utils/test';
 import { GameService } from './GameService';
+import { UserService } from './UserService';
 import { WordService } from './WordService';
 import { Request } from 'express';
 
@@ -60,6 +62,9 @@ export class RoundService {
             wordId
         );
 
+        //Check if all players have submitted
+        checkRoundState(roundId);
+
         return roundDefinition;
     }
 
@@ -101,7 +106,6 @@ export class RoundService {
                 }
             }
         }
-
         // Apply score updates in DB and get back all players' latest scores
         const updatedScores = await GameRepository.updatePlayersScore(
             gameId,
@@ -109,7 +113,9 @@ export class RoundService {
         );
 
         const SCORE_LIMIT = 10; //todo: Discuss score limit
-        const gameOver = updatedScores.some((player) => player.currentScore >= SCORE_LIMIT);
+        const gameOver = updatedScores.some(
+            (player) => player.currentScore >= SCORE_LIMIT
+        );
 
         if (gameOver) {
             await GameRepository.endGame(gameId);
