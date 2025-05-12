@@ -57,7 +57,7 @@ export class HomePage extends HTMLElement {
       <section class="home-page">
 
         <vertical-container-h 
-          backgroundColour="rgba(255, 255, 255, 0.8)"
+          backgroundColour="rgb(114, 118, 212);"
           padding="16px"
           borderRadius="10px"
           maxWidth="482px">

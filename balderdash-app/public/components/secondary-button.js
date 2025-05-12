@@ -6,12 +6,13 @@ export class SecondaryButton extends BaseButton {
   getStyles() {
       return `
     button {
-      background-color: #ffffff;
+      background-color: rgba(255,255,255,.70);
       color: #black;
     }
 
     button:hover:not(:disabled) {
-        background-color: #93ff9a;
+        background-color: #6666c3;
+        color: #ffffff;
     }
   `;
   }
