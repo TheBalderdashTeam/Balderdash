@@ -11,10 +11,10 @@ router.get('/auth/google', (request: Request, response: Response) => {
     if (!!clientId && !!redirectUri) {
         const url = new URL('https://accounts.google.com/o/oauth2/v2/auth');
         url.searchParams.append('client_id', clientId);
-        // url.searchParams.append('redirect_uri', redirectUri);
+        url.searchParams.append('redirect_uri', redirectUri);
         url.searchParams.append('response_type', 'code');
         url.searchParams.append('scope', 'profile email');
-        response.redirect(url.href + '&redirect_uri=' + encodeURI('http://ec2-13-247-204-202.af-south-1.compute.amazonaws.com/auth/google/callback'));
+        response.redirect(url.href);
     }
 });
 

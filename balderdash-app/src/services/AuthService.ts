@@ -23,7 +23,7 @@ class AuthService {
                         client_id: process.env.CLIENT_ID,
                         client_secret: process.env.CLIENT_SECRET,
                         code,
-                        redirect_uri: "http://ec2-13-247-204-202.af-south-1.compute.amazonaws.com/auth/google/callback",
+                        redirect_uri: process.env.REDIRECT_URI,
                         grant_type: 'authorization_code',
                     }),
                 }
