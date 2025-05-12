@@ -19,7 +19,17 @@ export class GameController {
                 timeLimitSeconds,
                 GameState.Pending
             );
-            handleSuccess(res, game);
+
+            const googleUser = req.user;
+
+            if (!googleUser)
+                res.status(401).json({
+                    message: 'Token error, user forbidden',
+                });
+
+            GameService.addPlayerToGame(game.lobbyCode, googleUser);
+
+            handleSuccess(res, GameController.createGameResponse(game));
         } catch (error) {
             handleFailure(res, error, 'Error occured while creating the game');
         }
