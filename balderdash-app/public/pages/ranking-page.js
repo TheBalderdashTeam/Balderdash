@@ -22,11 +22,15 @@ export class RankingPage extends HTMLElement {
   }
 
   async init() {
-    const data = await this.fetchRankingData();
-    this.rankingData = data.data;
-
-    if (!Array.isArray(this.rankingData)) {
-      this.rankingData = [];
+    
+    if (!this.rankingData) {
+      
+      const data = await this.fetchRankingData();
+      this.rankingData = data;
+  
+      if (!Array.isArray(this.rankingData)) {
+        this.rankingData = [];
+      }
     }
 
     this.updateContent();
@@ -89,7 +93,9 @@ export class RankingPage extends HTMLElement {
           backgroundColour="rgba(255, 255, 255, 0.8)"
           padding="16px"
           borderRadius="10px"
-          maxWidth="482px">
+          maxWidth="482px"
+          justifyContent="flex-start"
+          hostHeight="100%">
 
           <h1 class="leaderboard-title">${this.pageHeading}</h1>
           
@@ -106,36 +112,28 @@ export class RankingPage extends HTMLElement {
 
   async fetchRankingData() {
 
-    return {data: [
-      { name: 'Alice', score: 120 },
-      { name: 'Bob', score: 110 },
-      { name: 'Charlie', score: 95 },
-      { name: 'Ivan', score: 50 },
-      { name: 'Jade', score: 45 }
-    ]}
 
-    const response = await apiFetch('rounds/games/1/current-round', {
+    const apiEndpoint = this.isLeaderBoard && 'leaderboard' || '' ;
+    const data = await apiFetch(apiEndpoint, {
       method: "GET",
     })
 
-    if (!response) {
+    console.log({data})
+    if (!data) {
       return {}
     }
-
-    const data = await response.json();
 
     return data;
   }
 
   async updateContent() {
     const container = this.shadowRoot.querySelector('#ranking-rows');
-    if (!container || !Array.isArray(this.rankingData)) return;
+
+    if (!container || !Array.isArray(this.rankingData)) {
+      return
+    };
   
-    container.innerHTML = ''; // Clear previous rows
-    this.rankingData = this.rankingData.sort((a, b) => {
-      if (b.score !== a.score) return b.score - a.score;
-      return a.name.localeCompare(b.name);
-    });
+    container.innerHTML = '';
 
     this.rankingData.forEach((entry, index) => {
       
@@ -148,8 +146,8 @@ export class RankingPage extends HTMLElement {
       
       row.innerHTML = `
         <section class="rank">${index + 1}</section>
-        <section class="player">${entry.name}</section>
-        <section class="score">${entry.score}</section>
+        <section class="player">${entry.username}</section>
+        <section class="score">${entry.totalScore}</section>
       `;
   
       container.appendChild(row);

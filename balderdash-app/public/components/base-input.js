@@ -8,6 +8,10 @@ export class BaseInput extends HTMLElement {
     this.render();
   }
 
+  get value() {
+    return this.shadowRoot.querySelector('input')?.value || '';
+  }
+
   render() {
     const label = this.getAttribute('label') || '';
     const type = this.getAttribute('type') || 'text';
@@ -42,7 +46,6 @@ export class BaseInput extends HTMLElement {
           height: 1em; 
         }
 
-
         input {
           border: 3px solid #93ff9a;
           border-radius: 8px;
@@ -53,7 +56,6 @@ export class BaseInput extends HTMLElement {
           width: 100%;
           flex: 1;
           max-width: 480px;
-          font-family: 'Roboto', sans-serif;
         }
       </style>
       <section class="input-wrapper">

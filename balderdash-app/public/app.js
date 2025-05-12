@@ -1,12 +1,14 @@
 import { router } from '../router/index.js';
+import { LoadingSpinner } from '../components/loading-spinner.js';
 import {
   HomePage,
   AuthPage,
   RankingPage,
   LobbyPage,
   JoinGamePage,
+  ErrorPage,
+  GameSettingsPage,
 } from './pages/index.js';
-import { LoadingSpinner } from '../components/loading-spinner.js';
 
 // Register Web Components
 customElements.define('home-page', HomePage);
@@ -14,6 +16,8 @@ customElements.define('auth-page', AuthPage);
 customElements.define('ranking-page', RankingPage);
 customElements.define('lobby-page', LobbyPage);
 customElements.define('join-game-page', JoinGamePage);
+customElements.define('error-page', ErrorPage);
+customElements.define('game-settings-page', GameSettingsPage);
 
 // Configure Routes
 router.addRoute('home', () => {
@@ -37,6 +41,11 @@ router.addRoute('leaderboard', () => {
   rankingPage.isLeaderBoard = true;
   rankingPage.pageHeading = 'Leaderboard'
   document.querySelector('#app').appendChild(rankingPage);
+});
+
+router.addRoute('game-settings', () => {
+  const gameSettingsPage = new GameSettingsPage();
+  document.querySelector('#app').appendChild(gameSettingsPage);
 });
 
 router.addRoute('lobby', () => {

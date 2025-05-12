@@ -27,9 +27,12 @@ export class BaseButton extends HTMLElement {
   render() {
     this.shadow.innerHTML = `
       <style>
-      
+
         :host {
-          display: inline-block;
+          display: flex;
+          width: 100%;
+          flex: 1;
+          justify-content: center;
         }
 
         button {
@@ -37,11 +40,13 @@ export class BaseButton extends HTMLElement {
           border-radius: 8px;
           padding: 16px 16px;
           margin: 16px 0px;
+          align-self: end;
           font-size: 16px;
           font-weight: 500;
           cursor: pointer;
+          width: 100%;
           transition: all 0.3s ease;
-          min-width: 480px;
+          max-width: 485px;
           font-family: 'Roboto', sans-serif;
         }
 
@@ -49,17 +54,6 @@ export class BaseButton extends HTMLElement {
           background-color: #cccccc;
           cursor: not-allowed;
           opacity: 0.7;
-        }
-
-        @media (max-width: 768px) {
-          :host {
-            display: block;
-            width: 100%;
-          }
-          button {
-            width: 100%;
-            min-width: auto;
-          }
         }
 
         ${this.getStyles?.() || ''}

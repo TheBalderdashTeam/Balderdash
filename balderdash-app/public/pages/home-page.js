@@ -85,21 +85,20 @@ export class HomePage extends HTMLElement {
   }
 
   async onStartGameClick() {
-    this.fetchGameData();
+    router.navigate('/game-settings');
     // router.navigate('/lobby');
   }
 
   async fetchGameData() {
 
-    const response = await apiFetch('games/1', {
+    const data = await apiFetch('games/1', {
       method: "GET",
     });
 
-    if (!response) {
+    if (!data) {
       return {};
     }
 
-    const data = await response.json();
     console.log({data});
     return data;
   }

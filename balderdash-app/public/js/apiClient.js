@@ -1,3 +1,5 @@
+import { showErrorScreen } from "./helpers.js";
+
 const API_BASE_URL = window.location.origin + '/api'; 
 
 export async function logoutUser() {
@@ -10,6 +12,9 @@ export async function apiFetch(endpoint, options = {}) {
   const headers = new Headers(options.headers || {});
   headers.set('Content-Type', 'application/json');
 
+  const loadingSpinner = document.querySelector('#loading-spinner');
+
+  loadingSpinner?.show?.();
   try {
     const response = await fetch(`${API_BASE_URL}/${endpoint}`, {
       ...options,
@@ -28,12 +33,21 @@ export async function apiFetch(endpoint, options = {}) {
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || 'API request failed');
+      showErrorScreen({
+        message: errorData.message || 'API request failed',
+        onRetry: () => apiFetch(endpoint, options),
+      });
+      return;
     }
-
+    
     return await response.json();
   } catch (error) {
-    console.error('apiFetch error:', error);
-    throw error;
+    console.log({error})
+    showErrorScreen({
+      message: error.message || 'API request failed',
+      onRetry: () => apiFetch(endpoint, options),
+    });
+  } finally {
+    loadingSpinner?.hide?.();
   }
 }

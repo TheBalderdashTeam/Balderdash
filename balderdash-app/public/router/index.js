@@ -9,7 +9,7 @@ class RouterService {
 
       // Handle browser back/forward
       window.addEventListener('popstate', (event) => {
-        this.handleRouteChange(window.location.pathname || 'home', event.state);
+        this.handleRouteChange(window.location.pathname || '/', event.state);
       });      
       // Delegate link clicks
       document.addEventListener('click', (e) => {
