@@ -44,6 +44,7 @@ export class RoundService {
         return {
             roundId: round.id,
             roundNumber: round.roundNumber,
+            roundStatus: RoundState[round.roundStatusId],
             word: word,
             definitions: shuffledDefinitions,
         };
@@ -69,6 +70,10 @@ export class RoundService {
     }
 
     static async endRoundAndCalculateScores(gameId: number) {
+        const game = await GameRepository.getGameById(gameId);
+
+        if (!game) return null;
+
         // Get latest round
         const round = await RoundRepository.getLatestRoundByGameId(gameId);
         if (!round) throw new Error('Round not found');
@@ -112,13 +117,16 @@ export class RoundService {
             scoreMap
         );
 
-        const SCORE_LIMIT = 10; //todo: Discuss score limit
-        const gameOver = updatedScores.some(
-            (player) => player.currentScore >= SCORE_LIMIT
-        );
+        const rounds = await GameService.getRoundCount(gameId);
+
+        const gameOver = rounds >= game.numberRounds;
 
         if (gameOver) {
+            //End game if this was the last round
             await GameRepository.endGame(gameId);
+        } else {
+            //Create new round
+            RoundService.createRound(gameId, rounds + 1);
         }
 
         return updatedScores;

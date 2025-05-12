@@ -27,21 +27,15 @@ export class RoundRepository {
         return roundRow ? this.mapToRound(roundRow) : null;
     }
 
-    static async getLatestRoundByGameId(gameId: number): Promise<Round> {
+    static async getLatestRoundByGameId(gameId: number): Promise<Round | null> {
         const [roundRow] = await sql`
-      SELECT id, game_id, word_id, round_number 
+      SELECT id, game_id, word_id, round_number, round_status_id
       FROM rounds
       WHERE game_id = ${gameId}
       ORDER BY round_number DESC
       LIMIT 1
     `;
-        const round: Round = {
-            id: roundRow.id,
-            gameId: roundRow.game_id,
-            wordId: roundRow.word_id,
-            roundNumber: roundRow.round_number,
-        };
-        return round;
+        return roundRow ? this.mapToRound(roundRow) : null;
     }
 
     static async getDefinitionsByRoundId(
@@ -82,6 +76,7 @@ export class RoundRepository {
             gameId: row.game_id,
             wordId: row.word_id,
             roundNumber: row.round_number,
+            roundStatusId: row.round_status_id,
         };
     }
 

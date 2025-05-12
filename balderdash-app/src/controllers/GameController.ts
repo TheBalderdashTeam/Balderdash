@@ -6,13 +6,12 @@ import { GameState } from '../types/GameState';
 export class GameController {
     static async createGame(req: Request, res: Response) {
         try {
-            const { hostUserId, numberRounds, timeLimitSeconds, statusId } =
-                req.body;
+            const { hostUserId, numberRounds, timeLimitSeconds } = req.body;
             const game = await GameService.createGame(
                 hostUserId,
                 numberRounds,
                 timeLimitSeconds,
-                statusId
+                GameState.Pending
             );
             handleSuccess(res, game);
         } catch (error) {
@@ -29,7 +28,9 @@ export class GameController {
                     .status(500)
                     .json({ message: 'Failed to start game' });
 
-            res.status(200).json(game);
+            const startedGame = await GameService.startGame(game.id);
+
+            handleSuccess(res, startedGame);
         } catch (error) {
             handleFailure(res, error, 'Error occured when starting game');
         }
