@@ -1,6 +1,5 @@
 export enum RoundState {
-    None,
-    Writing,
-    Voting,
-    Scoring,
+    Writing = 1,
+    Voting = 2,
+    Scoring = 3,
 }

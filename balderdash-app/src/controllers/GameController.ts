@@ -2,6 +2,12 @@ import { Request, Response } from 'express';
 import { GameService } from '../services/GameService';
 import { handleSuccess, handleFailure } from '../utils/handleResponses';
 import { GameState } from '../types/GameState';
+import { Game } from '../types/Game';
+
+type GameData = {
+    game: Game;
+    state: string;
+};
 
 export class GameController {
     static async createGame(req: Request, res: Response) {
@@ -13,7 +19,17 @@ export class GameController {
                 timeLimitSeconds,
                 GameState.Pending
             );
-            handleSuccess(res, game);
+
+            const googleUser = req.user;
+
+            if (!googleUser)
+                res.status(401).json({
+                    message: 'Token error, user forbidden',
+                });
+
+            GameService.addPlayerToGame(game.lobbyCode, googleUser);
+
+            handleSuccess(res, GameController.createGameResponse(game));
         } catch (error) {
             handleFailure(res, error, 'Error occured while creating the game');
         }
@@ -30,7 +46,7 @@ export class GameController {
 
             const startedGame = await GameService.startGame(game.id);
 
-            handleSuccess(res, startedGame);
+            handleSuccess(res, GameController.createGameResponse(startedGame));
         } catch (error) {
             handleFailure(res, error, 'Error occured when starting game');
         }
@@ -46,7 +62,7 @@ export class GameController {
                 statusId
             );
 
-            handleSuccess(res, game);
+            handleSuccess(res, GameController.createGameResponse(game));
         } catch (error) {
             handleFailure(res, error, 'Error updating game status');
         }
@@ -57,7 +73,7 @@ export class GameController {
             const gameInfo = await GameService.getPlayerGame(req);
             const game = await GameService.endGame(gameInfo?.id ?? 0);
 
-            handleSuccess(res, game);
+            handleSuccess(res, GameController.createGameResponse(game));
         } catch (error) {
             handleFailure(res, error, 'Error ending game');
             console.error(error);
@@ -78,7 +94,7 @@ export class GameController {
         try {
             const gameId = parseInt(req.params.id);
             const game = await GameService.getGameById(gameId);
-            handleSuccess(res, game);
+            handleSuccess(res, GameController.createGameResponse(game));
         } catch (error) {
             handleFailure(res, error, 'Error fetching game');
         }
@@ -119,12 +135,22 @@ export class GameController {
     static async getPlayerGame(req: Request, res: Response): Promise<any> {
         try {
             const game = await GameService.getPlayerGame(req);
+            console.log('Here');
 
-            if (!game)
-                return res.status(404).json({ message: 'Game not found' });
-            res.status(200).json(game);
+            handleSuccess(res, GameController.createGameResponse(game));
         } catch (error) {
             handleFailure(res, error, 'Error fetching game');
         }
+    }
+
+    static createGameResponse(game: Game | null) {
+        if (game == null) return null;
+
+        const gameData = {
+            game: game,
+            status: GameState[game.gameStatusId],
+        };
+
+        return gameData;
     }
 }
