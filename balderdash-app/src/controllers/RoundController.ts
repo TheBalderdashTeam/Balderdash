@@ -4,6 +4,7 @@ import { Round } from '../types/Round';
 import { GameService } from '../services/GameService';
 import { UserService } from '../services/UserService';
 import { handleFailure, handleSuccess } from '../utils/handleResponses';
+import { RoundState } from '../types/RoundState';
 
 export class RoundController {
     static async getCurrentRound(req: Request, res: Response): Promise<void> {
@@ -33,6 +34,22 @@ export class RoundController {
             );
 
             handleSuccess(res, result);
+        } catch (err) {
+            handleFailure(res, err, 'Failed to end round');
+        }
+    }
+
+    static async endRound(req: Request, res: Response): Promise<void> {
+        try {
+            const currentRound = await RoundService.getPlayerRound(req);
+
+            if (!currentRound)
+                res.status(400).json({ message: 'No valid round found' });
+
+            await RoundService.updateRoundState(
+                currentRound,
+                RoundState.Scoring
+            );
         } catch (err) {
             handleFailure(res, err, 'Failed to end round');
         }

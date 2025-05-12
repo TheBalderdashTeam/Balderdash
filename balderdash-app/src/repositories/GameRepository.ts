@@ -183,4 +183,15 @@ export class GameRepository {
 
         return game;
     }
+
+    static async getRoundCount(gameId: number): Promise<number> {
+        const [roundCountResult] = await sql`
+          SELECT COUNT(id) AS count 
+          FROM rounds 
+          WHERE rounds.game_id = ${gameId}
+        `;
+        if (!roundCountResult) return 0;
+
+        return roundCountResult.count;
+    }
 }
