@@ -38,24 +38,28 @@ export class VerticalContainerH extends BaseContainer {
     const maxWidth = this.getAttribute('maxWidth') || '';
     const minHeight = this.getAttribute('minHeight') || '';
     const alpha = this.getAttribute('alpha') || 1;
+    const hostHeight = this.getAttribute('hostHeight') || '';
+    const justifyContent = this.getAttribute('justifyContent') || 'center';
 
     return `
     :host {
       display: flex;
       justify-content: center;
+      ${hostHeight ? `height: ${hostHeight};` : ''}
     }
 
     .container {
       flex: 1 0 auto;
       flex-direction: column;
-      justify-content: center;
       align-items: center;
+      ${justifyContent ? `justify-content: ${justifyContent};` : ''}
       ${backgroundColour ? `background-color: ${hexToRgba(backgroundColour, alpha)};` : ''}
       ${margin ? `margin: ${margin};` : ''}
       ${padding ? `padding: ${padding};` : ''}
       ${borderRadius ? `border-radius: ${borderRadius};` : ''}
       ${maxWidth ? `max-width: ${maxWidth};` : ''}
       ${minHeight ? `min-height: ${minHeight};` : ''}
+
     }
   `;
   }  
