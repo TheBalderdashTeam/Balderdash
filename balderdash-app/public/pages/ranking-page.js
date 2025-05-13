@@ -105,10 +105,17 @@ export class RankingPage extends HTMLElement {
     `;
   }
 
-  getRowColor(index) {
-    const colors = ['#3f51b5', '#f44336', '#e6a817', '#9c27b0', '#4caf50'];
-    return colors[index % colors.length];
-  }
+getRowColor(index) {
+  const baseHue = 231;
+  const saturation = 50;
+  const lightnessBase = 85;
+  const lightnessStep = 6;
+
+  // Decrease lightness gradually to create distinct shades
+  const lightness = Math.max(20, lightnessBase - index * lightnessStep);
+
+  return `hsl(${baseHue}, ${saturation}%, ${lightness}%)`;
+}
 
   async fetchRankingData() {
 

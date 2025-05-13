@@ -45,7 +45,7 @@ export class ErrorPage extends HTMLElement {
 
       </style>
       <vertical-container-h class="error-page"
-        backgroundColour="#f8d7da"
+        backgroundColour="rgb(114, 118, 212)"
         borderRadius="8px"
         padding="16px"
         maxWidth="500px">
