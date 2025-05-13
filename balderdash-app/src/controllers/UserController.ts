@@ -8,8 +8,6 @@ export class UserController {
         try {
             const googleUser = request.user;
 
-            console.log(googleUser);
-
             if (!googleUser || googleUser == undefined)
                 response.status(404).json({ message: 'Invalid token' });
 
@@ -25,19 +23,19 @@ export class UserController {
         }
     }
 
-        static async getAllGamePlayers(req: Request, res: Response): Promise<any> {
-            try {
-                 const game = await GameService.getPlayerGame(req);
-    
-                if (!game)
-                    return res
-                        .status(404)
-                        .json({ message: 'Could not find users current game' });
-    
-                const usersInGame = UserService.getAllPlayersInGame(game.id);
-                handleSuccess(res, usersInGame);
-            } catch (error) {
-                handleFailure(res, error, 'Error fetching game');
-            }
+    static async getAllGamePlayers(req: Request, res: Response): Promise<any> {
+        try {
+            const game = await GameService.getPlayerGame(req);
+
+            if (!game)
+                return res
+                    .status(404)
+                    .json({ message: 'Could not find users current game' });
+
+            const usersInGame = UserService.getAllPlayersInGame(game.id);
+            handleSuccess(res, usersInGame);
+        } catch (error) {
+            handleFailure(res, error, 'Error fetching game');
         }
+    }
 }

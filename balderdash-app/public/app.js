@@ -1,14 +1,15 @@
 import { router } from '../router/index.js';
 import { LoadingSpinner } from '../components/loading-spinner.js';
 import {
-  HomePage,
-  AuthPage,
-  RankingPage,
-  LobbyPage,
-  JoinGamePage,
-  ErrorPage,
-  GameSettingsPage,
-  SubmitDefinitionPage,
+    HomePage,
+    AuthPage,
+    RankingPage,
+    LobbyPage,
+    JoinGamePage,
+    ErrorPage,
+    GameSettingsPage,
+    SubmitDefinitionPage,
+    GamePage,
 } from './pages/index.js';
 
 // Register Web Components
@@ -23,46 +24,46 @@ customElements.define('submit-definition-page', SubmitDefinitionPage);
 
 // Configure Routes
 router.addRoute('home', () => {
-  const homePage = new HomePage();
-  document.querySelector('#app').appendChild(homePage);
+    const homePage = new HomePage();
+    document.querySelector('#app').appendChild(homePage);
 });
 
 router.addRoute('sign-in', () => {
-  const authPage = new AuthPage();
-  document.querySelector('#app').appendChild(authPage);
+    const authPage = new AuthPage();
+    document.querySelector('#app').appendChild(authPage);
 });
 
 router.addRoute('results', () => {
-  const rankingPage = new RankingPage();
-  rankingPage.pageHeading = 'Game Results'
-  document.querySelector('#app').appendChild(rankingPage);
+    const rankingPage = new RankingPage();
+    rankingPage.pageHeading = 'Game Results';
+    document.querySelector('#app').appendChild(rankingPage);
 });
 
 router.addRoute('leaderboard', () => {
-  const rankingPage = new RankingPage();
-  rankingPage.isLeaderBoard = true;
-  rankingPage.pageHeading = 'Leaderboard'
-  document.querySelector('#app').appendChild(rankingPage);
+    const rankingPage = new RankingPage();
+    rankingPage.isLeaderBoard = true;
+    rankingPage.pageHeading = 'Leaderboard';
+    document.querySelector('#app').appendChild(rankingPage);
 });
 
 router.addRoute('game-settings', () => {
-  const gameSettingsPage = new GameSettingsPage();
-  document.querySelector('#app').appendChild(gameSettingsPage);
+    const gameSettingsPage = new GameSettingsPage();
+    document.querySelector('#app').appendChild(gameSettingsPage);
 });
 
 router.addRoute('lobby', () => {
-  const lobbyPage = new LobbyPage();
-  document.querySelector('#app').appendChild(lobbyPage);
+    const lobbyPage = new LobbyPage();
+    document.querySelector('#app').appendChild(lobbyPage);
 });
 
 router.addRoute('submit-definition', () => {
-  const submitDefinition = new SubmitDefinitionPage;
-  document.querySelector('#app').appendChild(submitDefinition);
+    const submitDefinition = new SubmitDefinitionPage();
+    document.querySelector('#app').appendChild(submitDefinition);
 });
 
 router.addRoute('join-game', () => {
-  const joinGamePage = new JoinGamePage();
-  document.querySelector('#app').appendChild(joinGamePage);
+    const joinGamePage = new JoinGamePage();
+    document.querySelector('#app').appendChild(joinGamePage);
 });
 
 // Initialize router

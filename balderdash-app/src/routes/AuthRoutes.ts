@@ -28,7 +28,9 @@ router.get(
             return;
         }
 
-        response.redirect(`http://ec2-13-247-204-202.af-south-1.compute.amazonaws.com/login?code=${encodeURI(code)}`);
+        response.redirect(
+            `http://localhost:8080/login?code=${encodeURI(code)}`
+        );
     }
 );
 
@@ -38,9 +40,9 @@ router.get(
         const token = await authService.login(request, response);
 
         response.cookie('authorization', token ?? '', {
-          httpOnly: true,
-          secure: false,
-          path: '/'
+            httpOnly: true,
+            secure: false,
+            path: '/',
         });
 
         response.redirect('/home');
@@ -49,12 +51,11 @@ router.get(
 
 // Logout route
 router.get('/logout', (request: Request, response: Response) => {
-  
     response.clearCookie('authorization', {
-      httpOnly: true,
-      secure: false,
-      sameSite: 'lax',
-      path: '/',
+        httpOnly: true,
+        secure: false,
+        sameSite: 'lax',
+        path: '/',
     });
 
     response.status(200).json({ message: 'Logged out successfully' });

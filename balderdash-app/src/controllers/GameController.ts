@@ -3,6 +3,7 @@ import { GameService } from '../services/GameService';
 import { handleSuccess, handleFailure } from '../utils/handleResponses';
 import { GameState } from '../types/GameState';
 import { Game } from '../types/Game';
+import { UserService } from '../services/UserService';
 
 type GameData = {
     game: Game;
@@ -12,24 +13,40 @@ type GameData = {
 export class GameController {
     static async createGame(req: Request, res: Response) {
         try {
-            const { hostUserId, numberRounds, timeLimitSeconds } = req.body;
+            const { numberRounds, timeLimitSeconds } = req.body;
+
+            const googleUser = req.user;
+
+            if (!googleUser || googleUser == undefined)
+                res.status(401).json({
+                    message: 'Token error, user forbidden',
+                });
+
+            const user = await UserService.getUserByGoogleId(
+                googleUser?.sub ?? ''
+            );
+
+            if (!user) {
+                res.status(401).json({
+                    message: 'Token error, user forbidden',
+                });
+            }
+
             const game = await GameService.createGame(
-                hostUserId,
+                user?.id ?? 0,
                 numberRounds,
                 timeLimitSeconds,
                 GameState.Pending
             );
 
-            const googleUser = req.user;
+            const result = await GameService.addPlayerToGame(
+                game.lobbyCode,
+                googleUser
+            );
 
-            if (!googleUser)
-                res.status(401).json({
-                    message: 'Token error, user forbidden',
-                });
+            const gameData = GameController.createGameResponse(game);
 
-            GameService.addPlayerToGame(game.lobbyCode, googleUser);
-
-            handleSuccess(res, GameController.createGameResponse(game));
+            handleSuccess(res, gameData);
         } catch (error) {
             handleFailure(res, error, 'Error occured while creating the game');
         }
