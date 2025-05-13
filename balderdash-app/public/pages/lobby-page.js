@@ -6,25 +6,24 @@ import { HorizontalContainerV } from '../components/horizontal-container-v.js';
 import { router } from '../router/index.js';
 import { apiFetch } from '../js/apiClient.js';
 
-
 export class LobbyPage extends HTMLElement {
-  constructor(){
-    super();
-    this.shadow = this.attachShadow({ mode: 'open' });
-    this.pollingInterval = null;     
-  }
+    constructor() {
+        super();
+        this.shadow = this.attachShadow({ mode: 'open' });
+        this.pollingInterval = null;
+    }
 
-  connectedCallback() {
-    this.render();
-    this.startPollingForPlayers();
-  }
+    connectedCallback() {
+        this.render();
+        this.startPollingForPlayers();
+    }
 
-  disconnectedCallback() {
-    this.stopPollingForPlayers(); 
-  }
+    disconnectedCallback() {
+        this.stopPollingForPlayers();
+    }
 
-  render() {
-    this.shadow.innerHTML = `
+    render() {
+        this.shadow.innerHTML = `
       <style>
         :host {
           display: flex;
@@ -69,28 +68,30 @@ export class LobbyPage extends HTMLElement {
         </section>
       </section>
     `;
-  }
-
-  startPollingForPlayers() {
-    this.pollingInterval = setInterval(async () => {
-     
-      const gameData = await apiFetch('games', {
-        method: 'GET',
-      }, '', false);
-
-      if (gameData) {        
-        if (gameData.status === 'Active') {
-          this.stopPollingForPlayers();
-          router.navigate('/submit-definition', gameData);
-        }
-      }      
-    }, 3000);
-  }
-
-  stopPollingForPlayers() {
-    if (this.pollingInterval) {
-      clearInterval(this.pollingInterval);
-      this.pollingInterval = null;
     }
-  }
+
+    startPollingForPlayers() {
+        this.pollingInterval = setInterval(async () => {
+            const gameData = await apiFetch('games', {
+                method: 'GET',
+            });
+
+            if (gameData) {
+                const data = await response.json();
+                console.log('Players:', data.players); // Update UI or store the data
+
+                if (gameData.status === 'Active') {
+                    this.stopPollingForPlayers();
+                    router.navigate('/game', data);
+                }
+            }
+        }, 3000);
+    }
+
+    stopPollingForPlayers() {
+        if (this.pollingInterval) {
+            clearInterval(this.pollingInterval);
+            this.pollingInterval = null;
+        }
+    }
 }
