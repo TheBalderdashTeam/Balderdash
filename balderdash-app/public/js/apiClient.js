@@ -1,55 +1,55 @@
-import { showErrorScreen } from "./helpers.js";
-import { clearStorage } from "./storage.js";
+import { showErrorScreen } from './helpers.js';
+import { clearStorage } from './storage.js';
 
-const API_BASE_URL = window.location.origin + '/api'; 
+const API_BASE_URL = window.location.origin + '/api';
 
 export async function logoutUser() {
-  clearStorage();
-  await fetch(window.location.origin+'/logout');
-  window.location.href = '/sign-in';
+    clearStorage();
+    await fetch(window.location.origin + '/logout');
+    window.location.href = '/sign-in';
 }
 
-export async function apiFetch(endpoint, options = {}) {
+export async function apiFetch(endpoint, options = {}, body) {
+    const headers = new Headers(options.headers || {});
+    headers.set('Content-Type', 'application/json');
 
-  const headers = new Headers(options.headers || {});
-  headers.set('Content-Type', 'application/json');
+    const loadingSpinner = document.querySelector('#loading-spinner');
 
-  const loadingSpinner = document.querySelector('#loading-spinner');
+    loadingSpinner?.show?.();
+    try {
+        const response = await fetch(`${API_BASE_URL}/${endpoint}`, {
+            ...options,
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+                ...(options.headers || {}),
+            },
+            body: body ? JSON.stringify(body) : undefined,
+        });
 
-  loadingSpinner?.show?.();
-  try {
-    const response = await fetch(`${API_BASE_URL}/${endpoint}`, {
-      ...options,
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(options.headers || {})
-      }
-    });
+        if (response.status === 401) {
+            console.warn('401 Unauthorized — logging out');
+            logoutUser();
+            return;
+        }
 
-    if (response.status === 401) {
-      console.warn('401 Unauthorized — logging out');
-      logoutUser();
-      return;
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            showErrorScreen({
+                message: errorData.message || 'API request failed',
+                onRetry: () => apiFetch(endpoint, options),
+            });
+            return;
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.log({ error });
+        showErrorScreen({
+            message: error.message || 'API request failed',
+            onRetry: () => apiFetch(endpoint, options),
+        });
+    } finally {
+        loadingSpinner?.hide?.();
     }
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      showErrorScreen({
-        message: errorData.message || 'API request failed',
-        onRetry: () => apiFetch(endpoint, options),
-      });
-      return;
-    }
-    
-    return await response.json();
-  } catch (error) {
-    console.log({error})
-    showErrorScreen({
-      message: error.message || 'API request failed',
-      onRetry: () => apiFetch(endpoint, options),
-    });
-  } finally {
-    loadingSpinner?.hide?.();
-  }
 }
