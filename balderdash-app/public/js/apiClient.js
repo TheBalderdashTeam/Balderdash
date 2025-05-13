@@ -1,8 +1,10 @@
 import { showErrorScreen } from "./helpers.js";
+import { clearStorage } from "./storage.js";
 
 const API_BASE_URL = window.location.origin + '/api'; 
 
 export async function logoutUser() {
+  clearStorage();
   await fetch(window.location.origin+'/logout');
   window.location.href = '/sign-in';
 }
