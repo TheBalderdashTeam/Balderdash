@@ -18,7 +18,9 @@ export class BaseContainer extends HTMLElement {
         }
         .container {
           display: flex;
+          box-shadow: rgba(81, 85, 183, 0.4) 5px 5px, rgba(81, 85, 183, 0.3) 10px 10px, rgba(81, 85, 183, 0.2) 15px 15px, rgba(81, 85, 183, 0.1) 20px 20px, rgba(81, 85, 183, 0.05) 25px 25px;
           position: relative;
+          animation: shadowPulse 2s infinite ease-in-out;
         }
 
         ${this.getStyles()}

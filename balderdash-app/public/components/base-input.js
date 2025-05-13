@@ -47,8 +47,10 @@ export class BaseInput extends HTMLElement {
         }
 
         input {
-          border: 3px solid #93ff9a;
+          box-shadow: rgba(81, 85, 183, 0.4) 5px 5px, rgba(81, 85, 183, 0.3) 10px 10px, rgba(81, 85, 183, 0.2) 15px 15px, rgba(81, 85, 183, 0.1) 20px 20px, rgba(81, 85, 183, 0.05) 25px 25px;
           border-radius: 8px;
+          border: none;
+          color: #1f1f1f;
           padding: 16px 0px;
           margin: 16px 0px;
           font-size: 16px;
@@ -56,6 +58,7 @@ export class BaseInput extends HTMLElement {
           width: 100%;
           flex: 1;
           max-width: 480px;
+          text-align: center;
         }
       </style>
       <section class="input-wrapper">

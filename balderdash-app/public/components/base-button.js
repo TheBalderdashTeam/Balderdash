@@ -36,7 +36,8 @@ export class BaseButton extends HTMLElement {
         }
 
         button {
-          border: 3px solid #93ff9a;
+          box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+          border: none;
           border-radius: 8px;
           padding: 16px 16px;
           margin: 16px 0px;
@@ -47,7 +48,7 @@ export class BaseButton extends HTMLElement {
           width: 100%;
           transition: all 0.3s ease;
           max-width: 485px;
-          font-family: 'Roboto', sans-serif;
+          font-family: 'Source Code Pro', monospace;
         }
 
         button:disabled {
