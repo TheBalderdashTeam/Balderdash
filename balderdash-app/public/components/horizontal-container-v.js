@@ -40,9 +40,7 @@ export class HorizontalContainerV extends BaseContainer {
     const minHeight = this.getAttribute('minHeight') || '';
     const alpha = this.getAttribute('alpha') || 1;
     const justifyContent = this.getAttribute('justifyContent') || 'center';
-
-
-
+    
     return `
     .container {
       flex-direction: row;
