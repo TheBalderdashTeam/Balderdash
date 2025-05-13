@@ -52,6 +52,7 @@ export class VerticalContainerH extends BaseContainer {
       flex: 1 0 auto;
       flex-direction: column;
       align-items: center;
+      width: 100%;
       ${justifyContent ? `justify-content: ${justifyContent};` : ''}
       ${backgroundColour ? `background-color: ${hexToRgba(backgroundColour, alpha)};` : ''}
       ${margin ? `margin: ${margin};` : ''}

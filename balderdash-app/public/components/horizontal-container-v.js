@@ -39,6 +39,7 @@ export class HorizontalContainerV extends BaseContainer {
     const maxWidth = this.getAttribute('maxWidth') || '';
     const minHeight = this.getAttribute('minHeight') || '';
     const alpha = this.getAttribute('alpha') || 1;
+    const justifyContent = this.getAttribute('justifyContent') || 'center';
 
 
 
@@ -46,8 +47,8 @@ export class HorizontalContainerV extends BaseContainer {
     .container {
       flex-direction: row;
       flex: 1 0 auto;
-      justify-content: center;
       align-items: center;
+      ${justifyContent ? `justify-content: ${justifyContent};` : ''}
       ${backgroundColour ? `background-color: ${hexToRgba(backgroundColour, alpha)};` : ''}
       ${margin ? `margin: ${margin};` : ''}
       ${padding ? `padding: ${padding};` : ''}
