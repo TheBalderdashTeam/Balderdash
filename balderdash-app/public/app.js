@@ -8,7 +8,6 @@ import {
   JoinGamePage,
   ErrorPage,
   GameSettingsPage,
-  SubmitDefinitionPage,
 } from './pages/index.js';
 
 // Register Web Components
@@ -19,7 +18,6 @@ customElements.define('lobby-page', LobbyPage);
 customElements.define('join-game-page', JoinGamePage);
 customElements.define('error-page', ErrorPage);
 customElements.define('game-settings-page', GameSettingsPage);
-customElements.define('submit-definition-page', SubmitDefinitionPage);
 
 // Configure Routes
 router.addRoute('home', () => {
@@ -55,15 +53,10 @@ router.addRoute('lobby', () => {
   document.querySelector('#app').appendChild(lobbyPage);
 });
 
-router.addRoute('submit-definition', () => {
-  const submitDefinition = new SubmitDefinitionPage;
-  document.querySelector('#app').appendChild(submitDefinition);
-});
-
 router.addRoute('join-game', () => {
   const joinGamePage = new JoinGamePage();
   document.querySelector('#app').appendChild(joinGamePage);
 });
 
 // Initialize router
-router.navigate(window.location.pathname || '/sign-in');
+router.navigate(window.location.pathname || '/');
