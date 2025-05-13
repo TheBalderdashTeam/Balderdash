@@ -8,5 +8,5 @@ export const handleSuccess = (res: Response, result: any) => {
 };
 
 export const handleFailure = (res: Response, error: any, message: string) => {
-    res.status(500).json({ message: message});
+    res.status(500).json({ message: message, error,});
 };

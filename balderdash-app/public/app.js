@@ -24,8 +24,9 @@ customElements.define('submit-definition-page', SubmitDefinitionPage);
 
 // Configure Routes
 router.addRoute('home', () => {
-    const homePage = new HomePage();
-    document.querySelector('#app').appendChild(homePage);
+  const homePage = new HomePage();
+
+  document.querySelector('#app').appendChild(homePage);
 });
 
 router.addRoute('sign-in', () => {

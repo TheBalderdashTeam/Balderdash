@@ -2,14 +2,43 @@ export class BaseInput extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
+    this._validator = null;
   }
 
   connectedCallback() {
     this.render();
+    this.attachEvents();
   }
 
   get value() {
     return this.shadowRoot.querySelector('input')?.value || '';
+  }
+
+  set validator(fn) {
+    if (typeof fn === 'function') {
+      this._validator = fn;
+    }
+  }
+
+  attachEvents() {
+    const input = this.shadowRoot.querySelector('input');
+    if (input) {
+      input.addEventListener('blur', () => this.validate());
+    }
+  }
+
+  validate() {
+    const errorElement = this.shadowRoot.querySelector('.error-message');
+    if (!this._validator) return;
+
+    const errorMessage = this._validator(this.value);
+    errorElement.textContent = errorMessage || '';
+
+    this.dispatchEvent(new CustomEvent('input-validation', {
+      detail: { valid: !errorMessage },
+      bubbles: true,
+      composed: true
+    }));
   }
 
   render() {
@@ -43,7 +72,7 @@ export class BaseInput extends HTMLElement {
         .error-message { 
           color: red; 
           font-size: 12px; 
-          height: 1em; 
+          text-align: left;
         }
 
         input {
@@ -52,7 +81,7 @@ export class BaseInput extends HTMLElement {
           border: none;
           color: #1f1f1f;
           padding: 16px 0px;
-          margin: 16px 0px;
+          margin: 16px 0px 0px;
           font-size: 16px;
           font-weight: 500;
           width: 100%;

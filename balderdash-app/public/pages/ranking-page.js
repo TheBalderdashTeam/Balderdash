@@ -13,7 +13,7 @@ export class RankingPage extends HTMLElement {
     this.shadow = this.attachShadow({ mode: 'open' });
     this.rankingData = null;
     this.isLeaderBoard = false;
-    this.pageHeading = 'Game Results'
+    this.pageHeading = 'Game Results';
   }
 
   connectedCallback() {
@@ -22,7 +22,7 @@ export class RankingPage extends HTMLElement {
   }
 
   async init() {
-    
+
     if (!this.rankingData) {
       
       const data = await this.fetchRankingData();
@@ -54,17 +54,17 @@ export class RankingPage extends HTMLElement {
         .leaderboard-page ${pageStyles}
 
         .leaderboard-title {
-            text-align: center;
-            font-size: 28px;
-            margin-bottom: 20px;
-            color: #333;
+          text-align: center;
+          font-size: 28px;
+          margin-bottom: 20px;
+          color: #333;
         }
 
         horizontal-container-v {
-            align-items: center;
-            margin-bottom: 10px;
-            color: white;
-            font-weight: bold;
+          align-items: center;
+          margin-bottom: 10px;
+          color: white;
+          font-weight: bold;
         }
 
         .rank {

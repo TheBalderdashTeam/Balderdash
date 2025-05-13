@@ -9,23 +9,27 @@ export async function logoutUser() {
     window.location.href = '/sign-in';
 }
 
-export async function apiFetch(endpoint, options = {}, body) {
-    const headers = new Headers(options.headers || {});
-    headers.set('Content-Type', 'application/json');
+export async function apiFetch(endpoint, options = {}, body, showSpinner = true) {
 
-    const loadingSpinner = document.querySelector('#loading-spinner');
+  const headers = new Headers(options.headers || {});
+  headers.set('Content-Type', 'application/json');
+  
+  const loadingSpinner = document.querySelector('#loading-spinner');
 
+  if (showSpinner) {
     loadingSpinner?.show?.();
-    try {
-        const response = await fetch(`${API_BASE_URL}/${endpoint}`, {
-            ...options,
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json',
-                ...(options.headers || {}),
-            },
-            body: body ? JSON.stringify(body) : undefined,
-        });
+  }
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/${endpoint}`, {
+      ...options,
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(options.headers || {})
+      },
+      body: body ? JSON.stringify(body) : undefined,
+    });
 
         if (response.status === 401) {
             console.warn('401 Unauthorized — logging out');

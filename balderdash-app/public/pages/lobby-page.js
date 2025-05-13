@@ -76,15 +76,12 @@ export class LobbyPage extends HTMLElement {
      
       const gameData = await apiFetch('games', {
         method: 'GET',
-      });
+      }, '', false);
 
-      if (gameData) {
-        const data = await response.json();
-        console.log('Players:', data.players); // Update UI or store the data
-        
+      if (gameData) {        
         if (gameData.status === 'Active') {
           this.stopPollingForPlayers();
-          router.navigate('/game', data);
+          router.navigate('/submit-definition', gameData);
         }
       }      
     }, 3000);

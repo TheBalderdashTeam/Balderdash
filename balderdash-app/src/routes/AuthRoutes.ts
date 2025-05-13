@@ -28,9 +28,7 @@ router.get(
             return;
         }
 
-        response.redirect(
-            `http://localhost:8080/login?code=${encodeURI(code)}`
-        );
+        response.redirect(`http://localhost:8080/login?code=${encodeURI(code)}`);
     }
 );
 
