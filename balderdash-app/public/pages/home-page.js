@@ -1,6 +1,7 @@
 import { router } from '../router/index.js';
 import { apiFetch, logoutUser } from '../js/apiClient.js';
 import { pageStyles } from '../js/styles.js';
+import { setItem } from '../js/storage.js';
 import { 
   PrimaryButton,
   SecondaryButton,
@@ -13,11 +14,12 @@ export class HomePage extends HTMLElement {
     super();
     this.shadow = this.attachShadow({ mode: 'open' });
     this.routeData = null;
+    this.username= null;
   }
 
   connectedCallback() {
     this.render();
-    this.updateContent();
+    this.fetchUserInfo();
 
     const startGameButton = this.shadowRoot.querySelector('#start-game-button');
     const joinGameButton = this.shadowRoot.querySelector('#join-game-button');
@@ -51,14 +53,22 @@ export class HomePage extends HTMLElement {
           position: relative; 
         }
 
+        #greeting {
+          font-size: 25px;
+          font-weight: 600;
+          text-align: center;
+        }
+
         .home-page ${pageStyles}
       </style>
 
       <section class="home-page">
 
+        <p id="greeting"></p>
+
         <vertical-container-h 
           backgroundColour="rgba(255, 255, 255, 0.8)"
-          padding="16px"
+          padding="16px 8px"
           borderRadius="10px"
           maxWidth="482px">
           
@@ -86,33 +96,27 @@ export class HomePage extends HTMLElement {
 
   async onStartGameClick() {
     router.navigate('/game-settings');
-    // router.navigate('/lobby');
   }
 
-  async fetchGameData() {
+  async fetchUserInfo() {
 
-    const data = await apiFetch('games/1', {
+    const userData = await apiFetch('user', {
       method: "GET",
     });
 
-    if (!data) {
-      return {};
+    if (userData) {
+      this.username = userData.username;
+      setItem('user-data', userData);
+      this.updateContent();
     }
-
-    console.log({data});
-    return data;
   }
 
   updateContent() {
-    // Select the data display area
-    const dataDisplay = this.shadowRoot.querySelector('.data-display');
-     if (dataDisplay) {
-        // Display data if available
-        if (this.routeData) {
-          dataDisplay.textContent = `Received Data: ${JSON.stringify(this.routeData)}`;
-        } else {
-          dataDisplay.textContent = 'No data received yet.';
-        }
-    }
+    
+    const greeting = this.shadowRoot.querySelector('#greeting');
+
+    greeting.innerHTML = '';
+
+    greeting.innerHTML = `Welcome, ${this.username}`;
   }
 }
