@@ -1,6 +1,6 @@
 import express, { NextFunction, Request, Response } from 'express';
 import cookieParser from 'cookie-parser';
-const frontendAuth = require('./middleware/frontEndAuth');
+const auth = require('./middleware/auth');
 import authRoutes from './routes/AuthRoutes';
 import userRoutes from './routes/UserRoutes';
 import roundRoutes from './routes/RoundRoutes';
@@ -46,8 +46,8 @@ app.get('/sign-in', (req: Request, res: Response) => {
 });
 
 //ensure every other route other than sign-in is authed
-app.get(/^(?!\/sign-in).*/, frontendAuth, (req: Request, res: Response) => {
-  res.sendFile(path.join(__dirname, '../public/index.html'));
+app.get(/^(?!\/sign-in).*/, auth, (req: Request, res: Response) => {
+    res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
 app.listen(port, () => {

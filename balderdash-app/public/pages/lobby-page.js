@@ -20,7 +20,7 @@ export class LobbyPage extends HTMLElement {
   }
 
   disconnectedCallback() {
-    this.stopPollingForPlayers(); 
+    this.stopPollingForPlayers(); // Stop when removed from DOM
   }
 
   render() {
@@ -73,20 +73,25 @@ export class LobbyPage extends HTMLElement {
 
   startPollingForPlayers() {
     this.pollingInterval = setInterval(async () => {
-     
-      const gameData = await apiFetch('games', {
-        method: 'GET',
-      });
+      try {
+        const response = await apiFetch('games/current/players', {
+          method: 'GET',
+        });
 
-      if (gameData) {
-        const data = await response.json();
-        console.log('Players:', data.players); // Update UI or store the data
-        
-        if (gameData.status === 'Active') {
-          this.stopPollingForPlayers();
-          router.navigate('/game', data);
+        if (response && response.ok) {
+          const data = await response.json();
+          console.log('Players:', data.players); // Update UI or store the data
+          
+          if (data.players.length >= 4) {
+            this.stopPollingForPlayers();
+            router.navigate('/game', { players: data.players });
+          }
+        } else {
+          console.warn('Failed to fetch players');
         }
-      }      
+      } catch (error) {
+        console.error('Polling error:', error);
+      }
     }, 3000);
   }
 

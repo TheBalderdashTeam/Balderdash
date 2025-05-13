@@ -58,6 +58,7 @@ export class GamePage extends HTMLElement {
           <primary-button>Score History</primary-button>
           <secondary-button>Logout</secondary-button>
           <base-input label="Email"></base-input>
+          <div class="data-display"></div>
         </vertical-container-h>
 
       </section>

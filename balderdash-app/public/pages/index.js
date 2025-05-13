@@ -6,4 +6,3 @@ export * from './ranking-page.js';
 export * from './join-game-page.js';
 export * from './error-page.js';
 export * from './game-settings-page.js';
-export * from './submit-definition-page.js';
