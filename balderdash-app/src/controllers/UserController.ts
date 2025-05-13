@@ -32,7 +32,8 @@ export class UserController {
                     .status(404)
                     .json({ message: 'Could not find users current game' });
 
-            const usersInGame = UserService.getAllPlayersInGame(game.id);
+            const usersInGame = await UserService.getAllPlayersInGame(game.id);
+
             handleSuccess(res, usersInGame);
         } catch (error) {
             handleFailure(res, error, 'Error fetching game');

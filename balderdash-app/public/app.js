@@ -11,12 +11,14 @@ import {
     SubmitDefinitionPage,
     GamePage,
 } from './pages/index.js';
+import { HostLobbyPage } from './pages/host-lobby.js';
 
 // Register Web Components
 customElements.define('home-page', HomePage);
 customElements.define('auth-page', AuthPage);
 customElements.define('ranking-page', RankingPage);
 customElements.define('lobby-page', LobbyPage);
+customElements.define('host-lobby-page', HostLobbyPage);
 customElements.define('join-game-page', JoinGamePage);
 customElements.define('error-page', ErrorPage);
 customElements.define('game-settings-page', GameSettingsPage);
@@ -50,6 +52,11 @@ router.addRoute('leaderboard', () => {
 router.addRoute('game-settings', () => {
     const gameSettingsPage = new GameSettingsPage();
     document.querySelector('#app').appendChild(gameSettingsPage);
+});
+
+router.addRoute('host-lobby', () => {
+    const hostLobbyPage = new HostLobbyPage();
+    document.querySelector('#app').appendChild(hostLobbyPage);
 });
 
 router.addRoute('lobby', () => {

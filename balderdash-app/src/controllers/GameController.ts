@@ -152,7 +152,6 @@ export class GameController {
     static async getPlayerGame(req: Request, res: Response): Promise<any> {
         try {
             const game = await GameService.getPlayerGame(req);
-            console.log('Here');
 
             handleSuccess(res, GameController.createGameResponse(game));
         } catch (error) {
