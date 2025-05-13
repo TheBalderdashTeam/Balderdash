@@ -10,7 +10,7 @@ declare global {
     }
 }
 
-const frontendAuth = async (
+export const frontendAuth = async (
     request: Request,
     response: Response,
     next: NextFunction
@@ -29,5 +29,3 @@ const frontendAuth = async (
       response.redirect('/sign-in');
     }
 };
-
-module.exports = frontendAuth;

@@ -1,6 +1,6 @@
 import express, { NextFunction, Request, Response } from 'express';
+import { frontendAuth } from './middleware/frontendAuth';
 import cookieParser from 'cookie-parser';
-const frontendAuth = require('./middleware/frontEndAuth');
 import authRoutes from './routes/AuthRoutes';
 import userRoutes from './routes/UserRoutes';
 import roundRoutes from './routes/RoundRoutes';
