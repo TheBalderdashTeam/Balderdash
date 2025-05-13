@@ -48,6 +48,11 @@ export class VerticalContainerH extends BaseContainer {
       ${hostHeight ? `height: ${hostHeight};` : ''}
     }
 
+    :host([noShadow]) .container{
+      box-shadow: none;
+      animation: none;
+    }
+
     .container {
       flex: 1 0 auto;
       flex-direction: column;

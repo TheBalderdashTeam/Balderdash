@@ -149,7 +149,7 @@ getRowColor(index) {
       row.setAttribute('backgroundColour', this.getRowColor(index));
       row.setAttribute('padding', '15px 20px');
       row.setAttribute('borderRadius', '5px');
-  
+      row.setAttribute('style', 'margin-bottom: 1rem;');
       
       row.innerHTML = `
         <section class="rank">${index + 1}</section>
