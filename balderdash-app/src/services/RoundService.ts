@@ -5,9 +5,8 @@ import { Round } from '../types/Round';
 import { RoundDefinition } from '../types/RoundDefinition';
 import { RoundState } from '../types/RoundState';
 import { shuffleArray } from '../utils/shuffleArray';
-import { checkRoundState } from '../utils/test';
+import { checkRoundState } from '../utils/checkRoundState';
 import { GameService } from './GameService';
-import { UserService } from './UserService';
 import { WordService } from './WordService';
 import { Request } from 'express';
 

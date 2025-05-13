@@ -42,7 +42,7 @@ app.use(express.static(path.join(__dirname, '../public')));
 app.use('/api', roundRoutes);
 
 app.get('/sign-in', (req: Request, res: Response) => {
-  res.sendFile(path.join(__dirname, '../public/index.html'));
+    res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
 //ensure every other route other than sign-in is authed
@@ -53,3 +53,5 @@ app.get(/^(?!\/sign-in).*/, auth, (req: Request, res: Response) => {
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
 });
+
+export { app };
