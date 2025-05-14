@@ -144,10 +144,8 @@ jobs:
           EC2_HOST=${{ needs.terraform.outputs.ec2host }}
 
           ssh -o StrictHostKeyChecking=no -i privatekey.pem "ubuntu@$EC2_HOST" '
-            sudo apt-get install -y nginx &&
-            
             # Create the NGINX configuration file
-            sudo bash -c "cat > /etc/nginx/sites-available/default"
+            sudo bash -c "cat > /etc/nginx/sites-available/default" <<EOF
             server {
                 listen 80;
                 server_name *.amazonaws.com;
@@ -172,7 +170,8 @@ jobs:
                     proxy_set_header X-Real-IP \$remote_addr;
                 }
             }
-          '
+            EOF
+            '
       - name: Test and run nginx
         run: |
           sudo nginx -t &&
