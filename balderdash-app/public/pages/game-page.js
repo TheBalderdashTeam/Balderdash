@@ -1,29 +1,41 @@
-import { PrimaryButton } from '../components/primary-button.js';
-import { SecondaryButton } from '../components/secondary-button.js';
-import { VerticalContainerH } from '../components/vertical-container-h.js';
-import { BaseInput } from '../components/base-input.js';
+import { 
+  PrimaryButton,
+  SecondaryButton,
+  VerticalContainerH,
+  HorizontalContainerV,
+  BaseInput,
+  Timer,
+} from '../components/index.js';
 import { router } from '../router/index.js';
 import { apiFetch } from '../js/apiClient.js';
+import { pageStyles } from '../js/styles.js';
 
 export class GamePage extends HTMLElement {
 
   constructor(){
     super();
     this.shadow = this.attachShadow({ mode: 'open' });
-    this.routeData = null;
+    this.roundData = null;
+    this.roundWord = '';
   }
 
   connectedCallback() {
     this.render();
-    this.updateContent();
 
-    const startGameButton = this.shadowRoot.querySelector('#start-game-button');
+    this.init();
+
+    const startGameButton = this.shadow.querySelector('#start-game-button');
 
     if (startGameButton) {
       startGameButton.addEventListener('click', () => {
         this.handleNextRoundClick();
       });
     }
+  }
+
+  async init() {
+    await this.fetchRoundData();
+    this.updateContent();
   }
 
   render() {
@@ -36,29 +48,77 @@ export class GamePage extends HTMLElement {
           position: relative; 
         }
 
-        .game-page {
-          width: 100%;
-          display: flex;
-          flex: 1;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          padding: 8px;
-          box-sizing: border-box;
+        p {
+          margin: 0;
+          text-align: center;
+          word-wrap: break-word;
         }
+          
+        .word {
+          font-size: clamp(1.5rem, 5vw, 2rem);
+          font-weight: bold;
+          width: 100%;
+          text-align: center;
+          margin: 0 0 16px;
+        }
+
+        .options-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            padding: 0px;
+            justify-content: space-evenly;
+            flex-direction: row;
+        }
+
+        .option {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 1rem;
+            text-align: center;
+            font-size: 12px;
+            color: black;
+            background-color: rgba(255, 255, 255, 0.8);
+            cursor: pointer;
+            transition: background-color 0.2s;
+            min-height: 80px; 
+            min-width: 180px;
+            display: flex;
+            flex: 1;
+            justify-content: center;
+            align-items: center;
+            word-wrap: break-word;
+        }
+
+        .word-time {
+          position: sticky;
+          top: 0;
+        }
+
+        .option:hover {
+            background-color: #f5f5f5;
+        }
+
+        .game-page ${pageStyles}
+
       </style>
-      <section class="home-page">
-        <vertical-container-h 
-          backgroundColour="254, 254, 254"
-          padding="16px"
+
+      <section class="game-page">
+        <vertical-container-h class="word-time"
+          backgroundColour="rgb(114, 118, 212);"
           borderRadius="10px"
-          maxWidth="482px">
-          <primary-button id="start-game-button">Start Game</primary-button>
-          <primary-button>Join Game</primary-button>
-          <primary-button>Score History</primary-button>
-          <secondary-button>Logout</secondary-button>
-          <base-input label="Email"></base-input>
+          maxWidth="100%"
+          padding="16px">
+            <p>Time left to choose a definition</p>
+            <progress-timer duration="30" running></progress-timer>
+            
+            <p class="word"></p>
+            <p>Select the correct definition below</p>
+
+          
         </vertical-container-h>
+
+        <ul class="options-container"></ul>
 
       </section>
     `;
@@ -84,29 +144,37 @@ export class GamePage extends HTMLElement {
 
   async fetchRoundData() {
 
-    const response = await apiFetch('rounds/games/1/current-round', {
-      method: "GET",
-    })
+    if (!this.roundData) {
 
-    if (!response) {
-      return {}
+      const roundData = await apiFetch('games/current-round', {
+        method: "GET",
+      });
+      
+      if (!roundData) {
+        return
+      }
+      
+      this.roundData = roundData;
     }
 
-    const data = await response.json();
-
-    return data;
+    this.roundWord = this.roundData.word.word;
   }
 
   updateContent() {
     // Select the data display area
-    const dataDisplay = this.shadowRoot.querySelector('.data-display');
-     if (dataDisplay) {
-        // Display data if available
-        if (this.routeData) {
-          dataDisplay.textContent = `Received Data: ${JSON.stringify(this.routeData)}`;
-        } else {
-          dataDisplay.textContent = 'No data received yet.';
-        }
+    this.shadow.querySelector('.word').textContent = this.roundData.word.word;
+    if (Array.isArray(this.roundData?.definitions)) {
+      const optionsContainer = this.shadow.querySelector('.options-container');
+      this.roundData.definitions.forEach((def, _) => {
+
+        const definition = document.createElement('li');
+        definition.className = 'option';
+        definition.id = def.id;
+        definition.className = 'option';
+        definition.innerHTML = `<p>A fictional or humorous term describing the peculiar state of being simultaneously confused, mildly annoyed, and oddly amused by an overly complicated situation involving unnecessary details or baffling instructions. Often used when encountering bureaucracy, unclear user manuals, or a sudden shift in social expectations. Not a clinical term, but commonly felt during tech support calls, assembling IKEA furniture, or navigating complex return policies after midnight.</p>`;
+        
+        optionsContainer.appendChild(definition);
+        });
     }
   }
 }

@@ -16,6 +16,21 @@ export class ErrorPage extends HTMLElement {
 
   connectedCallback() {
     this.render();
+
+    
+    this.shadowRoot.getElementById('dismissBtn').onclick = () => {
+      if (typeof this._onDismiss === 'function') {
+        this._onDismiss();
+      }
+    };
+
+    if (this.shadowRoot.getElementById('retryBtn')) {
+      this.shadowRoot.getElementById('retryBtn').onclick = () => {
+        if (typeof this._onRetry === 'function') {
+          this._onRetry();
+        }
+      };
+    }
   }
 
   set errorMessage(msg) {
@@ -51,22 +66,11 @@ export class ErrorPage extends HTMLElement {
         maxWidth="500px">
         <h2>Something went wrong</h2>
         <p>${this._message}</p>
-        <primary-button id="retryBtn">Retry</primary-button>
+        ${!!this._onRetry ? `<primary-button id="retryBtn">Retry</primary-button>` || '<primary-button id="retryBtn">Retry</primary-button>' : ''}
         <secondary-button id="dismissBtn">Dismiss</secondary-button>
       <vertical-container-h>
 
     `;
 
-    this.shadowRoot.getElementById('dismissBtn').onclick = () => {
-      if (typeof this._onDismiss === 'function') {
-        this._onDismiss();
-      }
-    };
-
-    this.shadowRoot.getElementById('retryBtn').onclick = () => {
-      if (typeof this._onRetry === 'function') {
-        this._onRetry();
-      }
-    };
   }
 }

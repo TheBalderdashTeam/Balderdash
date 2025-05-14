@@ -4,3 +4,4 @@ export * from './base-input.js';
 export * from './primary-button.js';
 export * from './secondary-button.js';
 export * from './loading-spinner.js';
+export * from './timer.js';

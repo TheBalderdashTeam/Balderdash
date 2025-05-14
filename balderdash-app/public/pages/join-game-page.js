@@ -6,6 +6,7 @@ import { HorizontalContainerV } from '../components/horizontal-container-v.js';
 import { router } from '../router/index.js';
 import { apiFetch } from '../js/apiClient.js';
 import { getItem } from '../js/storage.js';
+import { showErrorScreen } from '../js/helpers.js';
 
 
 export class JoinGamePage extends HTMLElement {
@@ -48,6 +49,11 @@ export class JoinGamePage extends HTMLElement {
           flex: 1;
           position: relative;  
         }
+
+        .input-container {
+          height: 100%;
+          width: 100%;
+        }
         
         .join-game-page ${pageStyles}
 
@@ -66,10 +72,12 @@ export class JoinGamePage extends HTMLElement {
           class="join-image"
         />
 
-        <base-input id="lobby-code"
-          label="Enter lobby code"
-          minLength="8"
-          maxLength="8"></base-input>
+        <section class="input-container">
+          <base-input id="lobby-code"
+            label="Enter lobby code"
+            minLength="8"
+            maxLength="8"></base-input>
+        </section>
 
         <primary-button id="join-game-button" disabled>Join Game</primary-button>
       </section>
@@ -98,9 +106,11 @@ export class JoinGamePage extends HTMLElement {
       if (success) {
         router.navigate('/lobby');
       }
-      console.log({success})
+      else {
+        showErrorScreen({
+          message: 'Invalid Lobby Code',
+        });
+      }
     }
-
-    console.log('Hello');
   }
 }

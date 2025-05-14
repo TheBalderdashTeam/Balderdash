@@ -18,7 +18,6 @@ class RouterService {
               e.preventDefault();
               const path = link.getAttribute('href');
               const state = {...link.dataset};
-              console.log({path, state})
               this.navigate(path, state);
           }
       });

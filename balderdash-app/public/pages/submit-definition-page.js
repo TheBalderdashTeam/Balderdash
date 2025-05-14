@@ -7,37 +7,42 @@ import {
   VerticalContainerH,
   HorizontalContainerV,
   BaseInput,
+  Timer,
 } from '../components/index.js';
+import { showErrorScreen } from '../js/helpers.js';
 
 export class SubmitDefinitionPage extends HTMLElement {
 
   constructor(){
     super();
     this.shadow = this.attachShadow({ mode: 'open' });
-    this.routeData = null;
+    this.roundData = null;
+    this.submitDefinitionButton = null;
   }
 
   connectedCallback() {
     this.render();
-    this.updateContent();
 
-    const startGameButton = this.shadowRoot.querySelector('#start-game-button');
+    this.submitDefinitionButton = this.shadow.querySelector('#submit-definition');
+    const timer = this.shadow.querySelector('#progress-timer');
 
-    startGameButton.addEventListener('click', () => {
-      this.onStartGameClick();
+    timer.addEventListener('timer-end', (event) => {
+      this.submitDefinition();
     });
 
-    joinGameButton.addEventListener('click', () => {
-      this.onJoinGameClick();
+    this.submitDefinitionButton.addEventListener('click', (_) => {
+      timer.removeAttribute('running');
+      this.submitDefinition();
     });
 
-    leaderboardButton.addEventListener('click', () => {
-      this.onLeaderboardClick();
-    });
+    if (!this.roundData) {
+      this.fetchRoundData();
+    }
 
-    logoutButton.addEventListener('click', () => {
-      this.onLogoutClick();
-    });
+  }
+
+  disconnectedCallback() {
+    this.stopPollingForRoundStart();
   }
 
   render() {
@@ -70,16 +75,21 @@ export class SubmitDefinitionPage extends HTMLElement {
           margin-top: 0.5rem;
         }
 
+        .word-container {
+          height: 100%;
+          width: 100%;
+          align-content: center;
+        }
+
         .word {
           font-size: 25px;
           font-weight: bold;
           word-wrap: break-word;
+          width: 100%;
         }
 
         p {
-          white-space: pre-wrap; 
           text-align: center;
-          overflow: hidden;
         }
 
         .submit-definition-page ${pageStyles}
@@ -87,86 +97,78 @@ export class SubmitDefinitionPage extends HTMLElement {
       </style>
 
       <section class="submit-definition-page">
-        <vertical-container-h noShadow 
-          hostHeight="auto"
-          justifyContent="flex-start"
-          >
+        
 
           <p>Time left to submit a definition</p>
 
-          <horizontal-container-v
-            minHeight="10px"
-            backgroundColour="white"
-            justifyContent="flex-start">
+          <progress-timer id="progress-timer" duration="120" running></progress-timer>
 
-            <section class="progress"></section>
+          <section class="word-container">
 
-          </horizontal-container-v>
-
-          <section class="time">02:00</section>
-        </vertical-container-h>
-
-        <vertical-container-h
-          noShadow
-          hostHeight="100%">
-
-          <p class="word">Supercalifragilisticexpialidocious</p>
+            <p class="word"></p>
       
-          <base-input id="definition" label="Type out a fake definition"></base-input>
-        </vertical-container-h>
+            <base-input id="definition" label="Type out a fake definition"></base-input>
+            <p id="success-message"></p>
+          </section>
 
-        <vertical-container-h noShadow 
-          hostHeight="auto"
-          justifyContent= "flex-end"
-          >
-          
-          <primary-button>Submit</primary-button>
-        </vertical-container-h>
+          <primary-button id="submit-definition">
+            Submit
+          </primary-button>
       </section>
     `;
   }
 
-  async onJoinGameClick() {
-    router.navigate('/join-game');
-  }
+  startPollingForRoundStart() {
+    this.pollingInterval = setInterval(async () => {
+        const roundData = await apiFetch('games/current-round', {
+          method: 'GET',
+        }, null, false);
 
-  async onLogoutClick() {
-    await logoutUser();
-  }
+        if (roundData) {
+            if (roundData.roundStatus === 'Scoring') {
+                this.stopPollingForRoundStart();
+                router.navigate('/game', { roundData: roundData });
+            }
+        }
+    }, 3000);
+}
 
-  async onLeaderboardClick() {
-    router.navigate('/leaderboard');
-  }
+stopPollingForRoundStart() {
+    if (this.pollingInterval) {
+        clearInterval(this.pollingInterval);
+        this.pollingInterval = null;
+    }
+}
 
-  async onStartGameClick() {
-    router.navigate('/game-settings');
-    // router.navigate('/lobby');
-  }
+async fetchRoundData() {
 
-  async fetchGameData() {
-
-    const data = await apiFetch('games/1', {
-      method: "GET",
+  const roundData = await apiFetch('games/current-round', {
+      method: 'GET',
     });
 
-    if (!data) {
-      return {};
+    this.shadow.querySelector(".word").textContent = roundData.word.word;
+}
+
+  async submitDefinition() {
+    const definition = this.shadow.querySelector("#definition")?.value || '';
+    const data = await apiFetch('games/definitions', {
+      method: "POST",
+    }, {
+      definition,
+    });
+
+    if (!data?.id) {
+      showErrorScreen({
+        onRetry: this.submitDefinition,
+        message: "Failed to submit definition",
+      });
     }
 
-    console.log({data});
-    return data;
-  }
-
-  updateContent() {
-    // Select the data display area
-    const dataDisplay = this.shadowRoot.querySelector('.data-display');
-     if (dataDisplay) {
-        // Display data if available
-        if (this.routeData) {
-          dataDisplay.textContent = `Received Data: ${JSON.stringify(this.routeData)}`;
-        } else {
-          dataDisplay.textContent = 'No data received yet.';
-        }
+    else {
+      const successMessage = this.shadow.querySelector("#success-message");
+      this.submitDefinitionButton.setAttribute('disabled', true); 
+      successMessage.textContent = "Great!, your definition was sumbitted, please wait for the other players to submit their definitions";
+      this.startPollingForRoundStart();
     }
   }
 }
