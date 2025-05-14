@@ -84,8 +84,8 @@ export class GameRepository {
     ): Promise<boolean> {
         const [result] = await sql`
       INSERT INTO public.game_players(
-	game_id, user_id, score)
-	VALUES (${gameId}, ${playerId}, ${0});
+	game_id, user_id, score, active)
+	VALUES (${gameId}, ${playerId}, ${0}, true);
     `;
 
         if (!result) return false;
@@ -139,12 +139,26 @@ export class GameRepository {
         }));
     }
 
+    static async setGamePlayerActive(
+        gameId: number,
+        user_id: number,
+        active: boolean
+    ) {
+        const rows = await sql`
+      UPDATE game_players
+      SET active = ${active}
+      WHERE game_id = ${gameId} AND user_id = ${user_id} 
+      RETURNING active;
+    `;
+        return rows.length > 0;
+    }
+
     static async getGameByUser(userId: number): Promise<Game | null> {
         const [gameRow] = await sql`
           SELECT games.id, games.host_user_id, games.number_rounds, games.time_limit_seconds, games.lobby_code, games.started_at, games.ended_at, games.game_status_id 
           FROM games 
           JOIN game_players ON games.id = game_players.game_id
-          WHERE game_players.user_id = ${userId}
+          WHERE game_players.user_id = ${userId} AND game_players.active = '1'
           ORDER BY games.started_at DESC
           LIMIT 1;
         `;

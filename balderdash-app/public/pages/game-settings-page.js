@@ -10,6 +10,7 @@ export class GameSettingsPage extends HTMLElement {
     }
     connectedCallback() {
         this.render();
+        this.getGameInfo();
 
         const createGameButton = this.shadowRoot.querySelector(
             '#create-game-button'
@@ -81,6 +82,25 @@ export class GameSettingsPage extends HTMLElement {
         </primary-button>
     </section>
     `;
+    }
+
+    async getGameInfo() {
+        const gameData = await apiFetch(
+            'games',
+            {
+                method: 'GET',
+            },
+            null,
+            true,
+            false
+        );
+
+        console.log({ gameData });
+        if (gameData) {
+            router.navigate('/rejoin-game', {
+                sourceUrl: '/game-settings',
+            });
+        }
     }
 
     async createGame(round, seconds) {

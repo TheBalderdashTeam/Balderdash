@@ -105,7 +105,7 @@ export class LobbyPage extends HTMLElement {
             if (gameData) {
                 if (gameData.status === 'Active') {
                     this.stopPollingForPlayers();
-                    router.navigate('/game', data);
+                    router.navigate('/submit-definition', data);
                 }
             }
         }, 3000);
