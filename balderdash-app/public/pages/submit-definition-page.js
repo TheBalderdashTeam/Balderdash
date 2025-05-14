@@ -87,9 +87,10 @@ export class SubmitDefinitionPage extends HTMLElement {
       </style>
 
       <section class="submit-definition-page">
-        <vertical-container-h
+        <vertical-container-h noShadow 
           hostHeight="auto"
-          justifyContent="flex-start">
+          justifyContent="flex-start"
+          >
 
           <p>Time left to submit a definition</p>
 
@@ -106,6 +107,7 @@ export class SubmitDefinitionPage extends HTMLElement {
         </vertical-container-h>
 
         <vertical-container-h
+          noShadow
           hostHeight="100%">
 
           <p class="word">Supercalifragilisticexpialidocious</p>
@@ -113,9 +115,10 @@ export class SubmitDefinitionPage extends HTMLElement {
           <base-input id="definition" label="Type out a fake definition"></base-input>
         </vertical-container-h>
 
-        <vertical-container-h
+        <vertical-container-h noShadow 
           hostHeight="auto"
-          justifyContent= "flex-end">
+          justifyContent= "flex-end"
+          >
           
           <primary-button>Submit</primary-button>
         </vertical-container-h>
