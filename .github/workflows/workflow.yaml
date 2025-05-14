@@ -172,8 +172,7 @@ jobs:
                     proxy_set_header X-Real-IP \$remote_addr;
                 }
             }
-            EOCONF
-            EOF
+          '
       - name: Test and run nginx
         run: |
           sudo nginx -t &&
