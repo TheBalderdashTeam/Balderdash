@@ -174,12 +174,11 @@ jobs:
             }
             EOF
           '
-
-          ssh -o StrictHostKeyChecking=no -i privatekey.pem "ubuntu@$EC2_HOST" '
-            sudo nginx -t &&
-            sudo systemctl enable nginx &&
-            sudo systemctl restart nginx
-            '
+      - name: Test and run nginx
+        run: |
+          sudo nginx -t &&
+          sudo systemctl enable nginx &&
+          sudo systemctl restart nginx
 
   flyway:
     needs:
