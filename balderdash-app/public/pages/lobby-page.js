@@ -15,12 +15,12 @@ export class LobbyPage extends HTMLElement {
 
     async connectedCallback() {
         this.render();
-        this.startPollingForPlayers();
+        this.startPollingForGameStart();
         this.getGameInfo();
     }
 
     disconnectedCallback() {
-        this.stopPollingForPlayers();
+        this.stopPollingForGameStart();
     }
 
     render() {
@@ -86,12 +86,12 @@ export class LobbyPage extends HTMLElement {
 
         //Check game state to see if the player is on the correct page
         if (gameData.game.hostUserId === userData.id) {
-            this.stopPollingForPlayers();
+            this.startPollingForGameStart();
             router.navigate('/host-lobby');
         }
     }
 
-    startPollingForPlayers() {
+    startPollingForGameStart() {
         this.pollingInterval = setInterval(async () => {
             const gameData = await apiFetch(
                 'games',
@@ -104,14 +104,14 @@ export class LobbyPage extends HTMLElement {
 
             if (gameData) {
                 if (gameData.status === 'Active') {
-                    this.stopPollingForPlayers();
-                    router.navigate('/submit-definition', data);
+                    this.stopPollingForGameStart();
+                    router.navigate('/submit-definition', { game: gameData });
                 }
             }
         }, 3000);
     }
 
-    stopPollingForPlayers() {
+    stopPollingForGameStart() {
         if (this.pollingInterval) {
             clearInterval(this.pollingInterval);
             this.pollingInterval = null;

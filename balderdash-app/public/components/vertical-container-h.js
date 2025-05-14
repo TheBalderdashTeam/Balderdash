@@ -1,5 +1,6 @@
 import { BaseContainer } from "./base-container.js";
 import { hexToRgba } from "../js/helpers.js";
+
 /** 
  * The VerticalContainerH class extends BaseContainer and sets the flex-direction to column with center
  * alignment for both justify-content and align-items.

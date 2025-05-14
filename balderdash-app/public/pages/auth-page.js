@@ -15,7 +15,7 @@ export class AuthPage extends HTMLElement {
   connectedCallback() {
     this.render();
 
-    const loginButton = this.shadowRoot.querySelector('#google-login-button');
+    const loginButton = this.shadow.querySelector('#google-login-button');
     if (loginButton) {
       loginButton.addEventListener('click', () => {
         this.handleGoogleLogin();

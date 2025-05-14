@@ -10,31 +10,31 @@ export async function logoutUser() {
 }
 
 export async function apiFetch(
-    endpoint,
-    options = {},
-    body,
-    showSpinner = true,
-    errorOnFail = true
+  endpoint,
+  options = {},
+  body,
+  showSpinner = true,
+  errorOnFail = true
 ) {
-    const headers = new Headers(options.headers || {});
-    headers.set('Content-Type', 'application/json');
+  const headers = new Headers(options.headers || {});
+  headers.set('Content-Type', 'application/json');
 
-    const loadingSpinner = document.querySelector('#loading-spinner');
+  const loadingSpinner = document.querySelector('#loading-spinner');
 
-    if (showSpinner) {
-        loadingSpinner?.show?.();
-    }
+  if (showSpinner) {
+      loadingSpinner?.show?.();
+  }
 
-    try {
-        const response = await fetch(`${API_BASE_URL}/${endpoint}`, {
-            ...options,
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json',
-                ...(options.headers || {}),
-            },
-            body: body ? JSON.stringify(body) : undefined,
-        });
+  try {
+      const response = await fetch(`${API_BASE_URL}/${endpoint}`, {
+          ...options,
+          credentials: 'include',
+          headers: {
+              'Content-Type': 'application/json',
+              ...(options.headers || {}),
+          },
+          body: body ? JSON.stringify(body) : undefined,
+      });
 
         if (response.status === 401) {
             console.warn('401 Unauthorized — logging out');
@@ -57,7 +57,6 @@ export async function apiFetch(
         return await response.json();
     } catch (error) {
         if (errorOnFail) {
-            console.log({ error });
             showErrorScreen({
                 message: error.message || 'API request failed',
                 onRetry: () => apiFetch(endpoint, options),
