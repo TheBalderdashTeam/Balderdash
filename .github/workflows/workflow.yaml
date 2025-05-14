@@ -173,15 +173,13 @@ jobs:
                 }
             }
             EOF
+          '
 
-            # Ensure SSL directory exists (optional if already provisioned)
-            sudo mkdir -p /etc/nginx/ssl
-
-            # Test and restart Nginx
+          ssh -o StrictHostKeyChecking=no -i privatekey.pem "ubuntu@$EC2_HOST" '
             sudo nginx -t &&
             sudo systemctl enable nginx &&
             sudo systemctl restart nginx
-          '
+            '
 
   flyway:
     needs:
