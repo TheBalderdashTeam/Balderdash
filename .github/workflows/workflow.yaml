@@ -147,7 +147,7 @@ jobs:
             sudo apt-get install -y nginx &&
             
             # Create the NGINX configuration file
-            sudo bash -c "cat > /etc/nginx/sites-available/default" <<EOF
+            sudo bash -c "cat > /etc/nginx/sites-available/default"
             server {
                 listen 80;
                 server_name *.amazonaws.com;
