@@ -183,7 +183,6 @@ jobs:
             sudo systemctl restart nginx
           '
 
-
   flyway:
     needs:
       - terraform
