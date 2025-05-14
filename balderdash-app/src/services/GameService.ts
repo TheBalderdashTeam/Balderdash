@@ -101,7 +101,7 @@ export class GameService {
     static async getGameFromGoogleUser(
         googleUser: GooglePayload | undefined
     ): Promise<Game | null> {
-        if (googleUser == undefined) return null;
+        if (googleUser == undefined || googleUser == null) return null;
 
         const user = await UserService.getUserByGoogleId(googleUser.sub);
 

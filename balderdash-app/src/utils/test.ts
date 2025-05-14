@@ -21,7 +21,6 @@ export const checkRoundState = async (roundId: number) => {
     const definitionCount = definitions.definitions.length;
 
     if (definitionCount >= playerCount) {
-        RoundService.updateRoundState(roundId, RoundState.Scoring);
-        RoundService.endRoundAndCalculateScores(game.id);
+        RoundService.updateRoundState(roundId, RoundState.Voting);
     }
 };

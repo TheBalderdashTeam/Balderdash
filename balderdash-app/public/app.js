@@ -12,6 +12,7 @@ import {
     GamePage,
 } from './pages/index.js';
 import { HostLobbyPage } from './pages/host-lobby.js';
+import { ReJoinGamePage } from './pages/rejoin-game-page.js';
 
 // Register Web Components
 customElements.define('home-page', HomePage);
@@ -20,15 +21,16 @@ customElements.define('ranking-page', RankingPage);
 customElements.define('lobby-page', LobbyPage);
 customElements.define('host-lobby-page', HostLobbyPage);
 customElements.define('join-game-page', JoinGamePage);
+customElements.define('rejoin-game-page', ReJoinGamePage);
 customElements.define('error-page', ErrorPage);
 customElements.define('game-settings-page', GameSettingsPage);
 customElements.define('submit-definition-page', SubmitDefinitionPage);
 
 // Configure Routes
 router.addRoute('home', () => {
-  const homePage = new HomePage();
+    const homePage = new HomePage();
 
-  document.querySelector('#app').appendChild(homePage);
+    document.querySelector('#app').appendChild(homePage);
 });
 
 router.addRoute('sign-in', () => {
@@ -72,6 +74,11 @@ router.addRoute('submit-definition', () => {
 router.addRoute('join-game', () => {
     const joinGamePage = new JoinGamePage();
     document.querySelector('#app').appendChild(joinGamePage);
+});
+
+router.addRoute('rejoin-game', () => {
+    const reJoinGamePage = new ReJoinGamePage();
+    document.querySelector('#app').appendChild(reJoinGamePage);
 });
 
 // Initialize router
