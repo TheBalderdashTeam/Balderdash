@@ -5,6 +5,7 @@ import { GameService } from '../services/GameService';
 import { UserService } from '../services/UserService';
 import { handleFailure, handleSuccess } from '../utils/handleResponses';
 import { RoundState } from '../types/RoundState';
+import { readSync } from 'fs';
 
 export class RoundController {
     static async getCurrentRound(req: Request, res: Response): Promise<void> {
@@ -50,6 +51,17 @@ export class RoundController {
                 currentRound,
                 RoundState.Scoring
             );
+
+             const game = await GameService.getPlayerGame(req);
+
+            if (!game) res.status(500).json({ message: 'Failed to end current round' });
+
+            const roundResults = await RoundService.endRoundAndCalculateScores(
+                game?.id ?? 0
+            );
+
+            handleSuccess(res, roundResults);
+
         } catch (err) {
             handleFailure(res, err, 'Failed to end round');
         }
