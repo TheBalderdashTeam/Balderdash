@@ -15,8 +15,6 @@ export class UserController {
                 googleUser?.sub ?? ''
             );
 
-            // console.log(user);
-
             handleSuccess(response, user);
         } catch (error) {
             handleFailure(response, error, 'Error fetching user');

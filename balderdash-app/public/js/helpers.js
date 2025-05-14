@@ -1,5 +1,4 @@
 import { ErrorPage } from '../pages/index.js';
-import { router } from '../router/index.js';
 
 export function hexToRgba(color, alpha = 1) {
   // Return as-is if already in rgba format
@@ -30,18 +29,13 @@ let previousContent = null;
 export function showErrorScreen({
   message = 'An unexpected error occurred.',
   onRetry = null,
-  containerSelector = '#app'
-  
+  containerSelector = '#app',
+  onDismiss = null,
 } = {}) {
   const container = document.querySelector(containerSelector);
+  
   if (!container) return;
-  console.log(container)
-  // Save current content so it can be restored
-  if (!container.querySelector('error-page')) {
-    console.log(true)
-    previousContent = container.innerHTML;
-  }
-  // Clear and insert error screen
+
   container.innerHTML = '';
 
   const errorPage = new ErrorPage();
@@ -50,7 +44,10 @@ export function showErrorScreen({
   if (onRetry) errorPage.onRetry = onRetry;
 
   errorPage.onDismiss = () => {
-    router.navigate('/home');
+    if (typeof onDismiss !== 'function') {
+      location.href = location.href;
+    }
+    onDismiss();
   };
 
   container.appendChild(errorPage);

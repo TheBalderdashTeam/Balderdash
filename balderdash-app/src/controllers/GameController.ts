@@ -149,6 +149,43 @@ export class GameController {
         }
     }
 
+    static async leaveGame(req: Request, res: Response): Promise<any> {
+        try {
+            const game = await GameService.getPlayerGame(req);
+
+            const googleUser = req.user;
+
+            if (!googleUser || googleUser == undefined)
+                res.status(404).json({ message: 'Invalid token' });
+
+            const user = (await UserService.getUserByGoogleId(
+                googleUser?.sub ?? ''
+            )) as { id: number } | null;
+
+            if (!user) {
+                res.status(404).json({ message: 'Invalid token' });
+            }
+
+            if (!game)
+                return res
+                    .status(404)
+                    .json({ message: 'Could not find users current game' });
+
+            const result = await GameService.removePlayerFromGame(
+                user?.id ?? 0,
+                game.id
+            );
+
+            return res.status(200).json({
+                message: result,
+            });
+
+            //handleSuccess(res, result);
+        } catch (error) {
+            handleFailure(res, error, 'Failed to remove player from game');
+        }
+    }
+
     static async getPlayerGame(req: Request, res: Response): Promise<any> {
         try {
             const game = await GameService.getPlayerGame(req);

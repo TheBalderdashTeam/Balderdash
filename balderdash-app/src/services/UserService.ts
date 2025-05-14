@@ -1,3 +1,4 @@
+import { GameRepository } from '../repositories/GameRepository';
 import { UserRepository } from '../repositories/UserRepository';
 import { GooglePayload } from '../types/GoolePayload';
 import { User } from '../types/User';
@@ -31,12 +32,11 @@ export class UserService {
         return await UserRepository.getUserByGoogleId(googleId);
     }
 
-    
     static async getAllPlayersInGame(gameId: number): Promise<User[] | null> {
-    try {
-        return await UserRepository.getPlayersGameById(gameId);
-    } catch {
-        return null;
+        try {
+            return await UserRepository.getPlayersGameById(gameId);
+        } catch {
+            return null;
+        }
     }
-}
 }

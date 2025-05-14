@@ -10,8 +10,9 @@ import {
     GameSettingsPage,
     SubmitDefinitionPage,
     GamePage,
+    HostLobbyPage,
+    ReJoinGamePage,
 } from './pages/index.js';
-import { HostLobbyPage } from './pages/host-lobby.js';
 
 // Register Web Components
 customElements.define('home-page', HomePage);
@@ -20,15 +21,24 @@ customElements.define('ranking-page', RankingPage);
 customElements.define('lobby-page', LobbyPage);
 customElements.define('host-lobby-page', HostLobbyPage);
 customElements.define('join-game-page', JoinGamePage);
+customElements.define('rejoin-game-page', ReJoinGamePage);
 customElements.define('error-page', ErrorPage);
 customElements.define('game-settings-page', GameSettingsPage);
 customElements.define('submit-definition-page', SubmitDefinitionPage);
-
+customElements.define('game-page', GamePage);
 // Configure Routes
 router.addRoute('home', () => {
-  const homePage = new HomePage();
+    const homePage = new HomePage();
 
-  document.querySelector('#app').appendChild(homePage);
+    document.querySelector('#app').appendChild(homePage);
+});
+
+router.addRoute('game', (data) => {
+  const gamePage = new GamePage();
+
+  gamePage.roundData = data.roundData;
+
+  document.querySelector('#app').appendChild(gamePage);
 });
 
 router.addRoute('sign-in', () => {
@@ -64,14 +74,22 @@ router.addRoute('lobby', () => {
     document.querySelector('#app').appendChild(lobbyPage);
 });
 
-router.addRoute('submit-definition', () => {
+router.addRoute('submit-definition', (data) => {
     const submitDefinition = new SubmitDefinitionPage();
+    submitDefinition.gameData = data?.game;
     document.querySelector('#app').appendChild(submitDefinition);
 });
 
 router.addRoute('join-game', () => {
     const joinGamePage = new JoinGamePage();
     document.querySelector('#app').appendChild(joinGamePage);
+});
+
+router.addRoute('rejoin-game', (data) => {
+    const reJoinGamePage = new ReJoinGamePage();
+    reJoinGamePage.sourceUrl = data.sourceUrl;
+
+    document.querySelector('#app').appendChild(reJoinGamePage);
 });
 
 // Initialize router

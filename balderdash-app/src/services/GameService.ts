@@ -101,7 +101,7 @@ export class GameService {
     static async getGameFromGoogleUser(
         googleUser: GooglePayload | undefined
     ): Promise<Game | null> {
-        if (googleUser == undefined) return null;
+        if (googleUser == undefined || googleUser == null) return null;
 
         const user = await UserService.getUserByGoogleId(googleUser.sub);
 
@@ -126,6 +126,23 @@ export class GameService {
         } catch (error) {
             console.error(error);
             return null;
+        }
+    }
+
+    static async removePlayerFromGame(
+        userId: number,
+        gameId: number
+    ): Promise<string> {
+        const result = await GameRepository.setGamePlayerActive(
+            gameId,
+            userId,
+            false
+        );
+
+        if (result) {
+            return 'Player removed from game';
+        } else {
+            return 'Failed to remove player from game';
         }
     }
 

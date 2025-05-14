@@ -15,10 +15,9 @@ export class HostLobbyPage extends HTMLElement {
         this.lobbyCode = '';
     }
 
-    connectedCallback() {
+    async connectedCallback() {
+        await this.getGameInfo();
         this.render();
-
-        this.getGameInfo();
         this.startPollingForPlayers();
     }
 
@@ -124,7 +123,6 @@ export class HostLobbyPage extends HTMLElement {
         }
 
         .footer {
-            background-color: #ddd;
             width: 100%;
             padding: 1.5rem;
             text-align: center;
