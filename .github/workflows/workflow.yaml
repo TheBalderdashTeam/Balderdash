@@ -146,42 +146,41 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i privatekey.pem "ubuntu@$EC2_HOST" '
             sudo apt-get install -y nginx &&
             
-            # Write the NGINX config with sudo and tee
-            echo "server {" | sudo tee  > /dev/null &&
-            echo "  listen 80;" | sudo tee -a  > /dev/null &&
-            echo "  server_name *.amazonaws.com;" | sudo tee -a  > /dev/null &&
-            echo "  location / {" | sudo tee -a  > /dev/null &&
-            echo "    proxy_pass http://localhost:8080;" | sudo tee -a  > /dev/null &&
-            echo "    proxy_set_header Host \$host;" | sudo tee -a  > /dev/null &&
-            echo "    proxy_set_header X-Real-IP \$remote_addr;" | sudo tee -a  > /dev/null &&
-            echo "  }" | sudo tee -a  > /dev/null &&
-            echo "}" | sudo tee -a  > /dev/null &&
-            
-            # Test and restart nginx
+            # Create the NGINX configuration file
+            sudo bash -c "cat > /etc/nginx/sites-available/default" <<EOF
+            server {
+                listen 80;
+                server_name *.amazonaws.com;
+
+                location / {
+                    proxy_pass http://localhost:8080;
+                    proxy_set_header Host \$host;
+                    proxy_set_header X-Real-IP \$remote_addr;
+                }
+            }
+
+            server {
+                listen 443 ssl;
+                server_name *.amazonaws.com;
+
+                ssl_certificate /etc/nginx/ssl/certificate.crt;
+                ssl_certificate_key /etc/nginx/ssl/privatessl.key;
+
+                location / {
+                    proxy_pass http://localhost:8080;
+                    proxy_set_header Host \$host;
+                    proxy_set_header X-Real-IP \$remote_addr;
+                }
+            }
+            EOF
+
+            # Ensure SSL directory exists (optional if already provisioned)
+            sudo mkdir -p /etc/nginx/ssl
+
+            # Test and restart Nginx
             sudo nginx -t &&
             sudo systemctl enable nginx &&
             sudo systemctl restart nginx
-          '
-
-
-      - name: Deploy
-        run: |
-          EC2_HOST=${{ needs.terraform.outputs.ec2host }}
-          scp -o StrictHostKeyChecking=no -i privatekey.pem ./balderdash-build.zip "ubuntu@$EC2_HOST:balderdash-build.zip"
-          
-          ssh -o StrictHostKeyChecking=no -i privatekey.pem "ubuntu@$EC2_HOST" ' 
-            unzip -o balderdash-build.zip &&
-
-            npm install &&
-            
-            # Stop and delete existing pm2 process if it exists
-            if pm2 list | grep -q "balderdash-app"; then
-              pm2 delete balderdash-app;
-            fi &&
-            
-            mv .env dist/ &&
-            cd dist &&
-            pm2 start index.js --name balderdash-app
           '
 
 
