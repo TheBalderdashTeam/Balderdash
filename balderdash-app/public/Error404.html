@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error 404 - Page Not Found</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        
+        body {
+            background-color: #3949ab;
+            color: white;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+        }
+        
+      
+       h1 {
+    font-size: 150%; 
+    margin-bottom: 10%; 
+}
+
+.message {
+    margin-bottom: 6.7%;
+    line-height: 1.6;
+}
+
+.highlight {
+    font-weight: bold;
+    display: inline;
+}
+
+.normal {
+    display: inline;
+}
+
+.word-play {
+    position: relative;
+    height: 15%; /* Assuming relative to container height */
+    margin: 6.7% 0;
+}
+
+.age {
+    font-size: 450%; /* 72px if base is 16px */
+    font-weight: bold;
+    color: white;
+}
+
+.p-letter {
+    position: absolute;
+    right: 2.5%; /* 20px of 800px container approx */
+    top: 0;
+    font-size: 450%;
+    font-weight: bold;
+    color: #64b5f6;
+}
+
+
+        
+        .home-link {
+            display: inline-block;
+            margin-top: 3.33%;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 1.67% 3.33%;
+            border: 2px solid white;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        
+        .home-link:hover {
+            background-color: white;
+            color: #3949ab;
+        }
+    </style>
+</head>
+<body>
+    <section class="container">
+        <h1>Error 404</h1>
+        
+        <section class="message">
+            <p class="normal">Uh-oh! The letter <p class="highlight">"p"</p> lost its <p class="highlight">age</p>.</p>
+            <p class="normal">Looks like it wandered off and left the <p class="highlight">"page"</p> behind. Let's help it find its way home.</p>
+        </section>
+        
+        <section class="word-play">
+            <section class="age">age</section>
+            <section class="p-letter">P</section>
+        </section>
+        
+        <a href="/" class="home-link">Go back home</a>
+    </section>
+</body>
+</html>
