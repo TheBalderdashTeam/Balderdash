@@ -125,7 +125,7 @@ export class SubmitDefinitionPage extends HTMLElement {
         }, null, false);
 
         if (roundData) {
-            if (roundData.roundStatus === 'Scoring') {
+            if (roundData.roundStatus === 'Voting') {
                 this.stopPollingForRoundStart();
                 router.navigate('/game', { roundData: roundData });
             }
