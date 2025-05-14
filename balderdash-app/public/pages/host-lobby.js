@@ -169,8 +169,18 @@ export class HostLobbyPage extends HTMLElement {
             method: 'GET',
         });
 
+        const userData = await apiFetch('user', {
+            method: 'GET',
+        });
+
         if (gameData) {
             this.lobbyCode = gameData.game.lobbyCode;
+        }
+
+        //Check game state to see if the player is on the correct page
+        if (gameData.game.hostUserId !== userData.id) {
+            this.stopPollingForPlayers();
+            router.navigate('/lobby');
         }
     }
 
@@ -183,6 +193,7 @@ export class HostLobbyPage extends HTMLElement {
             if (response || response.game) {
                 const data = await response.game;
 
+                this.stopPollingForPlayers();
                 router.navigate('/submit-definition', { game: data });
             } else {
                 console.warn('Failed to create game');
@@ -194,24 +205,28 @@ export class HostLobbyPage extends HTMLElement {
 
     startPollingForPlayers() {
         this.pollingInterval = setInterval(async () => {
-            const response = await apiFetch(
-                'user/all-players',
-                {
-                    method: 'GET',
-                },
-                null,
-                false
-            );
-
-            if (response) {
-                console.log(response.length);
-
-                if (this.waitingPlayers !== response.length) {
-                    this.waitingPlayers = response.length;
-                    this.render();
-                }
-            }
+            this.updatePlayerCount();
         }, 3000);
+    }
+
+    async updatePlayerCount() {
+        const response = await apiFetch(
+            'user/all-players',
+            {
+                method: 'GET',
+            },
+            null,
+            false
+        );
+
+        if (response) {
+            console.log(response.length);
+
+            if (this.waitingPlayers !== response.length) {
+                this.waitingPlayers = response.length;
+                this.render();
+            }
+        }
     }
 
     stopPollingForPlayers() {

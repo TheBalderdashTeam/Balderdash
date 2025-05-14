@@ -13,9 +13,10 @@ export class LobbyPage extends HTMLElement {
         this.pollingInterval = null;
     }
 
-    connectedCallback() {
+    async connectedCallback() {
         this.render();
         this.startPollingForPlayers();
+        this.getGameInfo();
     }
 
     disconnectedCallback() {
@@ -70,16 +71,38 @@ export class LobbyPage extends HTMLElement {
     `;
     }
 
+    async getGameInfo() {
+        const gameData = await apiFetch('games', {
+            method: 'GET',
+        });
+
+        const userData = await apiFetch('user', {
+            method: 'GET',
+        });
+
+        if (gameData) {
+            this.lobbyCode = gameData.game.lobbyCode;
+        }
+
+        //Check game state to see if the player is on the correct page
+        if (gameData.game.hostUserId === userData.id) {
+            this.stopPollingForPlayers();
+            router.navigate('/host-lobby');
+        }
+    }
+
     startPollingForPlayers() {
         this.pollingInterval = setInterval(async () => {
-            const gameData = await apiFetch('games', {
-                method: 'GET',
-            });
+            const gameData = await apiFetch(
+                'games',
+                {
+                    method: 'GET',
+                },
+                null,
+                false
+            );
 
             if (gameData) {
-                const data = await response.json();
-                console.log('Players:', data.players); // Update UI or store the data
-
                 if (gameData.status === 'Active') {
                     this.stopPollingForPlayers();
                     router.navigate('/game', data);
