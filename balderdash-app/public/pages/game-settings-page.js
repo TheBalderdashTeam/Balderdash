@@ -52,9 +52,20 @@ export class GameSettingsPage extends HTMLElement {
 
         .game-settings-page ${pageStyles}
 
+         .word-image {
+          display: block;
+          margin: 0 auto 5rem auto;
+          max-width: 15rem;
+        }
+
       </style>
 
       <section class="game-settings-page">
+      <img 
+          src="../images/word.png" 
+          alt="Word Card" 
+          class="word-image"
+        />
 
         <base-input 
           id="rounds" 

@@ -51,9 +51,20 @@ export class JoinGamePage extends HTMLElement {
         
         .join-game-page ${pageStyles}
 
+        .join-image {
+          display: block;
+          margin: 0 auto 5rem auto;
+          max-width: 10rem;
+        }
+
       </style>
 
       <section class="join-game-page">
+        <img 
+          src="../images/join-game.png" 
+          alt="Join" 
+          class="join-image"
+        />
 
         <base-input id="lobby-code"
           label="Enter lobby code"
