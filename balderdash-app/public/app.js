@@ -11,8 +11,8 @@ import {
     SubmitDefinitionPage,
     GamePage,
     HostLobbyPage,
+    ReJoinGamePage,
 } from './pages/index.js';
-import { ReJoinGamePage } from './pages/rejoin-game-page.js';
 
 // Register Web Components
 customElements.define('home-page', HomePage);
@@ -26,8 +26,6 @@ customElements.define('error-page', ErrorPage);
 customElements.define('game-settings-page', GameSettingsPage);
 customElements.define('submit-definition-page', SubmitDefinitionPage);
 customElements.define('game-page', GamePage);
-
-
 // Configure Routes
 router.addRoute('home', () => {
     const homePage = new HomePage();
