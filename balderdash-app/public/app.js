@@ -76,8 +76,10 @@ router.addRoute('join-game', () => {
     document.querySelector('#app').appendChild(joinGamePage);
 });
 
-router.addRoute('rejoin-game', () => {
+router.addRoute('rejoin-game', (data) => {
     const reJoinGamePage = new ReJoinGamePage();
+    reJoinGamePage.sourceUrl = data.sourceUrl;
+
     document.querySelector('#app').appendChild(reJoinGamePage);
 });
 

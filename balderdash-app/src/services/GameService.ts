@@ -129,6 +129,23 @@ export class GameService {
         }
     }
 
+    static async removePlayerFromGame(
+        userId: number,
+        gameId: number
+    ): Promise<string> {
+        const result = await GameRepository.setGamePlayerActive(
+            gameId,
+            userId,
+            false
+        );
+
+        if (result) {
+            return 'Player removed from game';
+        } else {
+            return 'Failed to remove player from game';
+        }
+    }
+
     static async getGameByRoundId(roundId: number): Promise<Game | null> {
         const game = GameRepository.getGameByRoundId(roundId);
 

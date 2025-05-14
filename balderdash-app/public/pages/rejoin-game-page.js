@@ -8,9 +8,10 @@ import { apiFetch } from '../js/apiClient.js';
 import { getItem } from '../js/storage.js';
 
 export class ReJoinGamePage extends HTMLElement {
-    constructor() {
+    constructor(sourceUrl) {
         super();
         this.shadow = this.attachShadow({ mode: 'open' });
+        this.sourceUrl = sourceUrl;
     }
 
     connectedCallback() {
@@ -23,11 +24,11 @@ export class ReJoinGamePage extends HTMLElement {
             this.onJoinGameClick();
         });
 
-        const joinGameButton =
-            this.shadowRoot.querySelector('#join-game-button');
+        const leaveGameButton =
+            this.shadowRoot.querySelector('#leave-game-button');
 
-        joinGameButton.addEventListener('click', () => {
-            this.onJoinGameClick();
+        leaveGameButton.addEventListener('click', () => {
+            this.onLeaveGameClick();
         });
     }
 
@@ -74,7 +75,17 @@ export class ReJoinGamePage extends HTMLElement {
         });
 
         if (gameData) {
-            router.navigate('/submit-definition');
+            router.navigate('/lobby');
         }
+    }
+
+    async onLeaveGameClick() {
+        const gameData = await apiFetch('games/leave', {
+            method: 'POST',
+        });
+
+        console.log(this.sourceUrl);
+
+        router.navigate(this.sourceUrl || '/home');
     }
 }

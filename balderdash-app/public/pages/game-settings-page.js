@@ -85,12 +85,21 @@ export class GameSettingsPage extends HTMLElement {
     }
 
     async getGameInfo() {
-        const gameData = await apiFetch('games', {
-            method: 'GET',
-        });
+        const gameData = await apiFetch(
+            'games',
+            {
+                method: 'GET',
+            },
+            null,
+            true,
+            false
+        );
 
+        console.log({ gameData });
         if (gameData) {
-            router.navigate('/rejoin-game');
+            router.navigate('/rejoin-game', {
+                sourceUrl: '/game-settings',
+            });
         }
     }
 
