@@ -1,6 +1,9 @@
 import express, { Request, Response, Router } from 'express';
 import authService from '../services/AuthService';
+import { UserService } from '../services/UserService';
+import { SendUserToSite } from '../utils/sendUserToSite';
 require('dotenv').config();
+const auth = require('../middleware/auth');
 
 const router: Router = express.Router();
 
@@ -29,23 +32,34 @@ router.get(
         }
 
         response.redirect(
-            `http://ec2-13-247-204-202.af-south-1.compute.amazonaws.com/login?code=${encodeURI(code)}`
+            `http://ec2-13-247-204-202.af-south-1.compute.amazonaws.com/login?code=${encodeURI(
+                code
+            )}`
         );
     }
 );
 
+router.get('/login', async (req: Request, res: Response): Promise<any> => {
+    const token = await authService.login(req, res);
+
+    res.cookie('authorization', token ?? '', {
+        httpOnly: true,
+        secure: false,
+        path: '/',
+    });
+
+    res.redirect('/place-user');
+});
+
 router.get(
-    '/login',
-    async (request: Request, response: Response): Promise<any> => {
-        const token = await authService.login(request, response);
+    '/place-user',
+    auth,
+    async (req: Request, res: Response): Promise<any> => {
+        if (!req.user) {
+            return res.status(401).json({ message: 'User not found' });
+        }
 
-        response.cookie('authorization', token ?? '', {
-            httpOnly: true,
-            secure: false,
-            path: '/',
-        });
-
-        response.redirect('/home');
+        SendUserToSite(req.user, res);
     }
 );
 

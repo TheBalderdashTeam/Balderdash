@@ -15,10 +15,9 @@ export class HostLobbyPage extends HTMLElement {
         this.lobbyCode = '';
     }
 
-    connectedCallback() {
+    async connectedCallback() {
+        await this.getGameInfo();
         this.render();
-
-        this.getGameInfo();
         this.startPollingForPlayers();
     }
 

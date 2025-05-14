@@ -44,6 +44,7 @@ export class RoundService {
         return {
             roundId: round.id,
             roundNumber: round.roundNumber,
+            roundStatusId: round.roundStatusId,
             roundStatus: RoundState[round.roundStatusId],
             word: word,
             definitions: shuffledDefinitions,

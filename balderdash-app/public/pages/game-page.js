@@ -38,8 +38,8 @@ export class GamePage extends HTMLElement {
     this.updateContent();
   }
 
-  render() {
-    this.shadow.innerHTML = `
+    render() {
+        this.shadow.innerHTML = `
       <style>
         :host {
           display: flex;
@@ -122,25 +122,24 @@ export class GamePage extends HTMLElement {
 
       </section>
     `;
-  }
-
-  async handleNextRoundClick() {
-    const spinner = document.getElementById('loading-spinner');
-    spinner.show(); // Show the spinner
-
-    try {
-      //TODO: replace with actual fetch and navigations
-      const data = await this.fetchGameData();
-      console.log('Data fetched:', data);
-
-      router.navigate('/home', data);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-
-    } finally {
-      setTimeout(() => spinner.hide(), 5000)
     }
-  }
+
+    async handleNextRoundClick() {
+        const spinner = document.getElementById('loading-spinner');
+        spinner.show(); // Show the spinner
+
+        try {
+            //TODO: replace with actual fetch and navigations
+            const data = await this.fetchGameData();
+            console.log('Data fetched:', data);
+
+            router.navigate('/home', data);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        } finally {
+            setTimeout(() => spinner.hide(), 5000);
+        }
+    }
 
   async fetchRoundData() {
 
