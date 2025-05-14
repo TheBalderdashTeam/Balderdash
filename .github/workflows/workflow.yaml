@@ -171,6 +171,7 @@ jobs:
 
       - name: Test and run nginx
         run: |
+          EC2_HOST=${{ needs.terraform.outputs.ec2host }}
           ssh -o StrictHostKeyChecking=no -i privatekey.pem "ubuntu@$EC2_HOST" '
           cd /etc/nginx/sites-enabled/ &&
           sudo nginx -t &&
