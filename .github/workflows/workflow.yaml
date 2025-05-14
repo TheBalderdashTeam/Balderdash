@@ -149,11 +149,8 @@ jobs:
               listen 80;
               server_name *.amazonaws.com;
 
-              location / {
-                  proxy_pass http://localhost:8080;
-                  proxy_set_header Host \$host;
-                  proxy_set_header X-Real-IP \$remote_addr;
-              }
+              # Redirect all HTTP traffic to HTTPS
+              return 301 https://$host$request_uri;
           }
 
           server {
@@ -179,6 +176,7 @@ jobs:
           sudo nginx -t &&
           sudo systemctl enable nginx &&
           sudo systemctl restart nginx
+          '
 
   flyway:
     needs:
