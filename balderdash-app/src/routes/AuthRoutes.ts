@@ -7,7 +7,6 @@ const auth = require('../middleware/auth');
 
 const router: Router = express.Router();
 
-// Google OAuth login route -- will be used on the frontend
 router.get('/auth/google', (request: Request, response: Response) => {
     var clientId = process.env.CLIENT_ID;
     var redirectUri = process.env.REDIRECT_URI;
@@ -21,7 +20,6 @@ router.get('/auth/google', (request: Request, response: Response) => {
     }
 });
 
-// OAuth callback route -- will be used on the frontend, and then pass the code to the backend login
 router.get(
     '/auth/google/callback',
     async (request: Request, response: Response) => {

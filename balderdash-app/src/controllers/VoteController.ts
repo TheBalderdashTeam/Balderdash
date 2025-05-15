@@ -7,7 +7,7 @@ import { handleFailure, handleSuccess } from '../utils/handleResponses';
 export class VoteController {
     static async createVote(req: Request, res: Response): Promise<void> {
         try {
-            const roundDefinitionId = parseInt(req.params.roundDefinitionId);
+            const { roundDefinitionId, isCorrect } = req.body;
 
             const googleUser = req.user;
 
@@ -26,7 +26,8 @@ export class VoteController {
             const vote = await VoteService.createVote(
                 roundData.roundId,
                 user?.id ?? 0,
-                roundDefinitionId
+                roundDefinitionId,
+                isCorrect
             );
 
             handleSuccess(res, vote);
