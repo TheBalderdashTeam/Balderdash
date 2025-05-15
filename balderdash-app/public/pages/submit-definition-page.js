@@ -21,6 +21,15 @@ export class SubmitDefinitionPage extends HTMLElement {
   }
 
   connectedCallback() {
+    this.init();
+  }
+
+  async init() {
+
+    if (!this.roundData) {
+      await this.fetchRoundData();
+    }
+
     this.render();
 
     this.submitDefinitionButton = this.shadow.querySelector('#submit-definition');
@@ -34,11 +43,6 @@ export class SubmitDefinitionPage extends HTMLElement {
       timer.removeAttribute('running');
       this.submitDefinition();
     });
-
-    if (!this.roundData) {
-      this.fetchRoundData();
-    }
-
   }
 
   disconnectedCallback() {
