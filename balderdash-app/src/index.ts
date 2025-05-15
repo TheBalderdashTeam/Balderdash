@@ -1,6 +1,6 @@
 import express, { NextFunction, Request, Response } from 'express';
 import { frontendAuth } from './middleware/frontendAuth';
-import cookieParser from 'cookie-parser';
+import { simpleCookieParser } from './middleware/cookieParser';
 import authRoutes from './routes/AuthRoutes';
 import userRoutes from './routes/UserRoutes';
 import roundRoutes from './routes/RoundRoutes';
@@ -24,7 +24,7 @@ const port = 8080;
 
 // Serve static files (like index.html)
 app.use(express.json());
-app.use(cookieParser());
+app.use(simpleCookieParser);
 
 app.use(authRoutes);
 
@@ -42,12 +42,12 @@ app.use(express.static(path.join(__dirname, '../public')));
 app.use('/api', roundRoutes);
 
 app.get('/sign-in', (req: Request, res: Response) => {
-  res.sendFile(path.join(__dirname, '../public/index.html'));
+    res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
 //ensure every other route other than sign-in is authed
 app.get(/^(?!\/sign-in).*/, frontendAuth, (req: Request, res: Response) => {
-  res.sendFile(path.join(__dirname, '../public/index.html'));
+    res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
 app.listen(port, () => {
