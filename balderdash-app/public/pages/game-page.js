@@ -49,7 +49,7 @@ export class GamePage extends HTMLElement {
     }
 
     render() {
-        this.shadow.innerHTML = `
+      this.shadow.innerHTML = `
     <style>
       :host {
         display: flex;
@@ -175,7 +175,7 @@ export class GamePage extends HTMLElement {
             method: 'POST',
             body: {
                 roundDefinitionId:
-                    (!isCorrect && this.selectedDefinitionId.split('-')[1]) ||
+                    (!isCorrect  && this.selectedDefinitionId.split('-')[1]) ||
                     '',
                 isCorrect,
             },
@@ -256,7 +256,9 @@ export class GamePage extends HTMLElement {
     handleOptionClick(event) {
         event.preventDefault();
         this.selectedDefinitionId = event.currentTarget.id;
-        this.updateSelection();
+        if (this.selectedDefinitionId) {
+          this.updateSelection();
+        }
     }
 
     updateContent() {
