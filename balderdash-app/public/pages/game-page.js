@@ -49,7 +49,7 @@ export class GamePage extends HTMLElement {
     }
 
     render() {
-      this.shadow.innerHTML = `
+        this.shadow.innerHTML = `
     <style>
       :host {
         display: flex;
@@ -175,7 +175,7 @@ export class GamePage extends HTMLElement {
             method: 'POST',
             body: {
                 roundDefinitionId:
-                    (!isCorrect  && this.selectedDefinitionId.split('-')[1]) ||
+                    (!isCorrect && this.selectedDefinitionId.split('-')[1]) ||
                     '',
                 isCorrect,
             },
@@ -242,13 +242,14 @@ export class GamePage extends HTMLElement {
             `#def-${this.roundData.word.id}`
         );
         correctDefinition.classList.add('correct');
-
-        if (this.selectedDefinitionId !== `def-${this.roundData.word.id}`) {
-            const incorrectSelection = this.shadow.querySelector(
-                `#${this.selectedDefinitionId}`
-            );
-            if (incorrectSelection) {
-                incorrectSelection.classList.add('incorrect');
+        if (this.selectedDefinitionId) {
+            if (this.selectedDefinitionId !== `def-${this.roundData.word.id}`) {
+                const incorrectSelection = this.shadow.querySelector(
+                    `#${this.selectedDefinitionId}`
+                );
+                if (incorrectSelection) {
+                    incorrectSelection.classList.add('incorrect');
+                }
             }
         }
     }
@@ -257,7 +258,7 @@ export class GamePage extends HTMLElement {
         event.preventDefault();
         this.selectedDefinitionId = event.currentTarget.id;
         if (this.selectedDefinitionId) {
-          this.updateSelection();
+            this.updateSelection();
         }
     }
 
