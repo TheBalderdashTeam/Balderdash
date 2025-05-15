@@ -58,6 +58,12 @@ export class RoundService {
         definition: string | null,
         wordId: number
     ): Promise<RoundDefinition | null> {
+        if (!definition || definition === null || definition === '') {
+            const word = await WordService.getRandomWord();
+            if (!word) definition = ':(';
+            else definition = word.definition;
+        }
+
         const roundDefinition = await RoundRepository.createRoundDefinition(
             roundId,
             playerId,
