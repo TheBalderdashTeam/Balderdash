@@ -6,6 +6,7 @@ import { router } from '../router/index.js';
 import { apiFetch } from '../js/apiClient.js';
 import { pageStyles } from '../js/styles.js';
 import { getItem } from '../js/storage.js';
+import { loadHtmlIntoShadow } from '../js/helpers.js';
 
 export class RankingPage extends HTMLElement {
     constructor() {
@@ -17,12 +18,16 @@ export class RankingPage extends HTMLElement {
         this.hostUserId = null;
     }
 
-    connectedCallback() {
-        this.render();
+    async connectedCallback() {
+        await this.render();
         this.init();
     }
 
     async init() {
+        const heading = this.shadowRoot.querySelector('.leaderboard-title');
+
+        heading.textContent = this.pageHeading;
+
         if (!this.rankingData) {
             const data = await this.fetchRankingData();
 
@@ -49,68 +54,12 @@ export class RankingPage extends HTMLElement {
     borderRadius="5px"
   `;
 
-    render() {
-        this.shadow.innerHTML = `
-      <style>
-        :host {
-          display: flex;
-          box-sizing: border-box;
-          flex: 1;
-          position: relative; 
-        }
-
-        .leaderboard-page ${pageStyles}
-
-        .leaderboard-title {
-          text-align: center;
-          font-size: 28px;
-          margin-bottom: 20px;
-          color: #333;
-        }
-
-        horizontal-container-v {
-          align-items: center;
-          margin-bottom: 10px;
-          color: white;
-          font-weight: bold;
-        }
-
-        .rank {
-            width: 10%;
-            text-align: left;
-        }
-
-        .player {
-            width: 60%;
-            text-align: center;
-        }
-
-        .score {
-            width: 10%;
-            text-align: right;
-        }
-
-        #ranking-rows {
-          width: 100%;
-        }
-
-      </style>
-      
-      <section class="leaderboard-page">
-        <vertical-container-h 
-          backgroundColour="rgba(255, 255, 255, 0.8)"
-          padding="16px"
-          borderRadius="10px"
-          maxWidth="482px"
-          justifyContent="flex-start"
-          hostHeight="100%">
-
-          <h1 class="leaderboard-title">${this.pageHeading}</h1>
-          
-          <section id="ranking-rows"></section>  
-        </vertical-container-v>
-      </section>
-    `;
+    async render() {
+        await loadHtmlIntoShadow(this.shadow, '../html/ranking-page.html');
+        this.shadow.styleSheets[0].insertRule(
+            `.leaderboard-page ${pageStyles}`,
+            0
+        );
     }
 
     getRowColor(index) {

@@ -1,0 +1,44 @@
+<style>
+    :host {
+        display: flex;
+        box-sizing: border-box;
+        flex: 1;
+        position: relative;
+    }
+
+    .loading-spinner {
+        width: 120px;
+        height: auto;
+        margin: 2rem auto;
+    }
+
+    #hangtight {
+        font-size: var(--font-large);
+        font-weight: bold;
+        margin-bottom: 1rem;
+    }
+
+    .game-start-message {
+        font-size: 1.25rem;
+        margin-top: 1rem;
+        color: var(--text-rgb-29-27-32);
+    }
+</style>
+
+<section class="lobby-page">
+    <section>
+        <img
+            src=" /images/loading.gif"
+            alt="Loading..."
+            class="loading-spinner"
+        />
+    </section>
+
+    <section>
+        <p id="hangtight">Hang tight</p>
+    </section>
+
+    <section>
+        <p>The game will start soon!</p>
+    </section>
+</section>

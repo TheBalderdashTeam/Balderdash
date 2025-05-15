@@ -90,14 +90,10 @@ export class RoundService {
         // Get all votes for the round
         const votes = await VoteRepository.getVotesForRound(roundId);
 
-        console.log('Votes:', votes);
-
         // Get all definitions for this round so we can determine their authors
         const definitions = await RoundRepository.getDefinitionsByRoundId(
             roundId
         );
-
-        console.log('Definitions:', definitions);
 
         // Map definitionId -> authorUserId
         const definitionAuthorMap: { [definitionId: number]: number } = {};

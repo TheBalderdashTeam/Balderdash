@@ -50,6 +50,4 @@ app.get(/^(?!\/sign-in).*/, frontendAuth, (req: Request, res: Response) => {
     res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
-app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
-});
+app.listen(port, () => {});

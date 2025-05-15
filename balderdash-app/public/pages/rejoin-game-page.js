@@ -5,6 +5,7 @@ import { VerticalContainerH } from '../components/vertical-container-h.js';
 import { HorizontalContainerV } from '../components/horizontal-container-v.js';
 import { router } from '../router/index.js';
 import { apiFetch } from '../js/apiClient.js';
+import { loadHtmlIntoShadow } from '../js/helpers.js';
 
 export class ReJoinGamePage extends HTMLElement {
     constructor(sourceUrl) {
@@ -13,8 +14,8 @@ export class ReJoinGamePage extends HTMLElement {
         this.sourceUrl = sourceUrl;
     }
 
-    connectedCallback() {
-        this.render();
+    async connectedCallback() {
+        await this.render();
 
         const joinGameButton =
             this.shadowRoot.querySelector('#join-game-button');
@@ -31,49 +32,12 @@ export class ReJoinGamePage extends HTMLElement {
         });
     }
 
-    render() {
-        this.shadow.innerHTML = `
-      <style>
-        :host {
-          display: flex;
-          box-sizing: border-box;
-          flex: 1;
-          position: relative;  
-        }
-
-        .join-game-page ${pageStyles}
-
-        .join-image {
-          display: block;
-          margin: 0 auto 5rem auto;
-          max-width: 10rem;
-        }
-
-        .option-text
-        {
-          font-size: 3rem;
-        }
-
-      </style>
-
-      <section class="join-game-page">
-        <img 
-          src="../images/join-game.png" 
-          alt="Join" 
-          class="join-image"
-        />
-
-        <section>
-          <p>You have an active game, rejoin or leave the previous</p>
-        </section>
-
-        <primary-button id="join-game-button">Re-join Game</primary-button>
-        <section>
-          <p class="option-text">OR</p>
-        </section>
-        <secondary-button id="leave-game-button">Leave Game</secondary-button>
-      </section>
-    `;
+    async render() {
+        await loadHtmlIntoShadow(this.shadow, '../html/rejoin-game-page.html');
+        this.shadow.styleSheets[0].insertRule(
+            `.join-game-page ${pageStyles}`,
+            0
+        );
     }
 
     async onJoinGameClick() {

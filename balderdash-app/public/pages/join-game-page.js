@@ -6,7 +6,7 @@ import { HorizontalContainerV } from '../components/horizontal-container-v.js';
 import { router } from '../router/index.js';
 import { apiFetch } from '../js/apiClient.js';
 import { showErrorScreen } from '../js/helpers.js';
-
+import { loadHtmlIntoShadow } from '../js/helpers.js';
 
 export class JoinGamePage extends HTMLElement {
     constructor() {
@@ -16,8 +16,8 @@ export class JoinGamePage extends HTMLElement {
         this.lobbyCodeInput = null;
     }
 
-    connectedCallback() {
-        this.render();
+    async connectedCallback() {
+        await this.render();
         this.getGameInfo();
 
         const joinGameButton =
@@ -40,59 +40,20 @@ export class JoinGamePage extends HTMLElement {
         });
     }
 
-    render() {
-        this.shadow.innerHTML = `
-      <style>
-        :host {
-          display: flex;
-          box-sizing: border-box;
-          flex: 1;
-          position: relative;  
-        }
-
-        .input-container {
-          height: 100%;
-          width: 100%;
-        }
-        
-        .join-game-page ${pageStyles}
-
-        .join-image {
-          display: block;
-          margin: 0 auto 5rem auto;
-          max-width: 10rem;
-        }
-
-      </style>
-
-      <section class="join-game-page">
-        <img 
-          src="../images/join-game.png" 
-          alt="Join" 
-          class="join-image"
-        />
-
-        <section class="input-container">
-          <base-input id="lobby-code"
-            label="Enter lobby code"
-            minLength="8"
-            maxLength="8"></base-input>
-        </section>
-
-        <primary-button id="join-game-button" disabled>Join Game</primary-button>
-      </section>
-    `;
+    async render() {
+        await loadHtmlIntoShadow(this.shadow, '../html/join-game-page.html');
+        this.shadow.styleSheets[0].insertRule(
+            `.join-game-page ${pageStyles}`,
+            0
+        );
     }
 
     async getGameInfo() {
-        const gameData = await apiFetch(
-            'games',
-            {
-                method: 'GET',
-                showSpinner: true,
-                errorOnFail: false,
-            }
-        );
+        const gameData = await apiFetch('games', {
+            method: 'GET',
+            showSpinner: true,
+            errorOnFail: false,
+        });
 
         if (gameData) {
             router.navigate('/rejoin-game', {
@@ -119,14 +80,13 @@ export class JoinGamePage extends HTMLElement {
                 method: 'POST',
             });
 
-      if (success) {
-        router.navigate('/lobby');
-      }
-      else {
-        showErrorScreen({
-          message: 'Invalid Lobby Code',
-        });
-      }
+            if (success) {
+                router.navigate('/lobby');
+            } else {
+                showErrorScreen({
+                    message: 'Invalid Lobby Code',
+                });
+            }
+        }
     }
-  }
 }

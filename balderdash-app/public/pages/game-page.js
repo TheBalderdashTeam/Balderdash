@@ -1,11 +1,4 @@
-import {
-    PrimaryButton,
-    SecondaryButton,
-    VerticalContainerH,
-    HorizontalContainerV,
-    BaseInput,
-    Timer,
-} from '../components/index.js';
+import { loadHtmlIntoShadow } from '../js/helpers.js';
 import { router } from '../router/index.js';
 import { apiFetch } from '../js/apiClient.js';
 import { pageStyles } from '../js/styles.js';
@@ -24,8 +17,8 @@ export class GamePage extends HTMLElement {
         this.handleOptionClick = this.handleOptionClick.bind(this);
     }
 
-    connectedCallback() {
-        this.render();
+    async connectedCallback() {
+        await this.render();
         this.init();
 
         this.timer = this.shadow.querySelector('progress-timer');
@@ -48,100 +41,9 @@ export class GamePage extends HTMLElement {
         this.updateContent();
     }
 
-    render() {
-        this.shadow.innerHTML = `
-    <style>
-      :host {
-        display: flex;
-        box-sizing: border-box;
-        flex: 1;
-        position: relative; 
-      }
-
-      p {
-        margin: 0;
-        text-align: center;
-        word-wrap: break-word;
-      }
-        
-      .word {
-        font-size: clamp(1.5rem, 5vw, 2rem);
-        font-weight: bold;
-        width: 100%;
-        text-align: center;
-        margin: 0 0 16px;
-      }
-
-      .options-container {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 1rem;
-          padding: 0px;
-          justify-content: space-evenly;
-          flex-direction: row;
-      }
-
-      .option {
-          border: 1px solid #ccc;
-          border-radius: 5px;
-          padding: 1rem;
-          text-align: center;
-          font-size: 12px;
-          color: black;
-          background-color: rgba(255, 255, 255, 0.8);
-          transition: background-color 0.2s;
-          min-height: 80px; 
-          min-width: 180px;
-          display: flex;
-          flex: 1;
-          justify-content: center;
-          align-items: center;
-          word-wrap: break-word;
-      }
-
-      .option.selected {
-        background-color: #a3c4f3; /* Or any color you prefer */
-        border: 2px solid #5a8dee;
-      }
-      
-      .option.correct {
-        background-color:rgb(163, 243, 178); /* Or any color you prefer */
-        border: 2px solid rgb(90, 238, 117);
-
-      }
-
-      .option.incorrect {
-        background-color:rgb(243, 163, 163); /* Or any color you prefer */
-        border: 2px solid rgb(238, 90, 90);
-      }
-
-      .word-time {
-        position: sticky;
-        top: 0;
-      }
-
-      .game-page ${pageStyles}
-
-    </style>
-
-    <section class="game-page">
-
-      <vertical-container-h class="word-time"
-        backgroundColour="rgb(114, 118, 212);"
-        borderRadius="10px"
-        maxWidth="100%"
-        padding="16px">
-
-          <p>Time left to choose a definition</p>
-          <progress-timer></progress-timer>
-          <p class="word"></p>
-          <p>Select the correct definition below</p>
-      </vertical-container-h>
-
-      <ul class="options-container"></ul>
-
-    </section>
-  `;
+    async render() {
+        await loadHtmlIntoShadow(this.shadow, '../html/game-page.html');
+        this.shadow.styleSheets[0].insertRule(`.game-page ${pageStyles}`, 0);
     }
 
     startPollingForRoundState() {
@@ -242,6 +144,7 @@ export class GamePage extends HTMLElement {
             `#def-${this.roundData.word.id}`
         );
         correctDefinition.classList.add('correct');
+
         if (this.selectedDefinitionId) {
             if (this.selectedDefinitionId !== `def-${this.roundData.word.id}`) {
                 const incorrectSelection = this.shadow.querySelector(

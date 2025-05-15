@@ -68,10 +68,6 @@ class AuthService {
 
             return id_token;
         } catch (error) {
-            console.error(
-                'Error:',
-                error instanceof Error ? error.message : 'Unknown error'
-            );
             return null;
         }
     }
