@@ -185,8 +185,8 @@ export class SubmitDefinitionPage extends HTMLElement {
   updateContent() {
     const wordElem = this.shadow.querySelector(".word");
     wordElem.textContent = this.roundData.word.word;
-    wordElem.style.setProperty('--word-length', word.length);
-    wordElem.style.setProperty('--word-length-char', `${word.length}ch`);
+    wordElem.style.setProperty('--word-length', this.roundData.word.word.length);
+    wordElem.style.setProperty('--word-length-char', `${this.roundData.word.word.length}ch`);
 
     wordElem.classList.remove('animate');
     void wordElem.offsetWidth; // Trigger reflow
