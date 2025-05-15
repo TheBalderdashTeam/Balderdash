@@ -1,0 +1,107 @@
+<style>
+    :host {
+        display: flex;
+        box-sizing: border-box;
+        flex: 1;
+        position: relative;
+    }
+
+    .progress-bar {
+        width: 100%;
+        height: 10px;
+        background-color: #e0e0e0;
+        border-radius: 5px;
+        overflow: hidden;
+    }
+
+    .progress {
+        height: 10px;
+        width: 40%; /* Simulate progress */
+        background-color: black;
+    }
+
+    .time {
+        font-size: clamp(1rem, 1.5vw, 1.2rem);
+        font-weight: bold;
+        margin-top: 0.5rem;
+    }
+
+    .word-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+    }
+
+    .word {
+        display: inline-block;
+        border-right: solid 3px rgba(240, 46, 170, 0.8);
+        white-space: nowrap;
+        overflow: hidden;
+        font-family: 'Source Code Pro', monospace;
+        font-size: clamp(1rem, 8vw, 2rem);
+        color: rgba(255, 255, 255, 0.7);
+        animation: animated-text 1s steps(var(--word-length), end) 1s 1 normal
+                both,
+            animated-cursor 600ms steps(var(--word-length), end) infinite;
+    }
+
+    p {
+        text-align: center;
+    }
+
+    .def-instruction {
+        margin-bottom: 1rem;
+    }
+
+    .definition {
+        box-shadow: rgba(255, 255, 255, 0.4) 5px 5px;
+        background-color: white;
+        border: none;
+        color: #1f1f1f;
+        padding: 0.5rem;
+        border-radius: 8px;
+        font-size: 1rem;
+        margin-bottom: 2rem;
+        width: 70%;
+        height: 40%;
+        resize: none;
+    }
+
+    @keyframes animated-text {
+        from {
+            width: 0;
+        }
+        to {
+            width: var(--word-length-char);
+        }
+    }
+
+    @keyframes animated-cursor {
+        from {
+            border-right-color: rgba(0, 102, 204, 0.8);
+        }
+        to {
+            border-right-color: transparent;
+        }
+    }
+</style>
+
+<section class="submit-definition-page">
+    <p>Time left to submit a definition</p>
+
+    <progress-timer id="progress-timer" duration="120" running></progress-timer>
+
+    <section class="word-container">
+        <p class="word"></p>
+        <label class="def-instruction" for="definition-textarea"
+            >Type out your definition:</label
+        >
+        <textarea class="definition"></textarea>
+        <p id="success-message"></p>
+    </section>
+
+    <primary-button id="submit-definition"> Submit </primary-button>
+</section>

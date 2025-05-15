@@ -93,7 +93,6 @@ export class GameController {
             handleSuccess(res, GameController.createGameResponse(game));
         } catch (error) {
             handleFailure(res, error, 'Error ending game');
-            console.error(error);
         }
     }
 

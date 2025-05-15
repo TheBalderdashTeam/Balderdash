@@ -1,0 +1,32 @@
+<style>
+    :host {
+        display: flex;
+        box-sizing: border-box;
+        flex: 1;
+        position: relative;
+    }
+
+    .word-image {
+        display: block;
+        margin: 0 auto 5rem auto;
+        max-width: 15rem;
+        height: 10rem;
+    }
+</style>
+
+<section class="game-settings-page">
+    <img src="../images/word.png" alt="Word Card" class="word-image" />
+
+    <base-input
+        id="rounds"
+        type="number"
+        label="How many rounds do you want to play?"
+    ></base-input>
+    <base-input
+        id="seconds"
+        type="number"
+        label="How many seconds per round?"
+    ></base-input>
+
+    <primary-button id="create-game-button"> Create game </primary-button>
+</section>
