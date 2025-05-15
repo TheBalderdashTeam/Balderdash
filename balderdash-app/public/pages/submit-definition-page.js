@@ -31,6 +31,7 @@ export class SubmitDefinitionPage extends HTMLElement {
     }
 
     this.render();
+    this.updateContent();
 
     this.submitDefinitionButton = this.shadow.querySelector('#submit-definition');
     const timer = this.shadow.querySelector('#progress-timer');
@@ -181,26 +182,25 @@ export class SubmitDefinitionPage extends HTMLElement {
       }
   }
 
-  async fetchRoundData() {
+  updateContent() {
+    const wordElem = this.shadow.querySelector(".word");
+    wordElem.textContent = this.roundData.word.word;
+    wordElem.style.setProperty('--word-length', this.roundData.word.word.length);
+    wordElem.style.setProperty('--word-length-char', `${this.roundData.word.word.length}ch`);
 
-    const roundData = await apiFetch('games/current-round', {
-        method: 'GET',
-      });
-
-      this.shadow.querySelector(".word").textContent = roundData.word.word;
-
-      const wordElem = this.shadow.querySelector(".word");
-    const word = roundData.word.word;
-    wordElem.textContent = word;
-
-    // Set width in characters for the animation
-    wordElem.style.setProperty('--word-length', word.length);
-    wordElem.style.setProperty('--word-length-char', `${word.length}ch`);
-
-    // Force reflow and re-trigger animation
     wordElem.classList.remove('animate');
     void wordElem.offsetWidth; // Trigger reflow
     wordElem.classList.add('animate');
+  }
+
+  async fetchRoundData() {
+    this.roundData = await apiFetch('games/current-round', {
+        method: 'GET',
+      });
+
+    if (!this.roundData) {
+      router.navigate('/home');
+    }
   }
 
   async submitDefinition() {
