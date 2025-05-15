@@ -29,10 +29,10 @@ export const SendUserToSite = async (user: GooglePayload, res: Response) => {
                 res.redirect('/submit-definition');
                 break;
             case RoundState.Voting:
-                res.redirect('/vote');
+                res.redirect('/game');
                 break;
             case RoundState.Scoring:
-                res.redirect('/scoring');
+                res.redirect('/results');
                 break;
             default:
                 res.redirect('/home');
