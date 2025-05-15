@@ -18,9 +18,9 @@ export class RankingPage extends HTMLElement {
   }
 
   connectedCallback() {
-    this.init();
+    
     this.render();
-    this.updateContent();
+    this.init();
   }
 
   async init() {
@@ -35,6 +35,8 @@ export class RankingPage extends HTMLElement {
         this.rankingData = [];
       }
     }
+
+    this.updateContent();
 
     if (!this.isLeaderBoard) {
       this.endRound();
