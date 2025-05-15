@@ -96,17 +96,23 @@ export class HostLobbyPage extends HTMLElement {
         }
 
         .code-display {
-            background-color: #111;
-            color: white;
+        box-shadow: rgba(255, 255, 255, 0.4) 5px 5px,
+            rgba(255, 255, 255, 0.3) 10px 10px,
+            rgba(255, 255, 255, 0.2) 15px 15px,
+            rgba(255, 255, 255, 0.1) 20px 20px,
+            rgba(255, 255, 255, 0.05) 25px 25px;
+            background-color: white;
+            border: none;
+            color: #1f1f1f;
             padding: 1.5rem;
             border-radius: 8px;
             font-size: 2rem;
-            margin-bottom: 1rem;
+            margin-bottom: 2rem;
             letter-spacing: 0.25em;
         }
 
         .code-info {
-            color: #555;
+            color: white;
             margin-bottom: 2rem;
             font-size: 1rem;
         }

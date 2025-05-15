@@ -57,6 +57,7 @@ export class GameSettingsPage extends HTMLElement {
           display: block;
           margin: 0 auto 5rem auto;
           max-width: 15rem;
+          height: 10rem;
         }
 
       </style>

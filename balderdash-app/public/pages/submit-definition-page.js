@@ -76,24 +76,60 @@ export class SubmitDefinitionPage extends HTMLElement {
         }
 
         .word-container {
-          height: 100%;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
           width: 100%;
-          align-content: center;
+          height: 100%
         }
 
         .word {
-          font-size: 25px;
-          font-weight: bold;
-          word-wrap: break-word;
-          width: 100%;
-        }
+          display: inline-block;
+          border-right: solid 3px rgba(240, 46, 170, 0.8);
+          white-space: nowrap;
+          overflow: hidden;
+          font-family: 'Source Code Pro', monospace;
+          font-size: clamp(1rem, 8vw, 2rem);
+          color: rgba(255, 255, 255, .70);
+          animation: animated-text 1s steps(var(--word-length), end) 1s 1 normal both,
+          animated-cursor 600ms steps(var(--word-length), end) infinite;
+}   
 
         p {
           text-align: center;
         }
 
+        .def-instruction{
+          margin-bottom: 1rem;
+        }
+
         .submit-definition-page ${pageStyles}
-        
+
+        .definition {
+          box-shadow: rgba(255, 255, 255, 0.4) 5px 5px;
+          background-color: white;
+          border: none;
+          color: #1f1f1f;
+          padding: 0.5rem;
+          border-radius: 8px;
+          font-size: 1rem;
+          margin-bottom: 2rem;
+          width: 70%;
+          height: 40%;
+          resize: none;
+        }
+
+        @keyframes animated-text {
+        from { width: 0; }
+        to { width: var(--word-length-char); }
+      }
+
+      @keyframes animated-cursor {
+        from { border-right-color: rgba(0, 102, 204, 0.8); }
+        to { border-right-color: transparent; }
+      }
+                
       </style>
 
       <section class="submit-definition-page">
@@ -106,9 +142,9 @@ export class SubmitDefinitionPage extends HTMLElement {
           <section class="word-container">
 
             <p class="word"></p>
-      
-            <base-input id="definition" label="Type out a fake definition"></base-input>
-            <p id="success-message"></p>
+              <label class = "def-instruction" for="definition-textarea">Type out your definition:</label>
+              <textarea class="definition"></textarea>            
+              <p id="success-message"></p>
           </section>
 
           <primary-button id="submit-definition">
@@ -147,6 +183,19 @@ async fetchRoundData() {
     });
 
     this.shadow.querySelector(".word").textContent = roundData.word.word;
+
+     const wordElem = this.shadow.querySelector(".word");
+  const word = roundData.word.word;
+  wordElem.textContent = word;
+
+  // Set width in characters for the animation
+  wordElem.style.setProperty('--word-length', word.length);
+  wordElem.style.setProperty('--word-length-char', `${word.length}ch`);
+
+  // Force reflow and re-trigger animation
+  wordElem.classList.remove('animate');
+  void wordElem.offsetWidth; // Trigger reflow
+  wordElem.classList.add('animate');
 }
 
   async submitDefinition() {
