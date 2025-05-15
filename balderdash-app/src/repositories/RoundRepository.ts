@@ -60,7 +60,7 @@ export class RoundRepository {
         let roundDefinitionRow: any = null;
         console.log('Creating round definition', definition);
 
-        if (!definition || definition !== undefined) {
+        if (!definition || definition === undefined) {
             definition = '';
         }
 
