@@ -26,7 +26,7 @@ export class RankingPage extends HTMLElement {
         if (!this.rankingData) {
             const data = await this.fetchRankingData();
 
-            if (!this.leaderboard) {
+            if (!this.isLeaderBoard) {
                 const gameData = await apiFetch('games');
                 this.hostUserId = gameData.game.hostUserId;
             }

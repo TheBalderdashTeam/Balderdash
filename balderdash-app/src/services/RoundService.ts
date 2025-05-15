@@ -142,7 +142,10 @@ export class RoundService {
         return roundData;
     }
 
-    static async endRound(game: Game, roundId: number) {
+    static async endRound(
+        game: Game,
+        roundId: number
+    ): Promise<boolean | null> {
         const rounds = await GameService.getRoundCount(game.id);
 
         const gameOver = rounds >= game.numberRounds;
@@ -154,5 +157,7 @@ export class RoundService {
             //Create new round
             RoundService.createRound(game.id, rounds + 1);
         }
+
+        return true;
     }
 }
