@@ -39,6 +39,10 @@ export class GameRepository {
     }
 
     static async endGame(gameId: number): Promise<Game | null> {
+        await sql`UPDATE game_players 
+        SET active = false WHERE 
+        game_id = ${gameId} RETURNING *;`;
+
         const [gameRow] = await sql`
     UPDATE games 
     SET ended_at = NOW(), game_status_id = ${GameStatus.Ended}
