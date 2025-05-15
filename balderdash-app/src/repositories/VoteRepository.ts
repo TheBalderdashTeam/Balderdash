@@ -10,7 +10,12 @@ export class VoteRepository {
     ): Promise<Vote> {
         let voteRow;
 
-        if (isCorrect) {
+        if (
+            isCorrect ||
+            roundDefinitionId === null ||
+            roundDefinitionId === undefined ||
+            !roundDefinitionId
+        ) {
             [voteRow] = await sql`
               INSERT INTO votes (round_id, voter_user_id, is_correct)
               VALUES (${roundId}, ${voterUserId}, ${isCorrect})
