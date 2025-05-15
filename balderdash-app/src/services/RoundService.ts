@@ -1,6 +1,7 @@
 import { GameRepository } from '../repositories/GameRepository';
 import { RoundRepository } from '../repositories/RoundRepository';
 import { VoteRepository } from '../repositories/VoteRepository';
+import { Game } from '../types/Game';
 import { Round } from '../types/Round';
 import { RoundDefinition } from '../types/RoundDefinition';
 import { RoundState } from '../types/RoundState';
@@ -70,7 +71,7 @@ export class RoundService {
         return roundDefinition;
     }
 
-    static async endRoundAndCalculateScores(gameId: number) {
+    static async calculateRoundScores(gameId: number) {
         const game = await GameRepository.getGameById(gameId);
 
         if (!game) return null;
@@ -83,10 +84,14 @@ export class RoundService {
         // Get all votes for the round
         const votes = await VoteRepository.getVotesForRound(roundId);
 
+        console.log('Votes:', votes);
+
         // Get all definitions for this round so we can determine their authors
         const definitions = await RoundRepository.getDefinitionsByRoundId(
             roundId
         );
+
+        console.log('Definitions:', definitions);
 
         // Map definitionId -> authorUserId
         const definitionAuthorMap: { [definitionId: number]: number } = {};
@@ -118,18 +123,6 @@ export class RoundService {
             scoreMap
         );
 
-        const rounds = await GameService.getRoundCount(gameId);
-
-        const gameOver = rounds >= game.numberRounds;
-
-        if (gameOver) {
-            //End game if this was the last round
-            await GameRepository.endGame(gameId);
-        } else {
-            //Create new round
-            RoundService.createRound(gameId, rounds + 1);
-        }
-
         return updatedScores;
     }
 
@@ -141,5 +134,19 @@ export class RoundService {
         const roundData = await RoundService.getCurrentRound(game?.id ?? 0);
 
         return roundData;
+    }
+
+    static async endRound(game: Game, roundId: number) {
+        const rounds = await GameService.getRoundCount(game.id);
+
+        const gameOver = rounds >= game.numberRounds;
+
+        if (gameOver) {
+            //End game if this was the last round
+            await GameRepository.endGame(game.id);
+        } else {
+            //Create new round
+            RoundService.createRound(game.id, rounds + 1);
+        }
     }
 }

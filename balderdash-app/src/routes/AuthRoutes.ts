@@ -30,9 +30,7 @@ router.get(
         }
 
         response.redirect(
-            `http://ec2-13-247-204-202.af-south-1.compute.amazonaws.com/login?code=${encodeURI(
-                code
-            )}`
+            `http://localhost:8080/login?code=${encodeURI(code)}`
         );
     }
 );

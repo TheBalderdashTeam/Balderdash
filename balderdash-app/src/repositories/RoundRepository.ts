@@ -20,9 +20,11 @@ export class RoundRepository {
         roundId: number,
         state: RoundState
     ): Promise<Round | null> {
+        console.log('Updating round state:', roundId, state);
         const [roundRow] = await sql`UPDATE rounds
 	SET round_status_id=${state}
-	WHERE id=${roundId};`;
+	WHERE id=${roundId}
+    RETURNING *;`;
 
         return roundRow ? this.mapToRound(roundRow) : null;
     }

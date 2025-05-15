@@ -7,42 +7,43 @@ import { apiFetch } from '../js/apiClient.js';
 import { pageStyles } from '../js/styles.js';
 
 export class RankingPage extends HTMLElement {
-
-  constructor(){
-    super();
-    this.shadow = this.attachShadow({ mode: 'open' });
-    this.rankingData = null;
-    this.isLeaderBoard = false;
-    this.pageHeading = 'Game Results';
-  }
-
-  connectedCallback() {
-    this.render();
-    this.init();
-  }
-
-  async init() {
-
-    if (!this.rankingData) {
-      
-      const data = await this.fetchRankingData();
-      this.rankingData = data;
-  
-      if (!Array.isArray(this.rankingData)) {
-        this.rankingData = [];
-      }
+    constructor() {
+        super();
+        this.shadow = this.attachShadow({ mode: 'open' });
+        this.rankingData = null;
+        this.isLeaderBoard = false;
+        this.pageHeading = 'Game Results';
     }
 
-    this.updateContent();
-  }
+    connectedCallback() {
+        this.render();
+        this.init();
+    }
 
-  rowContainerStyling = `
+    async init() {
+        if (!this.rankingData) {
+            const data = await this.fetchRankingData();
+            this.rankingData = data;
+
+            if (!Array.isArray(this.rankingData)) {
+                this.rankingData = [];
+            }
+        }
+
+        this.updateContent();
+
+        if (!this.isLeaderBoard) {
+            this.endRound();
+        }
+    }
+
+    rowContainerStyling = `
     padding="15px 20px"
     borderRadius="5px"
-  `
+  `;
 
-  render() {
-    this.shadow.innerHTML = `
+    render() {
+        this.shadow.innerHTML = `
       <style>
         :host {
           display: flex;
@@ -103,75 +104,83 @@ export class RankingPage extends HTMLElement {
         </vertical-container-v>
       </section>
     `;
-  }
+    }
 
-getRowColor(index) {
-  const baseHue = 231;
-  const saturation = 50;
-  const lightnessBase = 85;
-  const lightnessStep = 6;
+    getRowColor(index) {
+        const baseHue = 231;
+        const saturation = 50;
+        const lightnessBase = 85;
+        const lightnessStep = 6;
 
-  // Decrease lightness gradually to create distinct shades
-  const lightness = Math.max(20, lightnessBase - index * lightnessStep);
+        // Decrease lightness gradually to create distinct shades
+        const lightness = Math.max(20, lightnessBase - index * lightnessStep);
 
-  return `hsl(${baseHue}, ${saturation}%, ${lightness}%)`;
-}
+        return `hsl(${baseHue}, ${saturation}%, ${lightness}%)`;
+    }
 
-  async fetchRankingData() {
-
-
-    const apiEndpoint = this.isLeaderBoard && 'leaderboard' || 'games/get-round-scores' ;
-    const data = await apiFetch(apiEndpoint, {
-      method: 'GET',
-      showSpinner: false,
-    });
-
-    if (!this.isLeaderBoard) {
-      
-      setTimeout(async () => {
-        const response = await fetch(window.location.origin+'/place-user', {
-          method: 'GET',
+    async fetchRankingData() {
+        const apiEndpoint =
+            (this.isLeaderBoard && 'leaderboard') || 'games/get-round-scores';
+        const data = await apiFetch(apiEndpoint, {
+            method: 'GET',
+            showSpinner: false,
         });
-  
-        if (response.redirected) {
-              window.location.href = response.url;
-          }
-      }, 5000);
+
+        if (!data) {
+            return {};
+        }
+
+        return data;
     }
 
-    if (!data) {
-      return {}
+    async endRound() {
+        const currentUserId = getItem('user-data')?.id;
+        setTimeout(async () => {
+            if (currentUserId === this.hostUserId) {
+                await apiFetch('games/end-round', {
+                    method: 'POST',
+                });
+            }
+
+            const response = await fetch(
+                window.location.origin + '/place-user',
+                {
+                    method: 'GET',
+                }
+            );
+
+            if (response.redirected) {
+                window.location.href = response.url;
+            }
+        }, 10000);
     }
 
-    return data;
-  }
+    async updateContent() {
+        const container = this.shadowRoot.querySelector('#ranking-rows');
 
-  async updateContent() {
-    const container = this.shadowRoot.querySelector('#ranking-rows');
+        if (!container || !Array.isArray(this.rankingData)) {
+            return;
+        }
 
-    if (!container || !Array.isArray(this.rankingData)) {
-      return
-    };
-  
-    container.innerHTML = '';
+        container.innerHTML = '';
 
-    this.rankingData.forEach((entry, index) => {
-      
-      const row = document.createElement('horizontal-container-v');
-  
-      row.setAttribute('backgroundColour', this.getRowColor(index));
-      row.setAttribute('padding', '15px 20px');
-      row.setAttribute('borderRadius', '5px');
-      row.setAttribute('style', 'margin-bottom: 1rem;');
+        this.rankingData.forEach((entry, index) => {
+            const row = document.createElement('horizontal-container-v');
 
-      const score = this.isLeaderBoard && entry.totalScore || entry.currentScore;
-      row.innerHTML = `
+            row.setAttribute('backgroundColour', this.getRowColor(index));
+            row.setAttribute('padding', '15px 20px');
+            row.setAttribute('borderRadius', '5px');
+            row.setAttribute('style', 'margin-bottom: 1rem;');
+
+            const score =
+                (this.isLeaderBoard && entry.totalScore) || entry.currentScore;
+            row.innerHTML = `
         <section class="rank">${index + 1}</section>
         <section class="player">${entry.username}</section>
         <section class="score">${score}</section>
       `;
-  
-      container.appendChild(row);
-    });
-  }
+
+            container.appendChild(row);
+        });
+    }
 }

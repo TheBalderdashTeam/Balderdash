@@ -42,25 +42,61 @@ export class RoundController {
 
     static async endRound(req: Request, res: Response): Promise<void> {
         try {
+            const game = await GameService.getPlayerGame(req);
+
+            if (!game) {
+                res.status(500).json({
+                    message: 'Failed to end current round',
+                });
+                return;
+            }
+
             const currentRound = await RoundService.getPlayerRound(req);
 
             if (!currentRound)
                 res.status(400).json({ message: 'No valid round found' });
 
-            await RoundService.updateRoundState(
-                currentRound.roundId,
-                RoundState.Scoring
+            const roundState = await RoundService.endRound(
+                game,
+                currentRound.roundId
             );
 
+            handleSuccess(res, roundState);
+        } catch (err) {
+            handleFailure(res, err, 'Failed to end round');
+        }
+    }
+
+    static async calculateRoundScores(
+        req: Request,
+        res: Response
+    ): Promise<void> {
+        try {
             const game = await GameService.getPlayerGame(req);
 
             if (!game)
                 res.status(500).json({
-                    message: 'Failed to end current round',
+                    message: 'Failed to get scores, no game found',
+                });
+            const roundResults = await RoundService.calculateRoundScores(
+                game?.id ?? 0
+            );
+
+            if (!roundResults)
+                res.status(500).json({
+                    message: 'Failed to get scores',
                 });
 
-            const roundResults = await RoundService.endRoundAndCalculateScores(
-                game?.id ?? 0
+            const round = await RoundService.getCurrentRound(game?.id ?? 0);
+
+            if (!round)
+                res.status(500).json({
+                    message: 'Failed to get current round',
+                });
+
+            var result = await RoundService.updateRoundState(
+                round?.roundId ?? 0,
+                RoundState.Scoring
             );
 
             handleSuccess(res, roundResults);
@@ -78,7 +114,7 @@ export class RoundController {
                     message: 'Failed to end current round',
                 });
 
-            const roundResults = await RoundService.endRoundAndCalculateScores(
+            const roundResults = await RoundService.calculateRoundScores(
                 game?.id ?? 0
             );
 

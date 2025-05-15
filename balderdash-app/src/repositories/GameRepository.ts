@@ -98,6 +98,7 @@ export class GameRepository {
         scoreMap: { [userId: number]: number }
     ): Promise<{ userId: number; currentScore: number }[]> {
         const updates = Object.entries(scoreMap);
+        console.log('Updates:', updates);
         if (updates.length === 0)
             return await this.getUsersUpdatedScores(gameId);
 
@@ -107,10 +108,14 @@ export class GameRepository {
                 sql`WHEN user_id = ${userId} THEN score + ${scoreDelta} `
         );
 
+        console.log('Cases:', cases);
+
         // Combine cases into a single SQL fragment
         const caseFragment = cases.reduce((acc, curr) => sql`${acc} ${curr}`);
 
         const userIds = updates.map(([userId]) => parseInt(userId));
+
+        console.log('User IDs:', userIds);
 
         // Run the update
         await sql`
@@ -130,7 +135,6 @@ export class GameRepository {
       SELECT game_players.user_id, users.username, game_players.score FROM game_players 
       JOIN users ON users.id = game_players.user_id
       WHERE game_players.game_id = ${gameId}
-      RETURNING game_players.user_id, users.username, game_players.score
       ORDER BY game_players.score DESC;
     `;
 
