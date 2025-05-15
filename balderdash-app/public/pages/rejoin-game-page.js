@@ -50,6 +50,11 @@ export class ReJoinGamePage extends HTMLElement {
           max-width: 10rem;
         }
 
+        .option-text
+        {
+          font-size: 3rem;
+        }
+
       </style>
 
       <section class="join-game-page">
@@ -64,7 +69,10 @@ export class ReJoinGamePage extends HTMLElement {
         </section>
 
         <primary-button id="join-game-button">Re-join Game</primary-button>
-        <primary-button id="leave-game-button">Leave Game</primary-button>
+        <section>
+          <p class="option-text">OR</p>
+        </section>
+        <secondary-button id="leave-game-button">Leave Game</secondary-button>
       </section>
     `;
     }
