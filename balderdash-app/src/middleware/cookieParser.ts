@@ -19,6 +19,5 @@ export function simpleCookieParser(
             req.cookies[name] = decodeURIComponent(rest.join('='));
         });
     }
-    console.log('Cookies:', req.cookies);
     next();
 }

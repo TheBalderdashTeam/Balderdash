@@ -14,6 +14,7 @@ export const SendUserToSite = async (user: GooglePayload, res: Response) => {
 
     if (game.gameStatusId === GameState.Pending) {
         res.redirect('/lobby');
+        return;
     }
 
     if (game.gameStatusId === GameState.Active) {
@@ -40,4 +41,5 @@ export const SendUserToSite = async (user: GooglePayload, res: Response) => {
         return;
     }
     res.redirect('/home');
+    return;
 };
