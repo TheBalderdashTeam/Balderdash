@@ -1,37 +1,98 @@
+import { setItem, getItem } from "../js/storage.js";
+
 export class Timer extends HTMLElement {
   constructor() {
     super();
     this.shadow = this.attachShadow({ mode: 'open' });
     this.duration = parseInt(this.getAttribute('duration')) || 10;
-    this.remaining = this.duration;
     this.interval = null;
     this.render();
     this.progressBar = this.shadow.querySelector('.progress');
     this.timeDisplay = this.shadow.querySelector('.time-display');
+    
+    this.initializeTimerState();
+  }
+
+  get storageKey() {
+    return `timer_${this.id || 'default'}_state`;
+  }
+
+  initializeTimerState() {
+    const storedState = this.loadStoredState();
+    
+    if (storedState && storedState.endTime > Date.now()) {
+      this.endTime = storedState.endTime;
+      this.duration = storedState.duration;
+      this.remaining = (storedState.endTime - Date.now()) / 1000;
+      this.updateDisplay();
+      
+      if (storedState.isRunning) {
+        this.start();
+      }
+    } else {
+      this.remaining = this.duration;
+      this.endTime = null;
+      this.updateDisplay();
+      
+      if (storedState) {
+        this.clearStorage();
+      }
+    }
+  }
+
+  loadStoredState() {
+    try {
+      const value = getItem(this.storageKey);
+      if (!value) return null;
+      
+      const parsed = JSON.parse(value);
+      if (!parsed || typeof parsed !== 'object') return null;
+      
+      if (
+        typeof parsed.endTime === 'number' && 
+        typeof parsed.duration === 'number' &&
+        typeof parsed.isRunning === 'boolean'
+      ) {
+        return parsed;
+      }
+      return null;
+    } catch (e) {
+      console.error('Error reading timer storage:', e);
+      return null;
+    }
+  }
+
+  storeCurrentState() {
+    const state = {
+      endTime: this.endTime,
+      duration: this.duration,
+      isRunning: this.hasAttribute('running')
+    };
+    
+    if (this.endTime && this.endTime > Date.now()) {
+      setItem(this.storageKey, JSON.stringify(state));
+    } else {
+      this.clearStorage();
+    }
+  }
+
+  clearStorage() {
+    setItem(this.storageKey, '');
+  }
+
+  updateDisplay() {
+    const percent = (this.remaining / this.duration) * 100;
+    this.progressBar.style.width = `${percent}%`;
+    this.timeDisplay.textContent = this.formatTime(this.remaining);
   }
 
   static get observedAttributes() {
     return ['duration', 'running'];
   }
 
-  attributeChangedCallback(name, oldValue, newValue) {
-    if (name === 'duration') {
-      this.duration = parseInt(newValue) || 10;
-      this.reset();
-    }
-
-    if (name === 'running') {
-      if (this.hasAttribute('running')) {
-        this.start();
-      } else {
-        this.pause();
-      }
-    }
-  }
-
   connectedCallback() {
     if (this.hasAttribute('running')) {
-      this.start();
+      this.start(); 
     }
   }
 
@@ -71,7 +132,6 @@ export class Timer extends HTMLElement {
           font-weight: 500;
         }
 
-        ${this.getStyles?.() || ''}
       </style>
       <section class="container">
         <section class="progress" part="progress"></section>
@@ -87,39 +147,71 @@ export class Timer extends HTMLElement {
   }
 
   start() {
-    this.pause(); // Clear existing timer
-    this.remaining = this.remaining || this.duration;
-    const startTime = Date.now();
-    const endTime = startTime + this.remaining * 1000;
-
+    this.pause();
+    
+    if (!this.endTime || this.remaining <= 0) {
+      this.endTime = Date.now() + this.duration * 1000;
+    }
+    
+    this.storeCurrentState();
+    
     this.interval = setInterval(() => {
-      const now = Date.now();
-      this.remaining = Math.max(0, (endTime - now) / 1000);
-      const percent = (this.remaining / this.duration) * 100;
-      this.progressBar.style.width = `${percent}%`;
-      this.timeDisplay.textContent = this.formatTime(this.remaining);
+      this.remaining = Math.max(0, (this.endTime - Date.now()) / 1000);
+      this.updateDisplay();
 
       if (this.remaining <= 0) {
-        this.pause();
-        this.dispatchEvent(new CustomEvent('timer-end', {
-          detail: { message: 'Timer has finished!' },
-          bubbles: true,
-          composed: true 
-        }));
+        this.handleTimerCompletion();
+      } else {
+        if (Date.now() % 1000 < 100) {
+          this.storeCurrentState();
+        }
       }
     }, 100);
+  }
+
+  handleTimerCompletion() {
+    this.pause();
+    this.clearStorage();
+    this.dispatchEvent(new CustomEvent('timer-end', {
+      bubbles: true,
+      composed: true
+    }));
   }
 
   pause() {
     if (this.interval) {
       clearInterval(this.interval);
       this.interval = null;
+      this.removeAttribute('running');
+      this.storeCurrentState();
     }
   }
 
   reset() {
+    this.pause();
     this.remaining = this.duration;
-    this.progressBar.style.width = '100%';
+    this.endTime = null;
+    this.clearStorage();
+    this.updateDisplay();
+  }
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (name === 'duration') {
+      this.duration = parseInt(newValue) || 10;
+      if (this.hasAttribute('running')) {
+        this.start();
+      } else {
+        this.reset();
+      }
+    }
+
+    if (name === 'running') {
+      if (this.hasAttribute('running')) {
+        this.start();
+      } else {
+        this.pause();
+      }
+    }
   }
 }
 
