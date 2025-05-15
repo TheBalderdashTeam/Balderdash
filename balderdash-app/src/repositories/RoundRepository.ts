@@ -20,7 +20,7 @@ export class RoundRepository {
         roundId: number,
         state: RoundState
     ): Promise<Round | null> {
-        const [roundRow] = await sql`UPDATE public.rounds
+        const [roundRow] = await sql`UPDATE rounds
 	SET round_status_id=${state}
 	WHERE id=${roundId};`;
 
@@ -54,11 +54,18 @@ export class RoundRepository {
     static async createRoundDefinition(
         roundId: number,
         playerId: number,
-        definition: string,
+        definition: string | null,
         wordId: number
     ): Promise<RoundDefinition | null> {
-        const [roundDefinitionRow] =
-            await sql`INSERT INTO public.round_definitions(
+        let roundDefinitionRow: any = null;
+        console.log('Creating round definition', definition);
+
+        if (!definition || definition !== undefined) {
+            definition = '';
+        }
+
+        console.log('Inserting definition', definition);
+        [roundDefinitionRow] = await sql`INSERT INTO public.round_definitions(
         round_id, user_id, definition, word_id)
         VALUES (${roundId}, ${playerId}, ${definition}, ${wordId})
         RETURNING id, round_id, user_id, definition, word_id, submitted_at;`;
@@ -83,7 +90,7 @@ export class RoundRepository {
     private static mapToRoundDefinition(row: any): RoundDefinition {
         return {
             id: row.id,
-            roundId: row.game_id,
+            gameId: row.game_id,
             userId: row.user_id,
             definition: row.definition,
             wordId: row.word_id,

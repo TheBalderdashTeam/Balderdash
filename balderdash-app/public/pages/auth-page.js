@@ -7,24 +7,24 @@ import { router } from '../router/index.js';
 import { apiFetch } from '../js/apiClient.js';
 
 export class AuthPage extends HTMLElement {
-  constructor() {
-    super();
-    this.shadow = this.attachShadow({ mode: 'open' });
-  }
-
-  connectedCallback() {
-    this.render();
-
-    const loginButton = this.shadow.querySelector('#google-login-button');
-    if (loginButton) {
-      loginButton.addEventListener('click', () => {
-        this.handleGoogleLogin();
-      });
+    constructor() {
+        super();
+        this.shadow = this.attachShadow({ mode: 'open' });
     }
-  }
 
-  render() {
-    this.shadow.innerHTML = `
+    connectedCallback() {
+        this.render();
+
+        const loginButton = this.shadow.querySelector('#google-login-button');
+        if (loginButton) {
+            loginButton.addEventListener('click', () => {
+                this.handleGoogleLogin();
+            });
+        }
+    }
+
+    render() {
+        const htmlString = `
       <style>
         :host {
           display: flex;
@@ -100,39 +100,39 @@ export class AuthPage extends HTMLElement {
         }
 
         section.header-text {
-  text-align: center;
-  margin-bottom: 1.5rem;
-}
+          text-align: center;
+          margin-bottom: 1.5rem;
+        }
 
-.animated-text {
-  display: inline-block;
-  border-right: solid 3px rgba(240, 46, 170, 0.8);
-  white-space: nowrap;
-  overflow: hidden;
-  font-family: 'Source Code Pro', monospace;
-  font-size: clamp(2rem, 8vw, 4rem);
-  color: rgba(255, 255, 255, .70);
-  animation: animated-text 2s steps(10, end) 1s 1 normal both,
-             animated-cursor 600ms steps(10, end) infinite;
-}
+        .animated-text {
+          display: inline-block;
+          border-right: solid 3px rgba(240, 46, 170, 0.8);
+          white-space: nowrap;
+          overflow: hidden;
+          font-family: 'Source Code Pro', monospace;
+          font-size: clamp(2rem, 8vw, 4rem);
+          color: rgba(255, 255, 255, .70);
+          animation: animated-text 2s steps(10, end) 1s 1 normal both,
+                    animated-cursor 600ms steps(10, end) infinite;
+        }
 
-.sub-heading {
-  margin: 0.5rem;
-  font-size: 0.8rem;
-  font-family: sans-serif;
-  font-style: italic;
-  color: white;
-}
+        .sub-heading {
+          margin: 0.5rem;
+          font-size: 0.8rem;
+          font-family: sans-serif;
+          font-style: italic;
+          color: white;
+        }
 
-@keyframes animated-text {
-  from { width: 0; }
-  to { width: 10ch; }
-}
+        @keyframes animated-text {
+          from { width: 0; }
+          to { width: 10ch; }
+        }
 
-@keyframes animated-cursor {
-  from { border-right-color: rgba(0, 102, 204, 0.8); }
-  to { border-right-color: transparent; }
-}
+        @keyframes animated-cursor {
+          from { border-right-color: rgba(0, 102, 204, 0.8); }
+          to { border-right-color: transparent; }
+        }
       </style>
       
       <section class="auth-container">
@@ -158,9 +158,24 @@ export class AuthPage extends HTMLElement {
         </button>
       </section>
     `;
-  }
 
-  async handleGoogleLogin() {
-    window.location.href = '/auth/google';
-  }
+        while (this.shadow.firstChild) {
+            this.shadow.removeChild(this.shadow.firstChild);
+        }
+
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(htmlString, 'text/html');
+
+        Array.from(doc.body.childNodes).forEach((node) => {
+            this.shadow.appendChild(node);
+        });
+
+        Array.from(doc.head.childNodes).forEach((node) => {
+            this.shadow.appendChild(node);
+        });
+    }
+
+    async handleGoogleLogin() {
+        window.location.href = '/auth/google';
+    }
 }

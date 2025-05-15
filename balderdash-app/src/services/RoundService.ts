@@ -54,7 +54,7 @@ export class RoundService {
     static async createRoundDefinition(
         roundId: number,
         playerId: number,
-        definition: string,
+        definition: string | null,
         wordId: number
     ): Promise<RoundDefinition | null> {
         const roundDefinition = await RoundRepository.createRoundDefinition(

@@ -209,8 +209,6 @@ export class GameController {
 
     static async getGameScores(req: Request, res: Response): Promise<any> {
         try {
-          console.log('Controller executed')
-
             const game = await GameService.getPlayerGame(req);
             if (!game)
                 return res

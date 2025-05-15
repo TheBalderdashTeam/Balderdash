@@ -46,7 +46,7 @@ export class RoundController {
 
             if (!currentRound)
                 res.status(400).json({ message: 'No valid round found' });
-            
+
             await RoundService.updateRoundState(
                 currentRound.roundId,
                 RoundState.Scoring
@@ -93,7 +93,7 @@ export class RoundController {
         res: Response
     ): Promise<void> {
         try {
-            const { definition } = req.body;
+            const { definition } = req.body as { definition: string | null };
 
             const googleUser = req.user;
 
