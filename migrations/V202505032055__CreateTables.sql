@@ -21,6 +21,7 @@ CREATE TABLE "game_players" (
   "game_id" INT NOT NULL,
   "user_id" INT NOT NULL,
   "score" INT NOT NULL DEFAULT 0
+  "active" BOOLEAN DEFAULT TRUE
 );
 
 CREATE TABLE "rounds" (
