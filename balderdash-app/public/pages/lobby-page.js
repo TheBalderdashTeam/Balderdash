@@ -15,8 +15,12 @@ export class LobbyPage extends HTMLElement {
 
     async connectedCallback() {
         this.render();
-        this.startPollingForGameStart();
-        this.getGameInfo();
+        this.init();
+    }
+
+    async init() {
+      await this.getGameInfo();
+      this.startPollingForGameStart();
     }
 
     disconnectedCallback() {
@@ -86,7 +90,6 @@ export class LobbyPage extends HTMLElement {
 
         //Check game state to see if the player is on the correct page
         if (gameData.game.hostUserId === userData.id) {
-            this.startPollingForGameStart();
             router.navigate('/host-lobby');
         }
     }

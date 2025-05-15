@@ -206,4 +206,21 @@ export class GameController {
 
         return gameData;
     }
+
+    static async getGameScores(req: Request, res: Response): Promise<any> {
+        try {
+            const game = await GameService.getPlayerGame(req);
+
+            if (!game)
+                return res
+                    .status(404)
+                    .json({ message: 'Could not find users current game' });
+
+            const scores = await GameService.getUsersUpdatedScores(game.id);
+
+            handleSuccess(res, scores);
+        } catch (error) {
+            handleFailure(res, error, 'Error fetching game scores');
+        }
+    }
 }

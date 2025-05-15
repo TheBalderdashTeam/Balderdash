@@ -52,16 +52,37 @@ export class RoundController {
                 RoundState.Scoring
             );
 
-             const game = await GameService.getPlayerGame(req);
+            const game = await GameService.getPlayerGame(req);
 
-            if (!game) res.status(500).json({ message: 'Failed to end current round' });
+            if (!game)
+                res.status(500).json({
+                    message: 'Failed to end current round',
+                });
 
             const roundResults = await RoundService.endRoundAndCalculateScores(
                 game?.id ?? 0
             );
 
             handleSuccess(res, roundResults);
+        } catch (err) {
+            handleFailure(res, err, 'Failed to end round');
+        }
+    }
 
+    static async getPlayerScore(req: Request, res: Response): Promise<void> {
+        try {
+            const game = await GameService.getPlayerGame(req);
+
+            if (!game)
+                res.status(500).json({
+                    message: 'Failed to end current round',
+                });
+
+            const roundResults = await RoundService.endRoundAndCalculateScores(
+                game?.id ?? 0
+            );
+
+            handleSuccess(res, roundResults);
         } catch (err) {
             handleFailure(res, err, 'Failed to end round');
         }
