@@ -8,11 +8,7 @@ export const checkRoundState = async (roundId: number) => {
 
     if (!game) return null;
 
-    const players = await UserService.getAllPlayersInGame(game.id);
-
-    if (!players) return null;
-
-    const playerCount = players.length;
+    const playerCount = await GameService.getActivePlayers(game.id);
 
     const definitions = await RoundService.getCurrentRound(game.id);
 

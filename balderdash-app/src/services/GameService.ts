@@ -158,4 +158,8 @@ export class GameService {
     static async getRoundCount(gameId: number): Promise<number> {
         return await GameRepository.getRoundCount(gameId);
     }
+
+    static async getActivePlayers(id: number): Promise<number> {
+        return await GameRepository.getActivePlayers(id);
+    }
 }

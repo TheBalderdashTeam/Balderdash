@@ -218,4 +218,15 @@ export class GameRepository {
 
         return roundCountResult.count;
     }
+
+    static async getActivePlayers(gameId: number): Promise<number> {
+        const [roundCountResult] = await sql`
+          SELECT COUNT(id) AS count 
+          FROM game_players
+          WHERE game_players.game_id = ${gameId} AND game_players.active = true 
+        `;
+        if (!roundCountResult) return 0;
+
+        return roundCountResult.count;
+    }
 }
