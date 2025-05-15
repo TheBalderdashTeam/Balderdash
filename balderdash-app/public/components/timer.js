@@ -103,8 +103,8 @@ export class Timer extends HTMLElement {
         this.pause();
         this.dispatchEvent(new CustomEvent('timer-end', {
           detail: { message: 'Timer has finished!' },
-          bubbles: true,  // Allow the event to propagate if needed
-          composed: true  // Allow the event to pass through the shadow DOM boundary
+          bubbles: true,
+          composed: true 
         }));
       }
     }, 100);
