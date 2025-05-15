@@ -142,8 +142,14 @@ export class GamePage extends HTMLElement {
   }
 
   async submitAnswer() {
-    await apiFetch(`votes/${this.selectedDefinitionId.split('-')[1]}`, {
+
+    const correctDefinitionId = `def-${this.roundData.word.id}`;
+    const isCorrect = this.selectedDefinitionId === correctDefinitionId;
+    await apiFetch(`votes/`, {
       method: 'POST',
+    }, {
+      definitionId: (isCorrect && '') || this.selectedDefinitionId.split('-')[1],
+      isCorrect, 
     });
     this.showResults();
   }

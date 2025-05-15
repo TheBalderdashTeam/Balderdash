@@ -5,7 +5,6 @@ import { GameService } from '../services/GameService';
 import { UserService } from '../services/UserService';
 import { handleFailure, handleSuccess } from '../utils/handleResponses';
 import { RoundState } from '../types/RoundState';
-import { UserController } from './UserController';
 
 export class RoundController {
     static async getCurrentRound(req: Request, res: Response): Promise<void> {
@@ -15,13 +14,8 @@ export class RoundController {
             if (!game) {
                 res.status(400).json({ error: 'Invalid gameId' });
             }
-            const user = UserController.getUser(req,res);
 
             const roundData = await RoundService.getCurrentRound(game?.id ?? 0);
-
-            if (roundData) {
-              RoundService.createRoundDefinition(roundData.roundId, roundData?.roundNumber, roundData?.word.definition, roundData.word.id);
-            }
 
             handleSuccess(res, roundData);
         } catch (err) {
