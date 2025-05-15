@@ -11,55 +11,55 @@ export async function logoutUser() {
 
 export async function apiFetch(
   endpoint,
-  options = {},
-  body,
-  showSpinner = true,
-  errorOnFail = true
+  options = {
+    method: 'GET',
+    body: undefined,
+    showSpinner: true,
+    errorOnFail: true,
+    headers: {},
+    onRetry: undefined,
+  },
 ) {
-  const headers = new Headers(options.headers || {});
-  headers.set('Content-Type', 'application/json');
-
   const loadingSpinner = document.querySelector('#loading-spinner');
 
-  if (showSpinner) {
+  if (options.showSpinner) {
       loadingSpinner?.show?.();
   }
 
   try {
       const response = await fetch(`${API_BASE_URL}/${endpoint}`, {
-          ...options,
+          body: JSON.stringify(options.body),
+          method: options.method,
           credentials: 'include',
           headers: {
               'Content-Type': 'application/json',
-              ...(options.headers || {}),
+              ...(options.headers),
           },
-          body: body ? JSON.stringify(body) : undefined,
       });
 
         if (response.status === 401) {
-            console.warn('401 Unauthorized — logging out');
             logoutUser();
             return;
         }
 
         if (!response.ok) {
-            if (!errorOnFail) {
+            if (!options.errorOnFail) {
                 return;
             }
             const errorData = await response.json().catch(() => ({}));
             showErrorScreen({
                 message: errorData.message || 'API request failed',
-                onRetry: () => apiFetch(endpoint, options),
+                onRetry: options.onRetry,
             });
             return;
         }
 
         return await response.json();
     } catch (error) {
-        if (errorOnFail) {
+        if (options.errorOnFail) {
             showErrorScreen({
-                message: error.message || 'API request failed',
-                onRetry: () => apiFetch(endpoint, options),
+              message: error.message || 'API request failed',
+              onRetry: options.onRetry,
             });
         } else return;
     } finally {

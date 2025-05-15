@@ -4,45 +4,43 @@ import { router } from '../router/index.js';
 import { apiFetch } from '../js/apiClient.js';
 
 export class GameSettingsPage extends HTMLElement {
-    constructor() {
-        super();
-        this.shadow = this.attachShadow({ mode: 'open' });
-    }
-    connectedCallback() {
-        this.render();
-        this.getGameInfo();
+  constructor() {
+    super();
+    this.shadow = this.attachShadow({ mode: 'open' });
+  }
+  connectedCallback() {
+    this.render();
+    this.getGameInfo();
 
-        const createGameButton = this.shadowRoot.querySelector(
-            '#create-game-button'
-        );
+    const createGameButton = this.shadowRoot.querySelector('#create-game-button');
 
-        if (createGameButton) {
-            createGameButton.addEventListener('click', () => {
-                const roundsInput = this.shadowRoot.querySelector('#rounds');
-                const secondsInput = this.shadowRoot.querySelector('#seconds');
+    if (createGameButton) {
+      createGameButton.addEventListener('click', () => {
+        const roundsInput = this.shadowRoot.querySelector('#rounds');
+        const secondsInput = this.shadowRoot.querySelector('#seconds');
 
-                if (roundsInput && secondsInput) {
-                    const rounds = roundsInput.value;
-                    const seconds = secondsInput.value;
+        if (roundsInput && secondsInput) {
+          const rounds = roundsInput.value;
+          const seconds = secondsInput.value;
 
-                    this.createGame(rounds, seconds);
-                }
-            });
+          this.createGame(rounds, seconds);
         }
-
-        const loginButton = this.shadowRoot.querySelector(
-            '#google-login-button'
-        );
-
-        if (loginButton) {
-            loginButton.addEventListener('click', () => {
-                this.handleGoogleLogin();
-            });
-        }
+      });
     }
 
-    render() {
-        this.shadow.innerHTML = `
+    const loginButton = this.shadowRoot.querySelector(
+      '#google-login-button'
+    );
+
+    if (loginButton) {
+      loginButton.addEventListener('click', () => {
+        this.handleGoogleLogin();
+      });
+    }
+  }
+
+  render() {
+    this.shadow.innerHTML = `
       <style>
         :host {
           display: flex;
@@ -83,50 +81,49 @@ export class GameSettingsPage extends HTMLElement {
         </primary-button>
     </section>
     `;
+  }
+
+  async getGameInfo() {
+    const gameData = await apiFetch(
+      'games',
+      {
+        method: 'GET',
+        showSpinner: true,
+        errorOnFail: false,
+      }
+    );
+
+    if (gameData) {
+      router.navigate('/rejoin-game', {
+        sourceUrl: '/game-settings',
+      });
     }
+  }
 
-    async getGameInfo() {
-        const gameData = await apiFetch(
-            'games',
-            {
-                method: 'GET',
-            },
-            null,
-            true,
-            false
-        );
+  async createGame(round, seconds) {
+    try {
+      const response = await apiFetch(
+        'games',
+        {
+          method: 'POST',
+          body: { numberRounds: round, timeLimitSeconds: seconds },
+        },
+        
+      );
 
-        console.log({ gameData });
-        if (gameData) {
-            router.navigate('/rejoin-game', {
-                sourceUrl: '/game-settings',
-            });
-        }
+      if (response || response.game) {
+        const data = response.game;
+
+        router.navigate('/lobby', { game: data });
+      } else {
+        console.warn('Failed to create game');
+      }
+    } catch (error) {
+      console.error('Error creating game:', error);
     }
+  }
 
-    async createGame(round, seconds) {
-        try {
-            const response = await apiFetch(
-                'games',
-                {
-                    method: 'POST',
-                },
-                { numberRounds: round, timeLimitSeconds: seconds }
-            );
-
-            if (response || response.game) {
-                const data = await response.game;
-
-                router.navigate('/lobby', { game: data });
-            } else {
-                console.warn('Failed to create game');
-            }
-        } catch (error) {
-            console.error('Error creating game:', error);
-        }
-    }
-
-    async handleGoogleLogin() {
-        window.location.href = '/auth/google';
-    }
+  async handleGoogleLogin() {
+    window.location.href = '/auth/google';
+  }
 }

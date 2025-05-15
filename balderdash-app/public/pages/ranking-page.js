@@ -123,27 +123,22 @@ getRowColor(index) {
     const apiEndpoint = this.isLeaderBoard && 'leaderboard' || 'games/get-round-scores' ;
     const data = await apiFetch(apiEndpoint, {
       method: 'GET',
-    }, null, false);
+      showSpinner: false,
+    });
 
-    setTimeout(async () => {
-      const response = await fetch(window.location.origin+'/place-user', {
-        method: 'GET',
-      });
-
-      if (response.redirected) {
-            window.location.href = response.url;
-        }
-
-    }, 5000);
-
-    // const gameData = await apiFetch('games');
-
-    // if (gameData.status === 'Active') {
+    if (!this.isLeaderBoard) {
       
-    //   const roundData = await apiFetch('games/current-round');
+      setTimeout(async () => {
+        const response = await fetch(window.location.origin+'/place-user', {
+          method: 'GET',
+        });
+  
+        if (response.redirected) {
+              window.location.href = response.url;
+          }
+      }, 5000);
+    }
 
-    //   router.navigate('submit-definition');
-    // }
     if (!data) {
       return {}
     }

@@ -148,24 +148,26 @@ export class GamePage extends HTMLElement {
   startPollingForRoundState() {
     this.pollingInterval = setInterval(async () => {
       const roundData = await apiFetch('games/current-round', { 
-        method: 'GET'
-      }, null, false);
+        method: 'GET',
+        showSpinner: false,
+        errorOnFail: false,
+        });
 
-        if (roundData) {
-            if (roundData.roundStatus === 'Scoring') {
-              this.stopPollingForRoundState();
-                router.navigate('/results');
-            }
-        }
-    }, 3000);
-}
+          if (roundData) {
+              if (roundData.roundStatus === 'Scoring') {
+                this.stopPollingForRoundState();
+                  router.navigate('/results');
+              }
+          }
+      }, 3000);
+  }
 
-stopPollingForRoundState() {
-    if (this.pollingInterval) {
-        clearInterval(this.pollingInterval);
-        this.pollingInterval = null;
-    }
-}
+  stopPollingForRoundState() {
+      if (this.pollingInterval) {
+          clearInterval(this.pollingInterval);
+          this.pollingInterval = null;
+      }
+  }
 
   async submitAnswer() {
 
@@ -173,9 +175,10 @@ stopPollingForRoundState() {
     const isCorrect = this.selectedDefinitionId === correctDefinitionId;
     await apiFetch(`votes/`, {
       method: 'POST',
-    }, {
-      roundDefinitionId: (!isCorrect && this.selectedDefinitionId.split('-')[1]) || '',
-      isCorrect, 
+      body: {
+        roundDefinitionId: (!isCorrect && this.selectedDefinitionId.split('-')[1]) || '',
+        isCorrect, 
+      }
     });
     this.showResults();
     await this.endRound();
@@ -184,9 +187,6 @@ stopPollingForRoundState() {
   async endRound() {
     const currentUserId = getItem('user-data')?.id;
 
-    console.log({currentUserId});
-
-    console.log({host: this.hostUserId})
     if (currentUserId === this.hostUserId) {
       setTimeout(() => {
         apiFetch('games/end-round' , {

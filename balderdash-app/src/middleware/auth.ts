@@ -27,7 +27,6 @@ const auth = async (
         request.user = user;
         next();
     } catch (error) {
-        console.log(error);
         response.status(401).json({ error: 'Invalid Token' });
     }
 };
