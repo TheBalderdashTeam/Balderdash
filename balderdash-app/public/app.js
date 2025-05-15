@@ -49,6 +49,7 @@ router.addRoute('sign-in', () => {
 router.addRoute('results', () => {
     const rankingPage = new RankingPage();
     rankingPage.pageHeading = 'Game Results';
+    rankingPage.isLeaderBoard = false;
     document.querySelector('#app').appendChild(rankingPage);
 });
 

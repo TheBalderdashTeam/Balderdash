@@ -14,24 +14,27 @@ export class RankingPage extends HTMLElement {
         this.rankingData = null;
         this.isLeaderBoard = false;
         this.pageHeading = 'Game Results';
+        this.hostUserId = null;
     }
 
     connectedCallback() {
-        this.render();
         this.init();
+        this.render(); 
+        this.updateContent();
     }
 
     async init() {
         if (!this.rankingData) {
             const data = await this.fetchRankingData();
+
+            const gameData = await apiFetch('games');
+            this.hostUserId = gameData.game.hostUserId;
             this.rankingData = data;
 
             if (!Array.isArray(this.rankingData)) {
                 this.rankingData = [];
             }
         }
-
-        this.updateContent();
 
         if (!this.isLeaderBoard) {
             this.endRound();
@@ -147,12 +150,14 @@ export class RankingPage extends HTMLElement {
         }
 
         setTimeout(async () => {
+
             if (currentUserId === this.hostUserId) {
                 await apiFetch('games/end-round', {
                     method: 'POST',
                 });
             }
-
+        }, 5000).then(() => {
+          setTimeout(async () => {
             const response = await fetch(
                 window.location.origin + '/place-user',
                 {
@@ -163,7 +168,8 @@ export class RankingPage extends HTMLElement {
             if (response.redirected) {
                 window.location.href = response.url;
             }
-        }, 10000);
+          }, 5000);
+        });
     }
 
     async updateContent() {
