@@ -1,11 +1,3 @@
-import { googleButonStyles, pageStyles } from '../js/styles.js';
-import { PrimaryButton } from '../components/primary-button.js';
-import { SecondaryButton } from '../components/secondary-button.js';
-import { VerticalContainerH } from '../components/vertical-container-h.js';
-import { HorizontalContainerV } from '../components/horizontal-container-v.js';
-import { router } from '../router/index.js';
-import { apiFetch } from '../js/apiClient.js';
-
 export class AuthPage extends HTMLElement {
     constructor() {
         super();

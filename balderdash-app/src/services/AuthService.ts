@@ -29,8 +29,6 @@ class AuthService {
                 }
             );
 
-            console.log(tokenResponse);
-
             if (!tokenResponse.ok) {
                 throw new Error(
                     `Token request failed: ${tokenResponse.statusText}`

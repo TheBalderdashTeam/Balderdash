@@ -5,7 +5,6 @@ import { VerticalContainerH } from '../components/vertical-container-h.js';
 import { HorizontalContainerV } from '../components/horizontal-container-v.js';
 import { router } from '../router/index.js';
 import { apiFetch } from '../js/apiClient.js';
-import { getItem } from '../js/storage.js';
 import { showErrorScreen } from '../js/helpers.js';
 
 
@@ -90,13 +89,11 @@ export class JoinGamePage extends HTMLElement {
             'games',
             {
                 method: 'GET',
-            },
-            null,
-            true,
-            false
+                showSpinner: true,
+                errorOnFail: false,
+            }
         );
 
-        console.log({ gameData });
         if (gameData) {
             router.navigate('/rejoin-game', {
                 sourceUrl: '/join-game',

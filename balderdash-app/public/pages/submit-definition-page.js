@@ -1,5 +1,5 @@
 import { router } from '../router/index.js';
-import { apiFetch, logoutUser } from '../js/apiClient.js';
+import { apiFetch } from '../js/apiClient.js';
 import { pageStyles } from '../js/styles.js';
 import { 
   PrimaryButton,
@@ -158,7 +158,8 @@ export class SubmitDefinitionPage extends HTMLElement {
     this.pollingInterval = setInterval(async () => {
         const roundData = await apiFetch('games/current-round', {
           method: 'GET',
-        }, null, false);
+          showSpinner: false,
+        });
 
         if (roundData) {
             if (roundData.roundStatus === 'Voting') {
@@ -167,43 +168,44 @@ export class SubmitDefinitionPage extends HTMLElement {
             }
         }
     }, 3000);
-}
+  }
 
-stopPollingForRoundStart() {
-    if (this.pollingInterval) {
-        clearInterval(this.pollingInterval);
-        this.pollingInterval = null;
-    }
-}
+  stopPollingForRoundStart() {
+      if (this.pollingInterval) {
+          clearInterval(this.pollingInterval);
+          this.pollingInterval = null;
+      }
+  }
 
-async fetchRoundData() {
+  async fetchRoundData() {
 
-  const roundData = await apiFetch('games/current-round', {
-      method: 'GET',
-    });
+    const roundData = await apiFetch('games/current-round', {
+        method: 'GET',
+      });
 
-    this.shadow.querySelector(".word").textContent = roundData.word.word;
+      this.shadow.querySelector(".word").textContent = roundData.word.word;
 
-     const wordElem = this.shadow.querySelector(".word");
-  const word = roundData.word.word;
-  wordElem.textContent = word;
+      const wordElem = this.shadow.querySelector(".word");
+    const word = roundData.word.word;
+    wordElem.textContent = word;
 
-  // Set width in characters for the animation
-  wordElem.style.setProperty('--word-length', word.length);
-  wordElem.style.setProperty('--word-length-char', `${word.length}ch`);
+    // Set width in characters for the animation
+    wordElem.style.setProperty('--word-length', word.length);
+    wordElem.style.setProperty('--word-length-char', `${word.length}ch`);
 
-  // Force reflow and re-trigger animation
-  wordElem.classList.remove('animate');
-  void wordElem.offsetWidth; // Trigger reflow
-  wordElem.classList.add('animate');
-}
+    // Force reflow and re-trigger animation
+    wordElem.classList.remove('animate');
+    void wordElem.offsetWidth; // Trigger reflow
+    wordElem.classList.add('animate');
+  }
 
   async submitDefinition() {
-    const definition = this.shadow.querySelector("#definition")?.value || '';
+    const definition = this.shadow.querySelector(".definition")?.value || '';
     const data = await apiFetch('games/definitions', {
       method: "POST",
-    }, {
-      definition,
+      body: {
+        definition,
+      },
     });
 
     if (!data?.id) {

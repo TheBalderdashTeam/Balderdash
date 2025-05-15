@@ -84,7 +84,6 @@ export const verifyGoogleToken = async (
 
         return payload;
     } catch (error) {
-        console.log(error);
         throw new Error(`Token verification failed: ${error}`);
     }
 };

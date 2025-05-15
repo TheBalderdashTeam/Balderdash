@@ -5,7 +5,6 @@ import { VerticalContainerH } from '../components/vertical-container-h.js';
 import { HorizontalContainerV } from '../components/horizontal-container-v.js';
 import { router } from '../router/index.js';
 import { apiFetch } from '../js/apiClient.js';
-import { getItem } from '../js/storage.js';
 
 export class ReJoinGamePage extends HTMLElement {
     constructor(sourceUrl) {
@@ -88,11 +87,9 @@ export class ReJoinGamePage extends HTMLElement {
     }
 
     async onLeaveGameClick() {
-        const gameData = await apiFetch('games/leave', {
+        await apiFetch('games/leave', {
             method: 'POST',
         });
-
-        console.log(this.sourceUrl);
 
         router.navigate(this.sourceUrl || '/home');
     }

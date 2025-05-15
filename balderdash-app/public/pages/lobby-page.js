@@ -1,4 +1,4 @@
-import { googleButonStyles, pageStyles } from '../js/styles.js';
+import { pageStyles } from '../js/styles.js';
 import { PrimaryButton } from '../components/primary-button.js';
 import { SecondaryButton } from '../components/secondary-button.js';
 import { VerticalContainerH } from '../components/vertical-container-h.js';
@@ -7,28 +7,28 @@ import { router } from '../router/index.js';
 import { apiFetch } from '../js/apiClient.js';
 
 export class LobbyPage extends HTMLElement {
-    constructor() {
-        super();
-        this.shadow = this.attachShadow({ mode: 'open' });
-        this.pollingInterval = null;
-    }
+  constructor() {
+    super();
+    this.shadow = this.attachShadow({ mode: 'open' });
+    this.pollingInterval = null;
+  }
 
-    async connectedCallback() {
-        this.render();
-        this.init();
-    }
+  async connectedCallback() {
+    this.render();
+    this.init();
+  }
 
-    async init() {
-      await this.getGameInfo();
-      this.startPollingForGameStart();
-    }
+  async init() {
+    await this.getGameInfo();
+    this.startPollingForGameStart();
+  }
 
-    disconnectedCallback() {
-        this.stopPollingForGameStart();
-    }
+  disconnectedCallback() {
+    this.stopPollingForGameStart();
+  }
 
-    render() {
-        this.shadow.innerHTML = `
+  render() {
+    this.shadow.innerHTML = `
       <style>
         :host {
           display: flex;
@@ -73,51 +73,50 @@ export class LobbyPage extends HTMLElement {
         </section>
       </section>
     `;
+  }
+
+  async getGameInfo() {
+    const gameData = await apiFetch('games', {
+      method: 'GET',
+    });
+
+    const userData = await apiFetch('user', {
+      method: 'GET',
+    });
+
+    if (gameData) {
+      this.lobbyCode = gameData.game.lobbyCode;
     }
 
-    async getGameInfo() {
-        const gameData = await apiFetch('games', {
-            method: 'GET',
-        });
+    //Check game state to see if the player is on the correct page
+    if (gameData.game.hostUserId === userData.id) {
+      router.navigate('/host-lobby');
+    }
+  }
 
-        const userData = await apiFetch('user', {
-            method: 'GET',
-        });
+  startPollingForGameStart() {
+    this.pollingInterval = setInterval(async () => {
+      const gameData = await apiFetch(
+        'games',
+        {
+          method: 'GET',
+          showSpinner: false,
+        },
+      );
 
-        if (gameData) {
-            this.lobbyCode = gameData.game.lobbyCode;
+      if (gameData) {
+        if (gameData.status === 'Active') {
+          this.stopPollingForGameStart();
+          router.navigate('/submit-definition', { game: gameData });
         }
+      }
+    }, 3000);
+  }
 
-        //Check game state to see if the player is on the correct page
-        if (gameData.game.hostUserId === userData.id) {
-            router.navigate('/host-lobby');
-        }
+  stopPollingForGameStart() {
+    if (this.pollingInterval) {
+      clearInterval(this.pollingInterval);
+      this.pollingInterval = null;
     }
-
-    startPollingForGameStart() {
-        this.pollingInterval = setInterval(async () => {
-            const gameData = await apiFetch(
-                'games',
-                {
-                    method: 'GET',
-                },
-                null,
-                false
-            );
-
-            if (gameData) {
-                if (gameData.status === 'Active') {
-                    this.stopPollingForGameStart();
-                    router.navigate('/submit-definition', { game: gameData });
-                }
-            }
-        }, 3000);
-    }
-
-    stopPollingForGameStart() {
-        if (this.pollingInterval) {
-            clearInterval(this.pollingInterval);
-            this.pollingInterval = null;
-        }
-    }
+  }
 }

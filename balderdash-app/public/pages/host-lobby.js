@@ -224,13 +224,11 @@ export class HostLobbyPage extends HTMLElement {
             'user/all-players',
             {
                 method: 'GET',
-            },
-            null,
-            false
+                showSpinner: false
+            }
         );
 
         if (response) {
-            console.log(response.length);
 
             if (this.waitingPlayers !== response.length) {
                 this.waitingPlayers = response.length;

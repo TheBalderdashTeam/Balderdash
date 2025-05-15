@@ -58,13 +58,11 @@ export class RoundRepository {
         wordId: number
     ): Promise<RoundDefinition | null> {
         let roundDefinitionRow: any = null;
-        console.log('Creating round definition', definition);
 
         if (!definition || definition === undefined) {
             definition = '';
         }
 
-        console.log('Inserting definition', definition);
         [roundDefinitionRow] = await sql`INSERT INTO public.round_definitions(
         round_id, user_id, definition, word_id)
         VALUES (${roundId}, ${playerId}, ${definition}, ${wordId})
