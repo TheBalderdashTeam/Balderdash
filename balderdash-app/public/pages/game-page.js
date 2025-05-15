@@ -19,7 +19,7 @@ export class GamePage extends HTMLElement {
     this.roundData = null;
     this.roundWord = '';
     this.selectedDefinitionId = '';
-    this.timeLimit = '10';
+    this.timeLimit = null;
     this.timer = null;
     this.hostUserId = null;
     this.handleOptionClick = this.handleOptionClick.bind(this);
@@ -35,9 +35,13 @@ export class GamePage extends HTMLElement {
       const allOptions = this.shadow.querySelectorAll('.option');
       allOptions.forEach((def) =>{
         def.removeEventListener('click', this.handleOptionClick);
-      })
+      });
       this.submitAnswer();
     })
+  }
+
+  disconnectedCallback() {
+    this.startPollingForRoundState();
   }
 
   async init() {
@@ -141,6 +145,28 @@ export class GamePage extends HTMLElement {
   `;
   }
 
+  startPollingForRoundState() {
+    this.pollingInterval = setInterval(async () => {
+      const roundData = await apiFetch('games/current-round', { 
+        method: 'GET'
+      }, null, false);
+
+        if (roundData) {
+            if (roundData.roundStatus === 'Scoring') {
+              this.stopPollingForRoundState();
+                router.navigate('/results');
+            }
+        }
+    }, 3000);
+}
+
+stopPollingForRoundState() {
+    if (this.pollingInterval) {
+        clearInterval(this.pollingInterval);
+        this.pollingInterval = null;
+    }
+}
+
   async submitAnswer() {
 
     const correctDefinitionId = `def-${this.roundData.word.id}`;
@@ -148,17 +174,28 @@ export class GamePage extends HTMLElement {
     await apiFetch(`votes/`, {
       method: 'POST',
     }, {
-      definitionId: (isCorrect && '') || this.selectedDefinitionId.split('-')[1],
+      roundDefinitionId: (!isCorrect && this.selectedDefinitionId.split('-')[1]) || '',
       isCorrect, 
     });
     this.showResults();
+    await this.endRound();
   }
 
-  endRound() {
+  async endRound() {
     const currentUserId = getItem('user-data')?.id;
+
+    console.log({currentUserId});
+
+    console.log({host: this.hostUserId})
     if (currentUserId === this.hostUserId) {
-      apiFetch()
+      setTimeout(() => {
+        apiFetch('games/end-round' , {
+          method: 'POST',
+        });
+      }, 3000); 
     }
+    
+    this.startPollingForRoundState();
   }
 
   async fetchRoundData() {
@@ -182,10 +219,11 @@ export class GamePage extends HTMLElement {
     if (!roundData || !gameData) {
       return
     }
+
     
-    this.hostUserId = gameData.hostUserId;
+    this.hostUserId = gameData.game.hostUserId;
     this.roundData = roundData;
-    this.timeLimit = gameData.timeLimitSeconds;
+    this.timeLimit = gameData.game.timeLimitSeconds;
     this.roundWord = this.roundData.word.word;
   }
 
@@ -204,9 +242,11 @@ export class GamePage extends HTMLElement {
     const correctDefinition = this.shadow.querySelector(`#def-${this.roundData.word.id}`);
     correctDefinition.classList.add('correct');
 
-    if (this.selectedDefinitionId !== this.roundData.word.id) {
+    if (this.selectedDefinitionId !== `def-${this.roundData.word.id}`) {
       const incorrectSelection = this.shadow.querySelector(`#${this.selectedDefinitionId}`);
-      incorrectSelection.classList.add('incorrect');
+      if (incorrectSelection) {
+        incorrectSelection.classList.add('incorrect');
+      }
     } 
   }
 
@@ -237,8 +277,8 @@ export class GamePage extends HTMLElement {
         optionsContainer.appendChild(definition);
       });
 
-      this.timer.setAttribute('running', true);
       this.timer.setAttribute('duration', this.timeLimit);
+      this.timer.setAttribute('running', true);
     }
   }
 }

@@ -39,4 +39,6 @@ export const SendUserToSite = async (user: GooglePayload, res: Response) => {
                 break;
         }
     }
+
+    res.redirect('/home');
 };

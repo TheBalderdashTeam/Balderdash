@@ -8,15 +8,21 @@ export class VoteRepository {
         roundDefinitionId: number | null,
         isCorrect: boolean
     ): Promise<Vote> {
-        const [voteRow] = await sql`
-      INSERT INTO votes (round_id, voter_user_id, ${
-          roundDefinitionId ?? 'round_definition_id,'
-      } is_correct)
-      VALUES (${roundId}, ${voterUserId}, ${
-            roundDefinitionId ?? roundDefinitionId + ','
-        } ${isCorrect})
-      RETURNING id, round_id, voter_user_id, round_definition_id, is_correct, voted_at;
-    `;
+      let voteRow;
+
+      if (isCorrect) {
+          [voteRow] = await sql`
+              INSERT INTO votes (round_id, voter_user_id, is_correct)
+              VALUES (${roundId}, ${voterUserId}, ${isCorrect})
+              RETURNING id, round_id, voter_user_id, round_definition_id, is_correct, voted_at;
+          `;
+      } else {
+          [voteRow] = await sql`
+              INSERT INTO votes (round_id, voter_user_id, round_definition_id, is_correct)
+              VALUES (${roundId}, ${voterUserId}, ${roundDefinitionId}, ${isCorrect})
+              RETURNING id, round_id, voter_user_id, round_definition_id, is_correct, voted_at;
+          `;
+      }
         return this.mapToVote(voteRow);
     }
 

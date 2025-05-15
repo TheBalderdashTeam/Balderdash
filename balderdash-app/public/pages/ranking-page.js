@@ -120,12 +120,30 @@ getRowColor(index) {
   async fetchRankingData() {
 
 
-    const apiEndpoint = this.isLeaderBoard && 'leaderboard' || '' ;
+    const apiEndpoint = this.isLeaderBoard && 'leaderboard' || 'games/get-round-scores' ;
     const data = await apiFetch(apiEndpoint, {
-      method: "GET",
-    })
+      method: 'GET',
+    }, null, false);
 
-    console.log({data})
+    setTimeout(async () => {
+      const response = await fetch(window.location.origin+'/place-user', {
+        method: 'GET',
+      });
+
+      if (response.redirected) {
+            window.location.href = response.url;
+        }
+
+    }, 5000);
+
+    // const gameData = await apiFetch('games');
+
+    // if (gameData.status === 'Active') {
+      
+    //   const roundData = await apiFetch('games/current-round');
+
+    //   router.navigate('submit-definition');
+    // }
     if (!data) {
       return {}
     }
@@ -150,11 +168,12 @@ getRowColor(index) {
       row.setAttribute('padding', '15px 20px');
       row.setAttribute('borderRadius', '5px');
       row.setAttribute('style', 'margin-bottom: 1rem;');
-      
+
+      const score = this.isLeaderBoard && entry.totalScore || entry.currentScore;
       row.innerHTML = `
         <section class="rank">${index + 1}</section>
         <section class="player">${entry.username}</section>
-        <section class="score">${entry.totalScore}</section>
+        <section class="score">${score}</section>
       `;
   
       container.appendChild(row);

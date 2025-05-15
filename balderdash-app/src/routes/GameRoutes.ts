@@ -12,6 +12,6 @@ router.patch('/games/end', auth, GameController.endGame);
 router.delete('/games', auth, GameController.deleteGame);
 router.get('/games/:id', auth, GameController.getGameById);
 router.post('/games/:lobbyCode', auth, GameController.addPlayerToGame);
-router.post('/games/score', auth, GameController.getGameScores);
+router.get('/games/score', auth, GameController.getGameScores);
 
 export default router;

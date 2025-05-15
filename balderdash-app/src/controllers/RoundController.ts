@@ -46,9 +46,9 @@ export class RoundController {
 
             if (!currentRound)
                 res.status(400).json({ message: 'No valid round found' });
-
+            
             await RoundService.updateRoundState(
-                currentRound,
+                currentRound.roundId,
                 RoundState.Scoring
             );
 
