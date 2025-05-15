@@ -5,6 +5,7 @@ import { BaseInput } from '../components/base-input.js';
 import { router } from '../router/index.js';
 import { apiFetch } from '../js/apiClient.js';
 import { pageStyles } from '../js/styles.js';
+import { getItem } from '../js/storage.js';
 
 export class RankingPage extends HTMLElement {
     constructor() {
@@ -134,7 +135,17 @@ export class RankingPage extends HTMLElement {
     }
 
     async endRound() {
-        const currentUserId = getItem('user-data')?.id;
+        let currentUserId = getItem('user-data')?.id;
+
+        if (!currentUserId) {
+
+          const userData = await apiFetch('user', {
+            showSpinner: false,
+          });
+
+          currentUserId = userData.id;
+        }
+
         setTimeout(async () => {
             if (currentUserId === this.hostUserId) {
                 await apiFetch('games/end-round', {
