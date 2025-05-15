@@ -8,46 +8,46 @@ import { pageStyles } from '../js/styles.js';
 import { getItem } from '../js/storage.js';
 
 export class RankingPage extends HTMLElement {
-    constructor() {
-        super();
-        this.shadow = this.attachShadow({ mode: 'open' });
-        this.rankingData = null;
-        this.isLeaderBoard = false;
-        this.pageHeading = 'Game Results';
-        this.hostUserId = null;
+  constructor() {
+    super();
+    this.shadow = this.attachShadow({ mode: 'open' });
+    this.rankingData = null;
+    this.isLeaderBoard = false;
+    this.pageHeading = 'Game Results';
+    this.hostUserId = null;
+  }
+
+  connectedCallback() {
+    this.init();
+    this.render();
+    this.updateContent();
+  }
+
+  async init() {
+    if (!this.rankingData) {
+      const data = await this.fetchRankingData();
+
+      const gameData = await apiFetch('games');
+      this.hostUserId = gameData.game.hostUserId;
+      this.rankingData = data;
+
+      if (!Array.isArray(this.rankingData)) {
+        this.rankingData = [];
+      }
     }
 
-    connectedCallback() {
-        this.init();
-        this.render(); 
-        this.updateContent();
+    if (!this.isLeaderBoard) {
+      this.endRound();
     }
+  }
 
-    async init() {
-        if (!this.rankingData) {
-            const data = await this.fetchRankingData();
-
-            const gameData = await apiFetch('games');
-            this.hostUserId = gameData.game.hostUserId;
-            this.rankingData = data;
-
-            if (!Array.isArray(this.rankingData)) {
-                this.rankingData = [];
-            }
-        }
-
-        if (!this.isLeaderBoard) {
-            this.endRound();
-        }
-    }
-
-    rowContainerStyling = `
+  rowContainerStyling = `
     padding="15px 20px"
     borderRadius="5px"
   `;
 
-    render() {
-        this.shadow.innerHTML = `
+  render() {
+    this.shadow.innerHTML = `
       <style>
         :host {
           display: flex;
@@ -108,96 +108,93 @@ export class RankingPage extends HTMLElement {
         </vertical-container-v>
       </section>
     `;
+  }
+
+  getRowColor(index) {
+    const baseHue = 231;
+    const saturation = 50;
+    const lightnessBase = 85;
+    const lightnessStep = 6;
+
+    // Decrease lightness gradually to create distinct shades
+    const lightness = Math.max(20, lightnessBase - index * lightnessStep);
+
+    return `hsl(${baseHue}, ${saturation}%, ${lightness}%)`;
+  }
+
+  async fetchRankingData() {
+    const apiEndpoint =
+      (this.isLeaderBoard && 'leaderboard') || 'games/get-round-scores';
+    const data = await apiFetch(apiEndpoint, {
+      method: 'GET',
+      showSpinner: false,
+    });
+
+    if (!data) {
+      return {};
     }
 
-    getRowColor(index) {
-        const baseHue = 231;
-        const saturation = 50;
-        const lightnessBase = 85;
-        const lightnessStep = 6;
+    return data;
+  }
 
-        // Decrease lightness gradually to create distinct shades
-        const lightness = Math.max(20, lightnessBase - index * lightnessStep);
+  async endRound() {
+    let currentUserId = getItem('user-data')?.id;
 
-        return `hsl(${baseHue}, ${saturation}%, ${lightness}%)`;
+    if (!currentUserId) {
+
+      const userData = await apiFetch('user', {
+        showSpinner: false,
+      });
+
+      currentUserId = userData.id;
     }
 
-    async fetchRankingData() {
-        const apiEndpoint =
-            (this.isLeaderBoard && 'leaderboard') || 'games/get-round-scores';
-        const data = await apiFetch(apiEndpoint, {
-            method: 'GET',
-            showSpinner: false,
+    setTimeout(async () => {
+
+      if (currentUserId === this.hostUserId) {
+        await apiFetch('games/end-round', {
+          method: 'POST',
         });
+      }
 
-        if (!data) {
-            return {};
-        }
-
-        return data;
-    }
-
-    async endRound() {
-        let currentUserId = getItem('user-data')?.id;
-
-        if (!currentUserId) {
-
-          const userData = await apiFetch('user', {
-            showSpinner: false,
+      setTimeout(async () => {
+        const response = await fetch(window.location.origin + '/place-user', {
+            method: 'GET',
           });
 
-          currentUserId = userData.id;
+        if (response.redirected) {
+          window.location.href = response.url;
         }
+      }, 5000);
+    }, 5000);
+  }
 
-        setTimeout(async () => {
+  async updateContent() {
+    const container = this.shadowRoot.querySelector('#ranking-rows');
 
-            if (currentUserId === this.hostUserId) {
-                await apiFetch('games/end-round', {
-                    method: 'POST',
-                });
-            }
-        }, 5000).then(() => {
-          setTimeout(async () => {
-            const response = await fetch(
-                window.location.origin + '/place-user',
-                {
-                    method: 'GET',
-                }
-            );
-
-            if (response.redirected) {
-                window.location.href = response.url;
-            }
-          }, 5000);
-        });
+    if (!container || !Array.isArray(this.rankingData)) {
+      return;
     }
 
-    async updateContent() {
-        const container = this.shadowRoot.querySelector('#ranking-rows');
+    container.innerHTML = '';
 
-        if (!container || !Array.isArray(this.rankingData)) {
-            return;
-        }
+    this.rankingData.forEach((entry, index) => {
+      const row = document.createElement('horizontal-container-v');
 
-        container.innerHTML = '';
+      row.setAttribute('backgroundColour', this.getRowColor(index));
+      row.setAttribute('padding', '15px 20px');
+      row.setAttribute('borderRadius', '5px');
+      row.setAttribute('style', 'margin-bottom: 1rem;');
 
-        this.rankingData.forEach((entry, index) => {
-            const row = document.createElement('horizontal-container-v');
-
-            row.setAttribute('backgroundColour', this.getRowColor(index));
-            row.setAttribute('padding', '15px 20px');
-            row.setAttribute('borderRadius', '5px');
-            row.setAttribute('style', 'margin-bottom: 1rem;');
-
-            const score =
-                (this.isLeaderBoard && entry.totalScore) || entry.currentScore;
-            row.innerHTML = `
+      const score =
+        (this.isLeaderBoard && entry.totalScore) || entry.currentScore;
+      row.innerHTML = `
         <section class="rank">${index + 1}</section>
         <section class="player">${entry.username}</section>
         <section class="score">${score}</section>
       `;
 
-            container.appendChild(row);
-        });
-    }
+      container.appendChild(row);
+    });
+  }
 }
