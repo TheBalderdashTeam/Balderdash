@@ -15,10 +15,14 @@ export class HostLobbyPage extends HTMLElement {
         this.lobbyCode = '';
     }
 
-    async connectedCallback() {
-        await this.getGameInfo();
-        this.render();
-        this.startPollingForPlayers();
+    connectedCallback() {
+      this.init();
+    }
+
+    async init() {
+      await this.getGameInfo();
+      this.render();
+      this.startPollingForPlayers();
     }
 
     disconnectedCallback() {
@@ -194,9 +198,11 @@ export class HostLobbyPage extends HTMLElement {
                 this.stopPollingForPlayers();
                 router.navigate('/submit-definition', { game: data });
             } else {
+                this.stopPollingForPlayers();
                 console.warn('Failed to create game');
             }
         } catch (error) {
+            this.stopPollingForPlayers();
             console.error('Error creating game:', error);
         }
     }

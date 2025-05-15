@@ -134,9 +134,6 @@ header .animated-text {
         <vertical-container-h 
           backgroundColour="rgb(114, 118, 212);"
           padding="16px"
-
-
-  
           borderRadius="10px"
           maxWidth="482px">
           
