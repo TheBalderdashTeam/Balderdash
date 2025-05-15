@@ -41,6 +41,7 @@ export class SubmitDefinitionPage extends HTMLElement {
 
         this.submitDefinitionButton.addEventListener('click', (_) => {
             timer.removeAttribute('running');
+            timer.setAttribute('duration', '120');
             this.submitDefinition();
         });
     }
