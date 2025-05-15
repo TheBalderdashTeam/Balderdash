@@ -130,7 +130,6 @@ export class GameRepository {
       SELECT game_players.user_id, users.username, game_players.score FROM game_players 
       JOIN users ON users.id = game_players.user_id
       WHERE game_players.game_id = ${gameId}
-      RETURNING game_players.user_id, users.username, game_players.score
       ORDER BY game_players.score DESC;
     `;
 
