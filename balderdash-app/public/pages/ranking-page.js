@@ -21,7 +21,11 @@ export class RankingPage extends HTMLElement {
 
     async connectedCallback() {
         await this.render();
-        this.init();
+        await this.init();
+
+        if (!this.isLeaderBoard) {
+            await this.endRound();
+        }
     }
 
     async init() {
@@ -47,10 +51,6 @@ export class RankingPage extends HTMLElement {
         }
 
         this.updateContent();
-
-        if (!this.isLeaderBoard) {
-            this.endRound();
-        }
     }
 
     rowContainerStyling = `
@@ -124,7 +124,7 @@ export class RankingPage extends HTMLElement {
                 if (response.redirected) {
                     window.location.href = response.url;
                 }
-            }, 5000);
+            }, 1000);
         }, 5000);
     }
 
