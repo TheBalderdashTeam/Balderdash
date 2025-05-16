@@ -20,16 +20,6 @@ export class GamePage extends HTMLElement {
     async connectedCallback() {
         await this.render();
         this.init();
-
-        this.timer = this.shadow.querySelector('progress-timer');
-
-        this.timer.addEventListener('timer-end', (_) => {
-            const allOptions = this.shadow.querySelectorAll('.option');
-            allOptions.forEach((def) => {
-                def.removeEventListener('click', this.handleOptionClick);
-            });
-            this.submitAnswer();
-        });
     }
 
     disconnectedCallback() {
@@ -188,8 +178,17 @@ export class GamePage extends HTMLElement {
                 optionsContainer.appendChild(definition);
             });
 
+            this.timer = this.shadow.querySelector('progress-timer');
             this.timer.setAttribute('duration', this.timeLimit);
             this.timer.setAttribute('running', true);
+
+            this.timer.addEventListener('timer-end', (_) => {
+                const allOptions = this.shadow.querySelectorAll('.option');
+                allOptions.forEach((def) => {
+                    def.removeEventListener('click', this.handleOptionClick);
+                });
+                this.submitAnswer();
+            });
         }
     }
 }

@@ -1,0 +1,38 @@
+<style>
+    :host {
+        display: flex;
+        width: 100%;
+    }
+    .input-wrapper {
+        display: flex;
+        flex-direction: column;
+        flex: 1 0 auto;
+        align-items: var(--container-align-items, center);
+    }
+    .error-message {
+        color: red;
+        font-size: 0.75rem;
+        text-align: left;
+    }
+    input {
+        box-shadow: rgba(81, 85, 183, 0.4) 5px 5px,
+            rgba(81, 85, 183, 0.3) 10px 10px, rgba(81, 85, 183, 0.2) 15px 15px,
+            rgba(81, 85, 183, 0.1) 20px 20px, rgba(81, 85, 183, 0.05) 25px 25px;
+        border-radius: 8px;
+        border: none;
+        color: #1f1f1f;
+        padding: 1em 0em;
+        margin: 1em 0em 0em;
+        font-size: 1em;
+        font-weight: 500;
+        width: 100%;
+        flex: 1;
+        max-width: 30em;
+        text-align: center;
+    }
+</style>
+<section class="input-wrapper">
+    <label id="input-label"></label>
+    <input id="input-field" />
+    <p class="error-message"></p>
+</section>

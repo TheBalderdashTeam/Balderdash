@@ -6,10 +6,10 @@ export const pageStyles = `
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 8px;
+    padding: 0.5em;
     box-sizing: border-box;
   }
-`
+`;
 
 export const googleButonStyles = `
   .gsi-material-button {
@@ -20,19 +20,19 @@ export const googleButonStyles = `
     background-color: #f2f2f2;
     background-image: none;
     border: none;
-    -webkit-border-radius: 4px;
-    border-radius: 4px;
+    -webkit-border-radius: 0.5em;
+    border-radius: 0.5em;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
     color: #1f1f1f;
     cursor: pointer;
     font-family: 'Roboto', arial, sans-serif;
-    font-size: 14px;
-    height: 40px;
-    letter-spacing: 0.25px;
+    font-size: 0.875rem;
+    height: 2.5em;
+    letter-spacing: 0.015em;
     outline: none;
     overflow: hidden;
-    padding: 0 12px;
+    padding: 0 0.75em;
     position: relative;
     text-align: center;
     -webkit-transition: background-color .218s, border-color .218s, box-shadow .218s;
@@ -40,15 +40,15 @@ export const googleButonStyles = `
     vertical-align: middle;
     white-space: nowrap;
     width: 100%;
-    max-width: 400px;
+    max-width: 25em;
     min-width: min-content;
   }
 
   .gsi-material-button .gsi-material-button-icon {
-    height: 20px;
-    margin-right: 12px;
-    min-width: 20px;
-    width: 20px;
+    height: 1.25em;
+    margin-right: 0.75em;
+    min-width: 1.25em;
+    width: 1.25em;
   }
 
   .gsi-material-button .gsi-material-button-content-wrapper {
@@ -118,4 +118,4 @@ export const googleButonStyles = `
     background-color: #001d35;
     opacity: 8%;
   }
-`
+`;

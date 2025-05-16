@@ -1,33 +1,25 @@
+import { loadHtmlIntoShadow } from '../js/helpers.js';
+
 export class BaseContainer extends HTMLElement {
-  constructor() {
-    super();
-    this.shadow = this.attachShadow({ mode: 'open' });
-    this.render();
-    this.backgroundColour = this.getAttribute('backgroundColour') || '';
-    this.margin = this.getAttribute('margin') || '';
-    this.borderRadius = this.getAttribute('borderRadius') || '';
-    this.padding = this.getAttribute('padding') || '';
-  }
+    constructor() {
+        super();
+        this.shadow = this.attachShadow({ mode: 'open' });
+        this.render();
+        this.backgroundColour = this.getAttribute('backgroundColour') || '';
+        this.margin = this.getAttribute('margin') || '';
+        this.borderRadius = this.getAttribute('borderRadius') || '';
+        this.padding = this.getAttribute('padding') || '';
+    }
 
-  render() {
-    this.shadow.innerHTML = `
-      <style>
-        :host {
-          display: block;
-          width: 100%;
+    async render() {
+        await loadHtmlIntoShadow(this.shadow, '../html/base-container.html');
+        if (this.getStyles && typeof this.getStyles === 'function') {
+            const extraStyles = this.getStyles();
+            if (extraStyles) {
+                const styleEl = document.createElement('style');
+                styleEl.textContent = extraStyles;
+                this.shadow.appendChild(styleEl);
+            }
         }
-        .container {
-          display: flex;
-          box-shadow: rgba(81, 85, 183, 0.4) 5px 5px, rgba(81, 85, 183, 0.3) 10px 10px, rgba(81, 85, 183, 0.2) 15px 15px, rgba(81, 85, 183, 0.1) 20px 20px, rgba(81, 85, 183, 0.05) 25px 25px;
-          position: relative;
-          animation: shadowPulse 2s infinite ease-in-out;
-        }
-
-        ${this.getStyles()}
-      </style>
-      <section class="container">
-        <slot></slot>
-      </section>
-    `;
-  }
+    }
 }

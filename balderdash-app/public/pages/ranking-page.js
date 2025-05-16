@@ -16,6 +16,7 @@ export class RankingPage extends HTMLElement {
         this.isLeaderBoard = false;
         this.pageHeading = 'Game Results';
         this.hostUserId = null;
+        this.roundEnded = false;
     }
 
     async connectedCallback() {
@@ -32,7 +33,10 @@ export class RankingPage extends HTMLElement {
             const data = await this.fetchRankingData();
 
             if (!this.isLeaderBoard) {
-                const gameData = await apiFetch('games');
+                const gameData = await apiFetch('games', {
+                    method: 'GET',
+                    showSpinner: false,
+                });
                 this.hostUserId = gameData.game.hostUserId;
             }
             this.rankingData = data;
@@ -50,7 +54,7 @@ export class RankingPage extends HTMLElement {
     }
 
     rowContainerStyling = `
-    padding="15px 20px"
+    padding="1em 1em"
     borderRadius="5px"
   `;
 
@@ -101,10 +105,12 @@ export class RankingPage extends HTMLElement {
         }
 
         setTimeout(async () => {
-            if (currentUserId === this.hostUserId) {
+            if (currentUserId === this.hostUserId && !this.roundEnded) {
                 await apiFetch('games/end-round', {
                     method: 'POST',
+                    showSpinner: false,
                 });
+                this.roundEnded = true;
             }
 
             setTimeout(async () => {

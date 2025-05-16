@@ -1,10 +1,9 @@
-import { BaseButton } from "./base-button.js";
+import { BaseButton } from './base-button.js';
 
 /** The PrimaryButton class defines a custom button element with specific styling for a primary button. */
 export class PrimaryButton extends BaseButton {
-
-  getStyles() {
-      return `
+    getStyles() {
+        return `
     button {
       background-color: #6666c3;
       color: #ffffff;
@@ -16,7 +15,7 @@ export class PrimaryButton extends BaseButton {
         color: #19191f;
     }
   `;
-  }
+    }
 }
 
 customElements.define('primary-button', PrimaryButton);

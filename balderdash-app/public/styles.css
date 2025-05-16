@@ -1,43 +1,41 @@
 body {
-  position: unset;
-  background: #5155B7;
-  background: linear-gradient(135deg, #5155B7, #C2AFF7);
+    position: unset;
+    background: #5155b7;
+    background: linear-gradient(135deg, #5155b7, #c2aff7);
 }
-
 
 html,
 body {
-  padding: 0;
-  font-family: 'Source Code Pro', monospace;
-  color: #ffffff;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+    padding: 0;
+    font-family: 'Source Code Pro', monospace;
+    color: #ffffff;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 #app {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  overflow: auto;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    overflow: auto;
 }
 
 #dalder-logo {
-  width: 100%;
-  max-width: 500px;
-  max-height: 100px;
-  height: auto;
-  object-fit: cover;
-  object-position: center;
-  align-self: center;
+    width: 100%;
+    max-width: 30rem;
+    max-height: 6rem;
+    height: auto;
+    object-fit: cover;
+    object-position: center;
+    align-self: center;
 }
 
 header,
 header a {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
-

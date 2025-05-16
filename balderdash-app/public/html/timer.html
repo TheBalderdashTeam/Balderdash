@@ -1,0 +1,31 @@
+<style>
+    :host {
+        display: block;
+        width: 100%;
+        max-width: 30.3125em;
+        margin: 1em 0;
+    }
+    .container {
+        background: #eee;
+        border-radius: 0.5em;
+        overflow: hidden;
+        height: 1.5em;
+        box-shadow: rgba(0, 0, 0, 0.2) 0px 1px 3px;
+    }
+    .progress {
+        height: 100%;
+        background: linear-gradient(to right, #00c6ff, #0072ff);
+        transition: width 0.1s linear;
+        width: 100%;
+    }
+    .time-display {
+        text-align: center;
+        margin-top: 0.5em;
+        font-size: 1em;
+        font-weight: 500;
+    }
+</style>
+<section class="container">
+    <section class="progress" part="progress"></section>
+</section>
+<p class="time-display" part="time">--:--</p>

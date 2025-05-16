@@ -104,6 +104,7 @@ export class SubmitDefinitionPage extends HTMLElement {
     async fetchRoundData() {
         this.roundData = await apiFetch('games/current-round', {
             method: 'GET',
+            showSpinner: false,
         });
 
         if (!this.roundData) {

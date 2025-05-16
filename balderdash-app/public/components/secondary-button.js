@@ -1,10 +1,9 @@
-import { BaseButton } from "./base-button.js";
+import { BaseButton } from './base-button.js';
 
 /** The SecondaryButton class defines a custom button element with specific styling for a secondary button. */
 export class SecondaryButton extends BaseButton {
-
-  getStyles() {
-      return `
+    getStyles() {
+        return `
     button {
       background-color: rgba(255,255,255,.70);
       color: #black;
@@ -15,7 +14,7 @@ export class SecondaryButton extends BaseButton {
         color: #ffffff;
     }
   `;
-  }
+    }
 }
 
 customElements.define('secondary-button', SecondaryButton);
