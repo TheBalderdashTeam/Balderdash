@@ -150,7 +150,7 @@ export class RankingPage extends HTMLElement {
             row.innerHTML = `
         <section class="rank">${index + 1}</section>
         <section class="player">${entry.username}</section>
-        <section class="score">${score}</section>
+        <section class="score">${score ?? 0}</section>
       `;
 
             container.appendChild(row);
